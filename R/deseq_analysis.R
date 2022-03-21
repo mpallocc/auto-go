@@ -21,7 +21,7 @@
 deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, log2FC_threshold=0, pre_filtering = T, save_excel = F, where_results = "./", outfolder = "results/", del_csv = ",") {
 
   if (grepl(".tsv", counts)[1]) {
-    counts <- read_delim(counts, col_types = cols(), delim = "\t")
+    counts <- read.delim(counts, col_types = cols(), delim = "\t")
   } else if (grepl(".csv", counts)[1]) {
     counts <- read_delim(counts, col_types = cols(), delim = del_csv)
   } else if (grepl(".rds", counts)[1]) {
