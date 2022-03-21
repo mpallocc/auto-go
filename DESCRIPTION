@@ -23,4 +23,5 @@ Suggests:
     ComplexHeatmap,
     enrichR,
     GSVA
+    utils
 
