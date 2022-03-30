@@ -6,9 +6,9 @@ Authors@R: c(
            comment = c(ORCID = "YOUR-ORCID-ID")),
     person("Lorenzo", "D'Ambrosio", , "lorenzo.dambrosio@ifo.it", role = "cre",
            comment = c(ORCID = "YOUR-ORCID-ID")),
-    person("Isabella", "Grassucci", , "isabella.grassucci@gmail.com", role = "cre",
+    person("Isabella", "Grassucci", , "isabella.grassucci@gmail.com",
            comment = c(ORCID = "YOUR-ORCID-ID")),
-    person("Matteo", "Pallocca", , "matteo.pallocca@ifo.it", role = "cre",
+    person("Matteo", "Pallocca", , "matteo.pallocca@ifo.it",
            comment = c(ORCID = "YOUR-ORCID-ID")))
 Description: Auto-GO is a framework that enables automated, high quality Gene Ontology enrichment analyses visualizations. It also features a handy wrapper for Differential Expression analysis around the DESeq2 package (Love et. al 2014) and a handy wrapper around the single-sample implementation of the GSEA algorithm (ssGSEA), useful for low-numerosity transcriptional profiles. The whole framework is structured in different, independent functions, in order to let the user decide which steps of the analysis perform and which plot to produce.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
