@@ -28,4 +28,5 @@ Imports:
     enrichR,
     GSVA,
     readr,
-    utils
+    utils,
+    dplyr
