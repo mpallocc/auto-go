@@ -22,5 +22,6 @@ Imports:
     DESeq2,
     ComplexHeatmap,
     enrichR,
-    GSVA,   utils,  readr    
-
+    GSVA,
+    readr,
+    utils
