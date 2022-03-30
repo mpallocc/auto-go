@@ -22,5 +22,5 @@ Suggests:
     DESeq2,
     ComplexHeatmap,
     enrichR,
-    GSVA,   utils    
+    GSVA,   utils,  readr    
 
