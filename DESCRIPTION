@@ -4,9 +4,9 @@ Version: 0.8
 Authors@R: c(
     person("Eleonora", "Sperandio", , "eleonora.sperandio@ifo.it", role = "aut",
            comment = c(ORCID = "YOUR-ORCID-ID")),
-    person("Lorenzo", "D'Ambrosio", , "lorenzo.dambrosio@ifo.it", role = "cre",
+    person("Lorenzo", "D'Ambrosio", , "lorenzo.dambrosio@ifo.it",
            comment = c(ORCID = "YOUR-ORCID-ID")),
-    person("Isabella", "Grassucci", , "isabella.grassucci@gmail.com",
+    person("Isabella", "Grassucci", , "isabella.grassucci@gmail.com", role = "cre",
            comment = c(ORCID = "YOUR-ORCID-ID")),
     person("Matteo", "Pallocca", , "matteo.pallocca@ifo.it",
            comment = c(ORCID = "YOUR-ORCID-ID")))
@@ -29,4 +29,5 @@ Imports:
     GSVA,
     readr,
     utils,
-    dplyr
+    dplyr,
+    rlang (>= 1.0.2)
