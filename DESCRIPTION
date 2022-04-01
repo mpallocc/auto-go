@@ -21,7 +21,6 @@ Imports:
     tidyverse,
     gdata,
     reshape2,
-    xlsx,
     circlize,
     DESeq2,
     ComplexHeatmap,
@@ -30,4 +29,8 @@ Imports:
     readr,
     utils,
     dplyr,
-    rlang (>= 1.0.2)
+    rlang,
+    magrittr,
+    vctrs,
+    processx,
+    fs
