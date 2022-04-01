@@ -26,7 +26,7 @@ Imports:
     ComplexHeatmap,
     enrichR,
     GSVA,
-    readr,
+    readr (>= 2.1.2),
     utils,
     dplyr,
     rlang,
