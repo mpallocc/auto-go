@@ -25,6 +25,19 @@
 #' @import ggplot2
 #' @import stringr
 #' @import stats
+#' @import SummarizedExperiment
+#' @import textshape
+#' @import ape
+#' @import openxlsx
+#' @import tidyr
+#' @import dichromat
+#' @import grid
+#' @import purrr
+#' @import Rcssplot
+#' @import imguR
+#' @import radiant.data
+#' @import ggrepel
+#' @import grDevices
 
 
 
