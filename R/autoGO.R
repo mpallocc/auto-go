@@ -23,6 +23,8 @@
 #' @import GSVA
 #' @import utils
 #' @import ggplot2
+#' @import stringr
+#' @import stats
 
 
 

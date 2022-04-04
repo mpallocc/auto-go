@@ -11,18 +11,6 @@
 #' @param files_format Default is NULL, when from_DE_analysis = T it is mandatory to provide the extension of the list of genes you want to upload.
 #' @export
 
-#' @import tidyverse
-#' @import readr
-#' @import dplyr
-#' @import gdata
-#' @import reshape2
-#' @import circlize
-#' @import DESeq2
-#' @import ComplexHeatmap
-#' @import enrichR
-#' @import GSVA
-#' @import utils
-#' @import ggplot2
 
 read_enrich_tables <- function(where_results = "./", outfolder = "results/", log2FC_threshold = 0, padj_threshold = 0.05, which_list = c("up_genes","down_genes","up_down_genes","everything"), from_DE_analysis = T, where_files = NULL, files_format = NULL) {
 

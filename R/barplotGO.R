@@ -8,19 +8,6 @@
 #' @param outfolder The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.
 #' @export
 
-#' @import tidyverse
-#' @import readr
-#' @import dplyr
-#' @import gdata
-#' @import reshape2
-#' @import circlize
-#' @import DESeq2
-#' @import ComplexHeatmap
-#' @import enrichR
-#' @import GSVA
-#' @import utils
-#' @import ggplot2
-
 
 barplotGO <- function(enrich_table,  my_comparison = NULL, where_results = "./", outfolder = "results/") {
 

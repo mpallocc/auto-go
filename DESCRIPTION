@@ -15,41 +15,21 @@ License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2.9000
+RoxygenNote: 7.1.2
 LazyData: true
-Depends:
-    tidyverse,
-    gdata,
-    reshape2,
-    circlize,
-    DESeq2,
-    ComplexHeatmap,
-    enrichR,
-    GSVA,
+Depends: 
     readr (>= 2.1.2),
-    utils,
-    dplyr,
-    rlang,
-    magrittr,
-    vctrs,
-    processx,
-    fs,
-    ggplot2
-Imports:
-    tidyverse,
-    gdata,
-    reshape2,
+    tidyverse
+Imports: 
     circlize,
-    DESeq2,
     ComplexHeatmap,
-    enrichR,
-    GSVA,
-    readr (>= 2.1.2),
-    utils,
+    DESeq2,
     dplyr,
-    rlang,
-    magrittr,
-    vctrs,
-    processx,
-    fs,
-    ggplot2
+    enrichR,
+    gdata,
+    ggplot2,
+    GSVA,
+    reshape2,
+    stats,
+    stringr,
+    utils

@@ -11,19 +11,6 @@
 #' @param where_results Specify the folder in which you want to save outputs. (Default = "./"). Note: if you are working with R Notebooks the default working directory (if not specified) is the folder in which the .Rmd is saved.
 #' @param outfolder The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.
 #' @export
-#'
-#' @import tidyverse
-#' @import readr
-#' @import dplyr
-#' @import gdata
-#' @import reshape2
-#' @import circlize
-#' @import DESeq2
-#' @import ComplexHeatmap
-#' @import enrichR
-#' @import GSVA
-#' @import utils
-#' @import ggplot2
 
 volcanoplot <- function (res, my_comparison = NULL, highlight_genes = NULL, log2FC_thresh = 0, padj_thresh = 0.05, del_csv = ",", where_results = "./", outfolder = "results/") {
 
