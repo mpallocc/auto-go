@@ -9,8 +9,18 @@
 #' @param save_excel (Default = FALSE) Write output in MS Excel file format (.xlsx).
 #' @export
 
-requireNamespace("autoGO-package.R")
-
+#' @import tidyverse
+#' @import readr
+#' @import dplyr
+#' @import gdata
+#' @import reshape2
+#' @import circlize
+#' @import DESeq2
+#' @import ComplexHeatmap
+#' @import enrichR
+#' @import GSVA
+#' @import utils
+#' @import ggplot2
 
 
 filtering_DE <- function(padj_threshold=0.05, log2FC_threshold=0, where_results = "./", outfolder = "results/", save_excel = F) {

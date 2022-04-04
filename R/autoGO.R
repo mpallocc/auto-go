@@ -10,8 +10,22 @@
 #' @param outfolder The name to assign to the folder in which outputs are saved. Default is: "results/". NOTE: please add "/" at the end.
 #' @param my_autoGO_dir where have you cloned the auto-go repository, default is your home directory "~/"
 #' @export
+#'
+#' @import tidyverse
+#' @import readr
+#' @import dplyr
+#' @import gdata
+#' @import reshape2
+#' @import circlize
+#' @import DESeq2
+#' @import ComplexHeatmap
+#' @import enrichR
+#' @import GSVA
+#' @import utils
+#' @import ggplot2
 
-requireNamespace("autoGO-package.R")
+
+
 
 autoGO <- function(list_of_genes, dbs = c("GO_Molecular_Function_2021", "GO_Cellular_Component_2021", "GO_Biological_Process_2021", "KEGG_2021_Human"),
                    my_comparison, ensembl = F, excel = F, where_results = "./", outfolder = "results/", my_autoGO_dir = "~/") {
