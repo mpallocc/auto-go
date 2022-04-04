@@ -16,6 +16,9 @@
 #' @export
 
 
+requireNamespace("autoGO-package.R")
+
+
 ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_names = c("hgnc","entrez"), which_gene_set = NULL, write_enrich_tables = F, group = NULL, my_autoGO_dir = "~/",  where_results = "./", outfolder = "ssgsea/", full_names = F, tpm_norm = F, ensembl = F) {
 
   if (grepl(".tsv", norm_data)[1]) {

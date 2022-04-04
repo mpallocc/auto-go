@@ -9,6 +9,7 @@
 #' @param save_excel (Default = FALSE) Write output in MS Excel file format (.xlsx).
 #' @export
 
+requireNamespace("autoGO-package.R")
 
 
 

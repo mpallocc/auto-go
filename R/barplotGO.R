@@ -8,6 +8,8 @@
 #' @param outfolder The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.
 #' @export
 
+requireNamespace("autoGO-package.R")
+
 
 barplotGO <- function(enrich_table,  my_comparison = NULL, where_results = "./", outfolder = "results/") {
 

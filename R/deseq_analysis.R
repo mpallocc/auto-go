@@ -16,6 +16,8 @@
 #' @examples comparisons <- data.frame(treatment = c("TREAT_A","TREAT_B","TREAT_A"), control = c("CTRL", "CTRL", "TREAT_B"))
 #' @export
 
+requireNamespace("autoGO-package.R")
+
 
 
 deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, log2FC_threshold=0, pre_filtering = T, save_excel = F, where_results = "./", outfolder = "results/", del_csv = ",") {

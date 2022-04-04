@@ -13,6 +13,9 @@
 #' @export
 
 
+requireNamespace("autoGO-package.R")
+
+
 volcanoplot <- function (res, my_comparison = NULL, highlight_genes = NULL, log2FC_thresh = 0, padj_thresh = 0.05, del_csv = ",", where_results = "./", outfolder = "results/") {
 
   if (is.data.frame(res)){

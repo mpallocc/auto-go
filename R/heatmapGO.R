@@ -10,6 +10,8 @@
 #' @param which_list One of c("up_genes", "down_genes","up_down_genes", "not_from_DE"): select data to plot. Respectively, only up regulated genes (up_genes), only down regulated genes ("down_genes"), enrichment on both up and down regulated genes (up_down_genes) or select "not_from_DE" if the enrichment will be made on a list of genes that does not come from a differential expression analysis.
 #' @export
 
+requireNamespace("autoGO-package.R")
+
 
 
 heatmapGO <- function(lib, where_results = "./", outfolder = "results/", log2FC_threshold = 0, padj_threshold = 0.05, which_list = c("up_genes", "down_genes","up_down_genes", "not_from_DE")) {
