@@ -45,3 +45,5 @@ Imports:
     textshape,
     tidyr,
     utils
+    
+Remotes: mikelove/DESeq2
