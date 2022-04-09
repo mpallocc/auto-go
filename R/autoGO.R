@@ -55,7 +55,6 @@ autoGO <- function(list_of_genes, dbs = c("GO_Molecular_Function_2021", "GO_Cell
 
   if (ensembl) {
     conv_path <-  "data/conversion_ensembl_hgnc.txt"
-    print(conv_path)
     all_genes_conversion <- read_delim(conv_path, delim = '\t', col_types = cols())
     list_of_genes <- as.data.frame(list_of_genes) %>% inner_join(all_genes_conversion, by=c("list_of_genes"="ensembl_gene_id")) %>%  pull()
   }
