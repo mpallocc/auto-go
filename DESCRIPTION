@@ -47,3 +47,5 @@ Imports:
     tidyr,
     utils
 Remotes: mikelove/DESeq2
+Suggests: 
+    rlang
