@@ -48,7 +48,7 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
 
     norm_data <- norm_data %>%
       filter(!duplicated(external_gene_name)) %>%
-      column_to_rownames(var = "external_gene_name")
+      column_to_rownames(loc = "external_gene_name")
   }
 
   if (tpm_norm) {
