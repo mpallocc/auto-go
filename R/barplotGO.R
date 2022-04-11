@@ -49,7 +49,7 @@ barplotGO <- function(enrich_table,  my_comparison = NULL, where_results = "./",
   }
 
   enrich_table <- enrich_table %>%
-    arrange(Adjusted.P.value, Term) %>%
+    arrange(.data$Adjusted.P.value, Term) %>%
     dplyr::slice(1:15) %>%
     mutate(Term = gsub("\\(GO.*","",Term),
            `-log10(Adjusted.P.value)` = -log10(Adjusted.P.value))
