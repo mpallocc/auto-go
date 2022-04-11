@@ -38,7 +38,7 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
 
   if (ensembl) {
     conv_path <-  paste0(my_autoGO_dir,"auto-go/data/conversion_ensembl_hgnc.txt")
-
+    return(head(conversion_ensembl))
     all_genes_conversion <- conversion_ensembl %>%
       column_to_rownames(var = "ensembl_gene_id")
     return(head(all_gene_conversion))
