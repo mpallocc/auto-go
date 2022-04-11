@@ -53,7 +53,7 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
   }
 
   if (tpm_norm) {
-    gene_length <-  read.table(paste0(my_autoGO_dir,"auto-go/data/gene_length.txt"), sep = "\t", header = T)
+    #gene_length <-  read.table(paste0(my_autoGO_dir,"auto-go/data/gene_length.txt"), sep = "\t", header = T)
 
     gene_length <- gene_length %>%
       filter(external_gene_name %in% rownames(norm_data))
