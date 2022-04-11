@@ -59,7 +59,6 @@ autoGO <- function(list_of_genes, dbs = c("GO_Molecular_Function_2021", "GO_Cell
     #all_genes_conversion <- read_delim(conv_path, delim = '\t', col_types = cols())
     all_genes_conversion <- conversion_ensembl
     list_of_genes <- as.data.frame(list_of_genes) %>% inner_join(all_genes_conversion, by=c("list_of_genes"="ensembl_gene_id")) %>%  pull()
-    return(head(list_of_genes))
     }
 
   enriched <- enrichr(list_of_genes, dbs)
