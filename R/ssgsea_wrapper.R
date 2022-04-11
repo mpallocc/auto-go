@@ -37,8 +37,8 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
   norm_data[,1] <- NULL
 
   if (ensembl) {
-    conversion_ensembl <- conversion_ensembl
-    all_genes_conversion <- conversion_ensembl %>%
+    conversion <- conversion_ensembl
+    all_genes_conversion <- conversion %>%
       column_to_rownames(var = "ensembl_gene_id")
     return(head(all_gene_conversion))
 
