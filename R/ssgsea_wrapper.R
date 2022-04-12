@@ -41,16 +41,14 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
     all_genes_conversion <- conversion %>%
       textshape::column_to_rownames(loc = "ensembl_gene_id")
 
-    return(head(all_genes_conversion))
-
     norm_data <- merge(norm_data, all_genes_conversion, by = 0) %>%
-      select(-Row.names)
+      dplyr::select(-Row.names)
 
     if(sum(duplicated(norm_data$external_gene_name)) != 0) warning("Conversion from ENSEMBL to HGNC has produced ", sum(duplicated(norm_data$external_gene_name)), " duplicated gene names. They are going to be filtered.")
 
     norm_data <- norm_data %>%
-      filter(!duplicated(external_gene_name)) %>%
-      column_to_rownames(loc = "external_gene_name")
+      dplyr::filter(!duplicated(external_gene_name)) %>%
+      textshape::column_to_rownames(loc = "external_gene_name")
   }
 
   if (tpm_norm) {
