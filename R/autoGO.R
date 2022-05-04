@@ -38,7 +38,7 @@
 #' @import radiant.data
 #' @import ggrepel
 #' @import grDevices
-#' @importFrom rlang .data
+
 
 
 

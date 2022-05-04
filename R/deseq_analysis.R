@@ -58,9 +58,9 @@ deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, lo
   } else {
     colnames(counts)[1] <- "gene_id"
     counts <- counts  %>%
-      distinct(gene_id, .keep_all = TRUE) %>% #rimozione di geni "doppi"
-      column_to_rownames(var = "gene_id") %>%
-      dplyr::select(sort(names(.))) %>%
+      distinct(.data$gene_id, .keep_all = TRUE) %>% #rimozione di geni "doppi"
+      column_to_rownames(loc = "gene_id") %>%
+      dplyr::select(sort(names(.data$.))) %>%
       mutate(across(where(is.numeric), round))
 
       if(dim(counts)[2] != dim(groups)[1]){
@@ -116,7 +116,7 @@ deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, lo
       arrange(padj)
 
     filtered <- rr %>%
-      filter(rr$padj  < padj_threshold & abs(rr$log2FoldChange) > log2FC_threshold)
+      dplyr::filter(rr$padj  < padj_threshold & abs(rr$log2FoldChange) > log2FC_threshold)
 
     #generating folders
     groups_fold <- paste0(where_results,outfolder,b,"_vs_",a)
