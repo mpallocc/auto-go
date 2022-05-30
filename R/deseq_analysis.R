@@ -60,7 +60,7 @@ deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, lo
     counts <- counts  %>%
       distinct(.data$gene_id, .keep_all = TRUE) %>% #rimozione di geni "doppi"
       column_to_rownames(loc = "gene_id") %>%
-      dplyr::select(sort(names(.))) %>%
+      dplyr::select(sort(names(.data$`.`))) %>%
       mutate(across(where(is.numeric), round))
 
       if(dim(counts)[2] != dim(groups)[1]){
