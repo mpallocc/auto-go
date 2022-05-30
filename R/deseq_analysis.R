@@ -53,14 +53,14 @@ deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, lo
       groups <- groups[match(groups[[1]], colnames(counts)), ]
     }
 
-    colData(counts) <- DataFrame(groups)
+    colData(counts) <- data.frame(groups)
     dds <- DESeqDataSet(se = counts, design = ~ group)
   } else {
     colnames(counts)[1] <- "gene_id"
     counts <- counts  %>%
       distinct(.data$gene_id, .keep_all = TRUE) %>% #rimozione di geni "doppi"
       column_to_rownames(loc = "gene_id") %>%
-      dplyr::select(sort(names(.data$.))) %>%
+      dplyr::select(sort(names(.))) %>%
       mutate(across(where(is.numeric), round))
 
       if(dim(counts)[2] != dim(groups)[1]){
@@ -111,9 +111,9 @@ deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, lo
     names(means_vst) <- c(paste0("mean_", a), paste0("mean_",b))
 
     rr <- merge(rr,means_vst, by=0) %>%
-      dplyr::rename(genes=Row.names) %>% dplyr::select(-baseMean, -lfcSE, -stat) %>%
+      dplyr::rename(genes=.data$Row.names) %>% dplyr::select(-.data$baseMean, -.data$lfcSE, -stat) %>%
       dplyr::select(c(1:4,6,5)) %>%
-      arrange(padj)
+      arrange(.data$padj)
 
     filtered <- rr %>%
       dplyr::filter(rr$padj  < padj_threshold & abs(rr$log2FoldChange) > log2FC_threshold)

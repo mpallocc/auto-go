@@ -20,7 +20,7 @@ filtering_DE <- function(padj_threshold=0.05, log2FC_threshold=0, where_results 
   for (files in names(readed)) {
     data <- readed[[files]]
     filtered <- data %>%
-      filter(padj < padj_threshold & abs(log2FoldChange) > log2FC_threshold)
+      dplyr::filter(.data$padj < padj_threshold & abs(.data$log2FoldChange) > log2FC_threshold)
 
     groups_fold <- paste0(where_results,outfolder,files,"/filtered_DE_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold)
     groups_fold_thresh_up_down <- paste0(groups_fold,"/up_down_genes_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold)

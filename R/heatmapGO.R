@@ -41,9 +41,9 @@ heatmapGO <- function(lib, where_results = "./", outfolder = "results/", log2FC_
       if (identical(my_comp,character(0))) my_comp <- str_match(string = x, pattern = paste0(outfolder, "(.*)/enrichment"))[2]
       out <- read_delim(x,"\t", col_types = cols()) %>%
         mutate(Comparison = my_comp,
-               Comparison = ifelse(is.na(Comparison), str_match(x, pattern = ("results.*\\/(.*)\\/enrichment"))[[2]], Comparison)) %>%
-        dplyr::select(Term, Adjusted.P.value, Comparison) %>%
-        pivot_wider(names_from = Comparison, values_from = Adjusted.P.value)
+               Comparison = ifelse(is.na(.data$Comparison), str_match(x, pattern = ("results.*\\/(.*)\\/enrichment"))[[2]], .data$Comparison)) %>%
+        dplyr::select(.data$Term, .data$Adjusted.P.value, .data$Comparison) %>%
+        pivot_wider(names_from = .data$Comparison, values_from = .data$Adjusted.P.value)
       return(out)
     })
 
@@ -55,7 +55,7 @@ heatmapGO <- function(lib, where_results = "./", outfolder = "results/", log2FC_
     filter_all(any_vars(. <= padj_threshold)) %>%
     mutate(Term=gsub("\\(GO.*","",Term)) %>%
     mutate(across(where(is.numeric), ~(-1*log10(.x)))) %>%
-    column_to_rownames(var = "Term")
+    column_to_rownames(loc = "Term")
 
 
   pretty_labels <- function(data) {

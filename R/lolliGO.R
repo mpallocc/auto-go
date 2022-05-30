@@ -49,21 +49,21 @@ lolliGO <- function (enrich_table,  my_comparison = NULL, where_results = "./", 
   }
 
   enrich_table <- enrich_table %>%
-    arrange(Adjusted.P.value, Term) %>%
+    arrange(.data$Adjusted.P.value, .data$Term) %>%
     dplyr::slice(1:20) %>%
-    extract(Overlap,into = c("gene_counts", "gene_total"), regex = "([0-9]+)\\/([0-9]+)") %>%
+    extract(.data$Overlap,into = c("gene_counts", "gene_total"), regex = "([0-9]+)\\/([0-9]+)") %>%
     type_convert(col_types = cols(gene_counts = col_double(),gene_total = col_double())) %>%
-    mutate(Term = gsub("\\(GO.*","",Term),
-           `-log10(Adjusted.P.value)` = -log10(Adjusted.P.value),
-           percent = round(gene_counts/gene_total, digits = 2),
-           percent = ifelse(percent > 0.4, 0.4, percent))
+    mutate(Term = gsub("\\(GO.*","",.data$Term),
+           `-log10(Adjusted.P.value)` = .data$`-log10(Adjusted.P.value)`,
+           percent = round(.data$gene_counts/.data$gene_total, digits = 2),
+           percent = ifelse(.data$percent > 0.4, 0.4, .data$percent))
 
   breaks <- round(seq(min(enrich_table$gene_counts), max(enrich_table$gene_counts), length.out = 6))
 
-  ggplot(enrich_table, aes(x = `-log10(Adjusted.P.value)`, reorder(Term, -Adjusted.P.value))) +
+  ggplot(enrich_table, aes(x = .data$`-log10(Adjusted.P.value)`, reorder(.data$Term, .data$`-Adjusted.P.value`))) +
     ggtitle(label = title, subtitle = subtitle) +
-    geom_segment(aes(xend=0, yend = Term)) +
-    geom_point(aes(color=percent, size = gene_counts)) +
+    geom_segment(aes(xend=0, yend = .data$Term)) +
+    geom_point(aes(color=.data$percent, size = .data$gene_counts)) +
     scale_color_viridis_c(guide=guide_colorbar(reverse=TRUE), option = "plasma", breaks = seq(0,0.4,0.1), limits = c(0,0.4), labels = c("0 %","10 %","20 %","30 %","> 40 %")) +
     scale_size_continuous(range = c(5,12), breaks = breaks) +
     theme_minimal() +

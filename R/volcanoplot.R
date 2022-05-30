@@ -44,12 +44,12 @@ volcanoplot <- function (res, my_comparison = NULL, highlight_genes = NULL, log2
   rownames(volcanoData) <- res[[1]]
 
   up <- res %>%
-    filter(log2FoldChange >= log2FC_thresh & padj <= padj_thresh) %>%
-    dplyr::select(genes) %>%
+    dplyr::filter(.data$log2FoldChange >= log2FC_thresh & .data$padj <= padj_thresh) %>%
+    dplyr::select(.data$genes) %>%
     pull()
   down <- res %>%
-    filter(log2FoldChange <= -log2FC_thresh & padj <= padj_thresh) %>%
-    dplyr::select(genes) %>%
+    dplyr::filter(.data$log2FoldChange <= -log2FC_thresh & .data$padj <= padj_thresh) %>%
+    dplyr::select(.data$genes) %>%
     pull()
 
   if (!is.null(highlight_genes)) {
@@ -82,7 +82,7 @@ volcanoplot <- function (res, my_comparison = NULL, highlight_genes = NULL, log2
     x_high_p <- xlim_p - 10
   }
 
-  p<-ggplot(volcanoData, aes(x=logFC,y=`-log10(padj)`)) +
+  p<-ggplot(volcanoData, aes(x=.data$logFC,y=.data$`-log10(padj)`)) +
     theme_classic()+
     ggtitle(label = title ,subtitle = paste0("|logFC|>",log2FC_thresh," & padj<",padj_thresh)) +
     theme(plot.title = element_text(size = (15), face = "bold.italic"),
@@ -90,17 +90,17 @@ volcanoplot <- function (res, my_comparison = NULL, highlight_genes = NULL, log2
           legend.position="bottom") +
     geom_point(aes(colour="Not_DE"), size=0.8) +
     geom_point(data=volcanoData[rownames(volcanoData) %in% up,],
-               aes(x=logFC,y=`-log10(padj)`, colour="Upregulated"), size=1.5) +
+               aes(x=.data$logFC,y=.data$`-log10(padj)`, colour="Upregulated"), size=1.5) +
     geom_point(data=volcanoData[rownames(volcanoData) %in% down,],
-               aes(x=logFC,y=`-log10(padj)`, colour="Downregulated"), size=1.5) +
-    {if (!is.null(highlight_genes)) geom_text_repel(data = subset(labeled_genes, logFC > 0), size=3, segment.size  = 0.15,
+               aes(x=.data$logFC,y=.data$`-log10(padj)`, colour="Downregulated"), size=1.5) +
+    {if (!is.null(highlight_genes)) geom_text_repel(data = subset(labeled_genes, .data$logFC > 0), size=3, segment.size  = 0.15,
                                                     xlim = c(x_high_p,NA), ylim = c(max(volcanoData$`-log10(padj)`)/3, NA),
                                                     segment.color = "grey50", direction = "y", box.padding = 1, max.overlaps = 50,
-                                                    aes(x=logFC,y=`-log10(padj)`, label = rownames(subset(labeled_genes, logFC > 0))))} +
-    {if (!is.null(highlight_genes)) geom_text_repel(data = subset(labeled_genes, logFC < 0), size=3, segment.size  = 0.15,
+                                                    aes(x=.data$logFC,y=.data$`-log10(padj)`, label = rownames(subset(labeled_genes, .data$logFC > 0))))} +
+    {if (!is.null(highlight_genes)) geom_text_repel(data = subset(labeled_genes, .data$logFC < 0), size=3, segment.size  = 0.15,
                                                     xlim = c(NA,x_high_n), ylim = c(max(volcanoData$`-log10(padj)`)/3, NA),
                                                     segment.color = "grey50",direction = "y", box.padding = 1, max.overlaps = 50,
-                                                    aes(x=logFC,y=`-log10(padj)`, label = rownames(subset(labeled_genes, logFC < 0))))} +
+                                                    aes(x=.data$logFC,y=.data$`-log10(padj)`, label = rownames(subset(labeled_genes, .data$logFC < 0))))} +
     {if (!is.null(highlight_genes)) geom_point(data = labeled_genes, pch = 10)} +
     scale_fill_continuous(guide = guide_legend()) +
     scale_color_manual(aesthetics = "colour",values = c("Not_DE"="grey79","Downregulated"="#66C2A5","Upregulated"="#D53E4F"),
