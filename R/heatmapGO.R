@@ -53,7 +53,7 @@ heatmapGO <- function(lib, where_results = "./", outfolder = "results/", log2FC_
     replace(is.na(.), 1) %>%
     rename_with(~gsub("up_genes/|down_genes/","",.x)) %>%
     filter_all(any_vars(. <= padj_threshold)) %>%
-    mutate(Term=gsub("\\(GO.*","",Term)) %>%
+    mutate(Term=gsub("\\(GO.*","",.data$Term)) %>%
     mutate(across(where(is.numeric), ~(-1*log10(.x)))) %>%
     column_to_rownames(loc = "Term")
 
