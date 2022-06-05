@@ -1,4 +1,4 @@
-#' gene_length TODO
+#' Mapping between gene names and lengths
 #'
 #' Long description
 #'
@@ -9,7 +9,7 @@
 #' }
 "gene_length"
 
-#' conversion_ensembl_hgnc TODO
+#' Mapping between gene names and Ensembl IDs
 #'
 #' Long description
 #'
@@ -18,14 +18,4 @@
 #'   \item{external_gene_name}{gene name}
 #'   \item{ensembl_gene_id}{ensembl gene identifiers}
 #' }
-"conversion_ensembl_hgnc"
-
-#' enrichR_database TODO
-#'
-#' Long description
-#'
-#' @format A data frame with 179 rows and 1 variables:
-#' \describe{
-#'   \item{DATASETS}{dataset name}
-#' }
-"enrichR_database"
+"conversion_ensembl"

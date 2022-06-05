@@ -37,9 +37,8 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
   norm_data[,1] <- NULL
 
   if (ensembl) {
-    conversion <- conversion_ensembl_hgnc
-    all_genes_conversion <- conversion %>%
-      textshape::column_to_rownames(loc = "ensembl_gene_id")
+    conversion <- conversion_ensembl
+    all_genes_conversion <- conversion %>% textshape::column_to_rownames(loc = "ensembl_gene_id")
 
     norm_data <- merge(norm_data, all_genes_conversion, by = 0) %>%
       dplyr::select(-.data$Row.names)
@@ -78,15 +77,14 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
   }
 
   if (MSigDB_names == "hgnc") {
-    gene_sets <- list.files(path = paste0(my_autoGO_dir,"/data/MSigDB"), pattern = "symbols.gmt", recursive = T, all.files = T)
-    gene_sets <- paste0(my_autoGO_dir,"/data/MSigDB/",gene_sets)
+    msigdb_dir = system.file("extdata", "MSigDB", package = "autoGO", mustWork = TRUE)
+    gene_sets <- list.files(path = msigdb_dir, pattern = "symbols.gmt", recursive = T, all.files = T, full.names = T)
     sets <- lapply(gene_sets, readLines)
     names(sets) <- gsub(".*MSigDB/| |\\.all.*","",gene_sets)
     sets <- lapply(names(sets),function(x) custom_file(sets[[x]]))
     names(sets) <- gsub(".*MSigDB/| |\\.all.*","",gene_sets)
   } else if (MSigDB_names == "entrez") {
-    gene_sets <- list.files(path = paste0(my_autoGO_dir,"/data/MSigDB"), pattern = "entrez.gmt", recursive = T, all.files = T)
-    gene_sets <- paste0(my_autoGO_dir,"/data/MSigDB/",gene_sets)
+    gene_sets <- list.files(path = msigdb_dir, pattern = "entrez.gmt", recursive = T, all.files = T, full.names = T)
     sets <- lapply(gene_sets, readLines)
     names(sets) <- gsub(".*MSigDB/| |\\.all.*","",gene_sets)
     sets <- lapply(names(sets),function(x) custom_file(sets[[x]]))

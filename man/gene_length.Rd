@@ -3,7 +3,7 @@
 \docType{data}
 \name{gene_length}
 \alias{gene_length}
-\title{gene_length TODO}
+\title{Mapping between gene names and lengths}
 \format{
 A data frame with 51180 rows and 2 variables:
 \describe{
