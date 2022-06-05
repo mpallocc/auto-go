@@ -3,8 +3,9 @@
 \docType{package}
 \name{autoGO}
 \alias{autoGO}
+\alias{_PACKAGE}
 \alias{autoGO-package}
-\title{autoGO}
+\title{autoGO: Auto-GO: Reproducible, Robust and High Quality Ontology Enrichment Visualizations}
 \usage{
 autoGO(
   list_of_genes,
@@ -33,5 +34,19 @@ autoGO(
 \item{outfolder}{The name to assign to the folder in which outputs are saved. Default is: "results/". NOTE: please add "/" at the end.}
 }
 \description{
+Auto-GO is a framework that enables automated, high quality Gene Ontology enrichment analyses visualizations. It also features a handy wrapper for Differential Expression analysis around the DESeq2 package (Love et. al 2014) and a handy wrapper around the single-sample implementation of the GSEA algorithm (ssGSEA), useful for low-numerosity transcriptional profiles. The whole framework is structured in different, independent functions, in order to let the user decide which steps of the analysis perform and which plot to produce.
+
 Perform enrichment analysis on all the desired gene lists. This function take advantage of the 'enrichR' package.
 }
+\author{
+\strong{Maintainer}: Isabella Grassucci \email{isabella.grassucci@gmail.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+
+Authors:
+\itemize{
+  \item Eleonora Sperandio \email{eleonora.sperandio@ifo.it} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+  \item Lorenzo D'Ambrosio \email{lorenzo.dambrosio@ifo.it} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+  \item Matteo Pallocca \email{matteo.pallocca@ifo.it} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+}
+
+}
+\keyword{internal}
