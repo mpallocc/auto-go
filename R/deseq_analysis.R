@@ -12,8 +12,14 @@
 #' @param where_results Specify the folder in which you want to save outputs. (Default = "./"). Note: if you are working with R Notebooks the default working directory (if not specified) is the folder in which the .Rmd is saved.
 #' @param outfolder The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.
 #' @param del_csv Specify the delimiter of the .csv file, default is ",". This is because opening .csv files with Excel messes up the format and changes the delimiter in ";".
-#' @examples groups <- data.frame(sample=c("Pat_1","Pat_2","Pat_3","Pat_4","Pat_5","Pat_6"), group=c("CTRL", "CTRL", "TREAT_A", "TREAT_A", "TREAT_B", "TREAT_B"))
-#' @examples comparisons <- data.frame(treatment = c("TREAT_A","TREAT_B","TREAT_A"), control = c("CTRL", "CTRL", "TREAT_B"))
+#' @examples
+#' sample <- c("Pat_1", "Pat_2", "Pat_3", "Pat_4", "Pat_5", "Pat_6")
+#' group <- c("CTRL", "CTRL", "TREAT_A", "TREAT_A", "TREAT_B", "TREAT_B")
+#' groups <- data.frame(sample, group)
+#' @examples
+#' treatment <- c("TREAT_A", "TREAT_B", "TREAT_A")
+#' control <- c("CTRL", "CTRL", "TREAT_B")
+#' comparisons <- data.frame(treatment, control)
 #' @export
 
 
