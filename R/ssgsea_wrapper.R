@@ -37,7 +37,7 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
   norm_data[,1] <- NULL
 
   if (ensembl) {
-    conversion <- conversion_ensembl
+    conversion <- conversion_ensembl_hgnc
     all_genes_conversion <- conversion %>%
       textshape::column_to_rownames(loc = "ensembl_gene_id")
 
@@ -52,10 +52,6 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
   }
 
   if (tpm_norm) {
-    #gene_length <-  read.table(paste0(my_autoGO_dir,"auto-go/data/gene_length.txt"), sep = "\t", header = T)
-
-    gene_length <- gene_length_data
-
     gene_length <- gene_length %>%
       dplyr::filter(.data$external_gene_name %in% rownames(norm_data))
 
