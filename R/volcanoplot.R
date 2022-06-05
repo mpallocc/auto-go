@@ -60,7 +60,6 @@ volcanoplot <- function (res, my_comparison = NULL, highlight_genes = NULL, log2
     } else if (grepl(".txt", highlight_genes)) {
       highlight_genes <- read_delim(highlight_genes, delim = '\t', col_types = cols(), col_names = F) %>% pull()
     }
-    require("ggrepel")
     labeled_genes <- volcanoData[rownames(volcanoData) %in% highlight_genes,]
   }
 

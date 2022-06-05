@@ -14,10 +14,6 @@ Auto-GO is a framework that enables automated, high quality Gene Ontology enrich
 Authors:
 \itemize{
   \item Eleonora Sperandio \email{eleonora.sperandio@ifo.it} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
-}
-
-Other contributors:
-\itemize{
   \item Lorenzo D'Ambrosio \email{lorenzo.dambrosio@ifo.it} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
   \item Matteo Pallocca \email{matteo.pallocca@ifo.it} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
 }
