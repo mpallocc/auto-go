@@ -9,7 +9,10 @@
 #' @export
 
 
-lolliGO <- function (enrich_table,  my_comparison = NULL, where_results = "./", outfolder = "results/") {
+lolliGO <- function(enrich_table,
+                    my_comparison = NULL,
+                    where_results = "./",
+                    outfolder = "results/") {
 
   if (is.data.frame(enrich_table)) {
     enrich_table <- enrich_table
@@ -18,19 +21,20 @@ lolliGO <- function (enrich_table,  my_comparison = NULL, where_results = "./", 
     enrich_table <- read_delim(enrich_table, delim = "\t", col_types = cols())
   }
 
-
+  pattern <- paste0(where_results, outfolder, "(.*?)\\/")
   if (is.null(my_comparison)) {
-      my_analysis <- str_match(enrich_table_path, pattern = paste0(where_results,outfolder,"(.*?)\\/"))[2]
+      my_analysis <- str_match(enrich_table_path,
+                               pattern = pattern)[2]
       dbs <- gsub(".*\\/|\\.tsv", "", enrich_table_path)
-      path_to_save <- paste0(gsub("_tables.*","", enrich_table_path),"_plots")
+      path_to_save <- paste0(gsub("_tables.*", "", enrich_table_path), "_plots")
   } else if (!is.null(my_comparison)) {
-    my_analysis <- str_match(my_comparison, pattern = paste0(where_results,outfolder,"(.*?)\\/"))[2]
+    my_analysis <- str_match(my_comparison, pattern = pattern)[2]
     if (grepl("\\/", my_comparison)) {
       dbs <- gsub(".*\\/", "", my_comparison)
-      path_to_save <- paste0(gsub("_tables.*","", my_comparison),"_plots/")
-    } else if (!grepl("\\/", my_comparison)){
+      path_to_save <- paste0(gsub("_tables.*", "", my_comparison), "_plots/")
+    } else if (!grepl("\\/", my_comparison)) {
       dbs <- NULL
-      path_to_save <- paste0("./",my_analysis,"/enrichment_plots/")
+      path_to_save <- paste0("./", my_analysis, "/enrichment_plots/")
     }
   }
 
@@ -49,19 +53,18 @@ lolliGO <- function (enrich_table,  my_comparison = NULL, where_results = "./", 
   }
 
   enrich_table <- enrich_table %>%
-    arrange(.data$Adjusted.P.value, .data$Term) %>%
+    dplyr::arrange(.data$Adjusted.P.value, .data$Term) %>%
     dplyr::slice(1:20) %>%
-    extract(.data$Overlap,into = c("gene_counts", "gene_total"), regex = "([0-9]+)\\/([0-9]+)") %>%
+    tidyr::extract(.data$Overlap,into = c("gene_counts", "gene_total"), regex = "([0-9]+)\\/([0-9]+)") %>%
     type_convert(col_types = cols(gene_counts = col_double(),gene_total = col_double())) %>%
-    mutate(Term = gsub("\\(GO.*","",.data$Term),
-           `-log10(Adjusted.P.value)` = "-log10(Adjusted.P.value)",
-           percent = round(.data$gene_counts/.data$gene_total, digits = 2),
+    dplyr::mutate(Term = gsub("\\(GO.*", "", .data$Term),
+           `-log10(Adjusted.P.value)` = -log10(.data$`Adjusted.P.value`),
+           percent = round(.data$gene_counts / .data$gene_total, digits = 2),
            percent = ifelse(.data$percent > 0.4, 0.4, .data$percent))
 
   breaks <- round(seq(min(enrich_table$gene_counts), max(enrich_table$gene_counts), length.out = 6))
 
-  print("aiuto")
-  ggplot(enrich_table, aes(x = "-log10(Adjusted.P.value)", reorder(Term, `Adjusted.P.value`))) +
+  ggplot(enrich_table, aes(x = .data$`-log10(Adjusted.P.value)`, reorder(.data$Term, .data$`Adjusted.P.value`))) +
     ggtitle(label = title, subtitle = subtitle) +
     geom_segment(aes(xend=0, yend = .data$Term)) +
     geom_point(aes(color=.data$percent, size = .data$gene_counts)) +

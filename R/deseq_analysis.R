@@ -12,12 +12,27 @@
 #' @param where_results Specify the folder in which you want to save outputs. (Default = "./"). Note: if you are working with R Notebooks the default working directory (if not specified) is the folder in which the .Rmd is saved.
 #' @param outfolder The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.
 #' @param del_csv Specify the delimiter of the .csv file, default is ",". This is because opening .csv files with Excel messes up the format and changes the delimiter in ";".
-#' @examples groups <- data.frame(sample=c("Pat_1","Pat_2","Pat_3","Pat_4","Pat_5","Pat_6"), group=c("CTRL", "CTRL", "TREAT_A", "TREAT_A", "TREAT_B", "TREAT_B"))
-#' @examples comparisons <- data.frame(treatment = c("TREAT_A","TREAT_B","TREAT_A"), control = c("CTRL", "CTRL", "TREAT_B"))
+#' @examples
+#' sample <- c("Pat_1", "Pat_2", "Pat_3", "Pat_4", "Pat_5", "Pat_6")
+#' group <- c("CTRL", "CTRL", "TREAT_A", "TREAT_A", "TREAT_B", "TREAT_B")
+#' groups <- data.frame(sample, group)
+#' @examples
+#' treatment <- c("TREAT_A", "TREAT_B", "TREAT_A")
+#' control <- c("CTRL", "CTRL", "TREAT_B")
+#' comparisons <- data.frame(treatment, control)
 #' @export
 
 
-deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, log2FC_threshold=0, pre_filtering = T, save_excel = F, where_results = "./", outfolder = "results/", del_csv = ",") {
+deseq_analysis <- function(counts,
+                           groups,
+                           comparisons,
+                           padj_threshold = 0.05,
+                           log2FC_threshold = 0,
+                           pre_filtering = TRUE,
+                           save_excel = FALSE,
+                           where_results = "./",
+                           outfolder = "results/",
+                           del_csv = ",") {
 
   if (grepl(".tsv", counts)[1]) {
     counts <- read_delim(counts, col_types = cols(), delim = "\t")
@@ -35,7 +50,7 @@ deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, lo
 
   if (!is.data.frame(groups)[1] & grepl(".txt", groups)[1]) {
     groups <- read_delim(groups, delim = '\t', col_types = cols())
-  } else if (dim(groups)[2] < 2){
+  } else if (dim(groups)[2] < 2) {
     warning("Please provide a two column file as groups list as .txt file or data.frame.")
   }
   if (!is.data.frame(comparisons)[1] & grepl(".txt", comparisons)[1]) {
@@ -45,11 +60,11 @@ deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, lo
   }
 
   if (class(counts)[1] == "SummarizedExperiment") {
-    assays(counts) <- assay(counts,1)
-    assay(counts) <- as.matrix(round(assay(counts)))
+    SummarizedExperiment::assays(counts) <- SummarizedExperiment::assay(counts, 1)
+    SummarizedExperiment::assay(counts) <- as.matrix(round(SummarizedExperiment::assay(counts)))
 
     rownames(groups) <- groups[[1]]
-    if (!all(colnames(counts)==groups[[1]])) {
+    if (!all(colnames(counts) == groups[[1]])) {
       groups <- groups[match(groups[[1]], colnames(counts)), ]
     }
 
@@ -57,20 +72,20 @@ deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, lo
     dds <- DESeqDataSet(se = counts, design = ~ group)
   } else {
     colnames(counts)[1] <- "gene_id"
-    counts <- counts  %>%
-      distinct(.data$gene_id, .keep_all = TRUE) %>% #rimozione di geni "doppi"
-      column_to_rownames(loc = "gene_id") %>%
-      dplyr::select(sort(names(.data$`.`))) %>%
-      mutate(across(where(is.numeric), round))
+    counts <- counts %>%
+      dplyr::distinct(.data$gene_id, .keep_all = TRUE) %>% # removing duplicated genes
+      textshape::column_to_rownames(loc = "gene_id") %>%
+      dplyr::relocate(sort(tidyselect::peek_vars())) %>%
+      dplyr::mutate(dplyr::across(where(is.numeric), round))
 
-      if(dim(counts)[2] != dim(groups)[1]){
+      if (dim(counts)[2] != dim(groups)[1]) {
         stop("Please provide all counts columns in your groups dataframe.")
       }
 
-    if (!all(colnames(counts)==groups[[1]])) {
-      groups <- groups[match(colnames(counts),groups[[1]]), ]
+    if (!all(colnames(counts) == groups[[1]])) {
+      groups <- groups[match(colnames(counts), groups[[1]]), ]
     }
-    dds <- DESeqDataSetFromMatrix(countData = counts, colData = groups, design = ~ group)
+    dds <- DESeq2::DESeqDataSetFromMatrix(countData = counts, colData = groups, design = ~ group)
   }
 
   #pre-filtering
@@ -83,7 +98,7 @@ deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, lo
   dds <- DESeq(dds)
   cc <- counts(dds, normalized=T)
   vsd <- varianceStabilizingTransformation(dds, blind = T)
-  vst <- assay(vsd)
+  vst <- SummarizedExperiment::assay(vsd)
 
   if(!dir.exists(paste0(where_results,outfolder))) {dir.create(paste0(where_results,outfolder), recursive = T)}
   write.table(cc, paste0(where_results,outfolder,"deseq_norm_data.txt"), quote = F, sep = '\t', row.names = T, col.names = NA)
@@ -94,9 +109,9 @@ deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, lo
     c <- comparisons [i, ]
 
     a <- c[,1] #treatment
-    if (is.data.frame(a)) { a <- pull(a) }
+    if (is.data.frame(a)) { a <- dplyr::pull(a) }
     b <- c[,2] #control
-    if (is.data.frame(b)) { b <- pull(b) }
+    if (is.data.frame(b)) { b <- dplyr::pull(b) }
 
     a_group <- group_list[[a]][[1]]
     b_group <- group_list[[b]][[1]]
@@ -113,7 +128,7 @@ deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, lo
     rr <- merge(rr,means_vst, by=0) %>%
       dplyr::rename(genes=.data$Row.names) %>% dplyr::select(-.data$baseMean, -.data$lfcSE, -stat) %>%
       dplyr::select(c(1:4,6,5)) %>%
-      arrange(.data$padj)
+      dplyr::arrange(.data$padj)
 
     filtered <- rr %>%
       dplyr::filter(rr$padj  < padj_threshold & abs(rr$log2FoldChange) > log2FC_threshold)
@@ -129,13 +144,13 @@ deseq_analysis <- function (counts, groups, comparisons, padj_threshold=0.05, lo
     write_tsv(rr, paste0(groups_fold, "/DE_",b, "_vs_",a,"_allres.tsv"))
 
     if (save_excel) {
-      write.xlsx(rr, file=paste0(groups_fold, "/DE_", b, "_vs_",a,"_allres.xlsx"),row.names = F)
+      openxlsx::write.xlsx(rr, file=paste0(groups_fold, "/DE_", b, "_vs_",a,"_allres.xlsx"),row.names = F)
     }
 
     #saving filtered results in different folders by thresholds
     if(!dir.exists(groups_fold_thresh_up_down)) dir.create(groups_fold_thresh_up_down, recursive=T)
     write_tsv(filtered, paste0(groups_fold,"/filtered_DE_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,"/filtered_DE_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".tsv"))
-    if (save_excel) write.xlsx(filtered, file=paste0(groups_fold,"/filtered_DE_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,"/filtered_DE_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".xlsx"),row.names = F)
+    if (save_excel) openxlsx::write.xlsx(filtered, file=paste0(groups_fold,"/filtered_DE_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,"/filtered_DE_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".xlsx"),row.names = F)
 
     #saving gene lists
     write.table(filtered$genes, paste0(groups_fold_thresh_up_down, "/up_down_genes_list_", b, "_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".txt"), quote = F, row.names = F, col.names = F)

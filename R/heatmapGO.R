@@ -10,14 +10,30 @@
 #' @param which_list One of c("up_genes", "down_genes","up_down_genes", "not_from_DE"): select data to plot. Respectively, only up regulated genes (up_genes), only down regulated genes ("down_genes"), enrichment on both up and down regulated genes (up_down_genes) or select "not_from_DE" if the enrichment will be made on a list of genes that does not come from a differential expression analysis.
 #' @export
 
+# TODO: this function should be told:
+# * where enrichment results are
+# ** we can provide no `lib` (it will produce heatmaps from all enrichment DBs)
+# ** user can provide a list of `libs` and in that case we produce all the heatmaps?
+# * where to save the heatmaps: `where_results` & `outfolder`
 
-heatmapGO <- function(lib, where_results = "./", outfolder = "results/", log2FC_threshold = 0, padj_threshold = 0.05, which_list = c("up_genes", "down_genes","up_down_genes", "not_from_DE")) {
-
-  x <- list.files(pattern = paste0(lib, ".tsv"), path = paste0(where_results,outfolder), recursive = T, all.files = T)
-  x <- paste0(where_results,outfolder,x)
+heatmapGO <- function(lib,
+                      where_results = "./",
+                      outfolder = "results/",
+                      log2FC_threshold = 0,
+                      padj_threshold = 0.05,
+                      which_list = c("up_genes",
+                                     "down_genes",
+                                     "up_down_genes",
+                                     "not_from_DE")) {
+  x <- list.files(pattern = paste0(lib, ".tsv"),
+                  path = paste0(where_results, outfolder),
+                  recursive = TRUE,
+                  all.files = TRUE)
+  x <- paste0(where_results, outfolder, x)
 
   if (which_list != "not_from_DE") {
-    to_read <- x[grepl(pattern = paste0("thFC",log2FC_threshold,"_thPval",padj_threshold), x)]
+    # FIXME: change column names to the new, correct ones
+    to_read <- x[grepl(pattern = paste0("thFC", log2FC_threshold,"_thPval", padj_threshold), x)]
   }
 
   if (which_list == "up_down_genes") {
@@ -40,33 +56,33 @@ heatmapGO <- function(lib, where_results = "./", outfolder = "results/", log2FC_
       my_comp <- vs_path[which(min(nchar(vs_path[grep("_vs_",vs_path)])) == nchar(vs_path[grep("_vs_",vs_path)]))]
       if (identical(my_comp,character(0))) my_comp <- str_match(string = x, pattern = paste0(outfolder, "(.*)/enrichment"))[2]
       out <- read_delim(x,"\t", col_types = cols()) %>%
-        mutate(Comparison = my_comp,
+        dplyr::mutate(Comparison = my_comp,
                Comparison = ifelse(is.na(.data$Comparison), str_match(x, pattern = ("results.*\\/(.*)\\/enrichment"))[[2]], .data$Comparison)) %>%
         dplyr::select(.data$Term, .data$Adjusted.P.value, .data$Comparison) %>%
-        pivot_wider(names_from = .data$Comparison, values_from = .data$Adjusted.P.value)
+        tidyr::pivot_wider(names_from = .data$Comparison, values_from = .data$Adjusted.P.value)
       return(out)
     })
 
 
 
-  complete_table <- purrr::reduce(dd,full_join,by="Term") %>%
+  complete_table <- purrr::reduce(dd, dplyr::full_join, by = "Term") %>%
     replace(is.na(.data$`.`), 1) %>%
-    rename_with(~gsub("up_genes/|down_genes/","",.x)) %>%
-    filter_all(any_vars(.data$`.` <= padj_threshold)) %>%
-    mutate(Term=gsub("\\(GO.*","",.data$Term)) %>%
-    mutate(across(where(is.numeric), ~(-1*log10(.x)))) %>%
-    column_to_rownames(loc = "Term")
+    dplyr::rename_with(~gsub("up_genes/|down_genes/", "", .x)) %>%
+    dplyr::filter_all(dplyr::any_vars(.data$`.` <= padj_threshold)) %>%
+    dplyr::mutate(Term=gsub("\\(GO.*", "", .data$Term)) %>%
+    dplyr::mutate(dplyr::across(where(is.numeric), ~(-1 * log10(.x)))) %>%
+    textshape::column_to_rownames(loc = "Term")
 
 
   pretty_labels <- function(data) {
-    labels <- gsub(" $","",rownames(data))
+    labels <- gsub(" $", "", rownames(data))
     for (row in seq_along(labels)) {
       a <- which(strsplit(labels[row], "")[[1]]==" ")
       if (length(a) > 6) {
         substr(labels[row], a[7], a[7]) <- "\n"
       }
       if (!grepl("\n", labels[row]) & nchar(labels[row]) > 60) {
-        substr(labels[row], a[length(a)-1], a[length(a)-1]) <- "\n"
+        substr(labels[row], a[length(a) - 1], a[length(a) - 1]) <- "\n"
         }
       }
     return(labels)
@@ -122,7 +138,7 @@ heatmapGO <- function(lib, where_results = "./", outfolder = "results/", log2FC_
       n_df <- round(nrow(data)/35)
       data$group <- 1:nrow(data) %% n_df + 1
       data_list <- split(data,data$group)
-      data_list <- map(data_list, ~ (.x %>% dplyr::select(-group)))
+      data_list <- purrr::map(data_list, ~ (.x %>% dplyr::select(-group)))
       for (ind in seq_along(data_list)) {
         png(paste0(path_save,gsub(".png","",name_save),"_",ind,".png"), width = 4000, height = 3500, res = 300)
         plots(data_list[[ind]])

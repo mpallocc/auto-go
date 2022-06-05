@@ -10,12 +10,16 @@
 #' @export
 
 
-
-filtering_DE <- function(padj_threshold=0.05, log2FC_threshold=0, where_results = "./", outfolder = "results/", save_excel = F) {
-  all_res <- list.files(path = paste0(where_results,outfolder), pattern = "_allres.tsv", recursive = T)
-  all_res <- paste0(where_results,outfolder,all_res)
+filtering_DE <- function(padj_threshold = 0.05,
+                         log2FC_threshold = 0,
+                         where_results = "./",
+                         outfolder = "results/",
+                         save_excel = FALSE) {
+  all_res <- list.files(path = paste0(where_results, outfolder),
+                        pattern = "_allres.tsv", recursive = TRUE)
+  all_res <- paste0(where_results, outfolder, all_res)
   readed <- lapply(all_res, function (x) read_tsv(x, col_types = cols()))
-  names(readed) <- gsub(paste0(where_results,outfolder,"|\\/.*"),"",all_res)
+  names(readed) <- gsub(paste0(where_results, outfolder, "|\\/.*"), "", all_res)
 
   for (files in names(readed)) {
     data <- readed[[files]]
@@ -30,7 +34,7 @@ filtering_DE <- function(padj_threshold=0.05, log2FC_threshold=0, where_results 
     #saving filtered results in different folders by thresholds
     if(!dir.exists(groups_fold)) dir.create(groups_fold, recursive=T)
     write_tsv(filtered, paste0(groups_fold,"/filtered_DE_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".tsv"))
-    if (save_excel) write.xlsx(filtered, file=paste0(groups_fold,"/filtered_DE_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".xlsx"),row.names = F)
+    if (save_excel) openxlsx::write.xlsx(filtered, file=paste0(groups_fold,"/filtered_DE_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".xlsx"),row.names = F)
 
     #saving gene lists
     if(!dir.exists(groups_fold_thresh_up_down)) dir.create(groups_fold_thresh_up_down, recursive=T)

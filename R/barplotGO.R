@@ -9,8 +9,10 @@
 #' @export
 
 
-barplotGO <- function(enrich_table,  my_comparison = NULL, where_results = "./", outfolder = "results/") {
-
+barplotGO <- function(enrich_table,
+                      my_comparison = NULL,
+                      where_results = "./",
+                      outfolder = "results/") {
   if (is.data.frame(enrich_table)) {
     enrich_table <- enrich_table
   } else if (grepl(".tsv", enrich_table)) {
@@ -18,30 +20,29 @@ barplotGO <- function(enrich_table,  my_comparison = NULL, where_results = "./",
     enrich_table <- read_delim(enrich_table, delim = "\t", col_types = cols())
   }
 
-
   if (is.null(my_comparison)) {
-      my_analysis <- str_match(enrich_table_path, pattern = paste0(where_results,outfolder,"(.*?)\\/"))[2]
-      dbs <- gsub(".*\\/|\\.tsv", "", enrich_table_path)
-      path_to_save <- paste0(gsub("_tables.*","", enrich_table_path),"_plots")
+    my_analysis <- str_match(enrich_table_path, pattern = paste0(where_results, outfolder, "(.*?)\\/"))[2]
+    dbs <- gsub(".*\\/|\\.tsv", "", enrich_table_path)
+    path_to_save <- paste0(gsub("_tables.*", "", enrich_table_path), "_plots")
   } else if (!is.null(my_comparison)) {
-    my_analysis <- str_match(my_comparison, pattern = paste0(where_results,outfolder,"(.*?)\\/"))[2]
+    my_analysis <- str_match(my_comparison, pattern = paste0(where_results, outfolder, "(.*?)\\/"))[2]
     if (grepl("\\/", my_comparison)) {
       dbs <- gsub(".*\\/", "", my_comparison)
-      path_to_save <- paste0(gsub("_tables.*","", my_comparison),"_plots/")
-    } else if (!grepl("\\/", my_comparison)){
+      path_to_save <- paste0(gsub("_tables.*", "", my_comparison), "_plots/")
+    } else if (!grepl("\\/", my_comparison)) {
       dbs <- NULL
-      path_to_save <- paste0("./",my_analysis,"/enrichment_plots/")
+      path_to_save <- paste0("./", my_analysis, "/enrichment_plots/")
     }
   }
 
   if (grepl("/down_genes", path_to_save)) {
-    title <- paste0(gsub("_"," ",dbs), " for Down Regulated Genes")
+    title <- paste0(gsub("_", " ", dbs), " for Down Regulated Genes")
     subtitle <- ifelse(is.na(gsub("_", " ", my_analysis)), "", gsub("_", " ", my_analysis))
   } else if (grepl("up_genes", path_to_save)) {
-    title <- paste0(gsub("_"," ",dbs), " for Up Regulated Genes")
+    title <- paste0(gsub("_", " ", dbs), " for Up Regulated Genes")
     subtitle <- ifelse(is.na(gsub("_", " ", my_analysis)), "", gsub("_", " ", my_analysis))
   } else if (grepl("up_down_genes", path_to_save)) {
-    title <- paste0(gsub("_"," ",dbs), " for all DE Genes")
+    title <- paste0(gsub("_", " ", dbs), " for all DE Genes")
     subtitle <- ifelse(is.na(gsub("_", " ", my_analysis)), "", gsub("_", " ", my_analysis))
   } else {
     title <- ifelse(is.na(gsub("_", " ", dbs)), "", gsub("_", " ", dbs))
@@ -49,26 +50,29 @@ barplotGO <- function(enrich_table,  my_comparison = NULL, where_results = "./",
   }
 
   enrich_table <- enrich_table %>%
-    arrange(.data$Adjusted.P.value, .data$Term) %>%
+    dplyr::arrange(.data$Adjusted.P.value, .data$Term) %>%
     dplyr::slice(1:15) %>%
-    mutate(Term = gsub("\\(GO.*","",.data$Term),
-           `-log10(Adjusted.P.value)` = -log10(.data$`Adjusted.P.value`))
+    dplyr::mutate(
+      Term = gsub("\\(GO.*", "", .data$Term),
+      `-log10(Adjusted.P.value)` = -log10(.data$`Adjusted.P.value`)
+    )
 
-  ggplot(data=enrich_table, aes(x=reorder(.data$Term, .data$`-log10(Adjusted.P.value)`), y=.data$`-log10(Adjusted.P.value)`)) +
-    geom_bar(stat="identity",fill="#91bbdb", width = 0.5) +
+  ggplot(data = enrich_table, aes(x = reorder(.data$Term, .data$`-log10(Adjusted.P.value)`), y = .data$`-log10(Adjusted.P.value)`)) +
+    geom_bar(stat = "identity", fill = "#91bbdb", width = 0.5) +
     theme_minimal() +
     ggtitle(title, subtitle = subtitle) +
-    geom_hline(yintercept = -log10(0.05), size = 1, colour = "#e09696", linetype="longdash") +
-    scale_y_continuous(expand = c(0,0))+
+    geom_hline(yintercept = -log10(0.05), size = 1, colour = "#e09696", linetype = "longdash") +
+    scale_y_continuous(expand = c(0, 0)) +
     coord_flip() +
     labs(y = "-log10(adjp_val)", x = "") +
-    theme(title = element_text(size = 23, ), plot.background = element_rect(fill = "#ffffff"),
-          axis.text=element_text(size=18), axis.title = element_text(size = 20),
-          axis.title.x = element_text(margin = margin(t = 30, r = 0, b = 0, l = 0)),
-          axis.title.y = element_text(margin = margin(t = 0, r = 30, b = 0, l = 0)))
+    theme(
+      title = element_text(size = 23, ), plot.background = element_rect(fill = "#ffffff"),
+      axis.text = element_text(size = 18), axis.title = element_text(size = 20),
+      axis.title.x = element_text(margin = margin(t = 30, r = 0, b = 0, l = 0)),
+      axis.title.y = element_text(margin = margin(t = 0, r = 30, b = 0, l = 0))
+    )
 
-  if (!dir.exists(path_to_save)) dir.create(path_to_save, recursive=T)
+  if (!dir.exists(path_to_save)) dir.create(path_to_save, recursive = T)
 
-  ggsave(filename=paste0(path_to_save,"barplotGO_",dbs,".png"), plot=last_plot(), width = unit(25,'cm'), height = unit(10,'cm'))
-
+  ggsave(filename = paste0(path_to_save, "barplotGO_", dbs, ".png"), plot = last_plot(), width = unit(25, "cm"), height = unit(10, "cm"))
 }

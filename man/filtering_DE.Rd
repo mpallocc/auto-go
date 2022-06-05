@@ -9,7 +9,7 @@ filtering_DE(
   log2FC_threshold = 0,
   where_results = "./",
   outfolder = "results/",
-  save_excel = F
+  save_excel = FALSE
 )
 }
 \arguments{

@@ -16,7 +16,17 @@
 #' @export
 
 
-ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_names = c("hgnc","entrez"), which_gene_set = NULL, write_enrich_tables = F, group = NULL, my_autoGO_dir = "~/",  where_results = "./", outfolder = "ssgsea/", full_names = F, tpm_norm = F, ensembl = F) {
+ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
+                           MSigDB_names = c("hgnc","entrez"),
+                           which_gene_set = NULL,
+                           write_enrich_tables = FALSE,
+                           group = NULL,
+                           my_autoGO_dir = "~/",
+                           where_results = "./",
+                           outfolder = "ssgsea/",
+                           full_names = FALSE,
+                           tpm_norm = FALSE,
+                           ensembl = FALSE) {
 
   if (grepl(".tsv", norm_data)[1]) {
     norm_data <- read_tsv(norm_data, col_types = cols())
@@ -38,8 +48,7 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
 
   if (ensembl) {
     conversion <- conversion_ensembl
-    all_genes_conversion <- conversion %>%
-      textshape::column_to_rownames(loc = "ensembl_gene_id")
+    all_genes_conversion <- conversion %>% textshape::column_to_rownames(loc = "ensembl_gene_id")
 
     norm_data <- merge(norm_data, all_genes_conversion, by = 0) %>%
       dplyr::select(-.data$Row.names)
@@ -52,10 +61,6 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
   }
 
   if (tpm_norm) {
-    #gene_length <-  read.table(paste0(my_autoGO_dir,"auto-go/data/gene_length.txt"), sep = "\t", header = T)
-
-    gene_length <- gene_length_data
-
     gene_length <- gene_length %>%
       dplyr::filter(.data$external_gene_name %in% rownames(norm_data))
 
@@ -63,7 +68,7 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
       dplyr::filter(rownames(norm_data) %in% gene_length$external_gene_name)
 
     if (!all(gene_length$external_gene_name == rownames(norm_data))) gene_length <- gene_length[match(rownames(norm_data), gene_length$external_gene_name),]
-    gene_length <- gene_length %>% select(width) %>% pull()
+    gene_length <- gene_length %>% dplyr::select(width) %>% dplyr::pull()
 
     tpm <- function(counts,len) {
       x <- counts/len
@@ -82,15 +87,14 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
   }
 
   if (MSigDB_names == "hgnc") {
-    gene_sets <- list.files(path = paste0(my_autoGO_dir,"/data/MSigDB"), pattern = "symbols.gmt", recursive = T, all.files = T)
-    gene_sets <- paste0(my_autoGO_dir,"/data/MSigDB/",gene_sets)
+    msigdb_dir = system.file("extdata", "MSigDB", package = "autoGO", mustWork = TRUE)
+    gene_sets <- list.files(path = msigdb_dir, pattern = "symbols.gmt", recursive = T, all.files = T, full.names = T)
     sets <- lapply(gene_sets, readLines)
     names(sets) <- gsub(".*MSigDB/| |\\.all.*","",gene_sets)
     sets <- lapply(names(sets),function(x) custom_file(sets[[x]]))
     names(sets) <- gsub(".*MSigDB/| |\\.all.*","",gene_sets)
   } else if (MSigDB_names == "entrez") {
-    gene_sets <- list.files(path = paste0(my_autoGO_dir,"/data/MSigDB"), pattern = "entrez.gmt", recursive = T, all.files = T)
-    gene_sets <- paste0(my_autoGO_dir,"/data/MSigDB/",gene_sets)
+    gene_sets <- list.files(path = msigdb_dir, pattern = "entrez.gmt", recursive = T, all.files = T, full.names = T)
     sets <- lapply(gene_sets, readLines)
     names(sets) <- gsub(".*MSigDB/| |\\.all.*","",gene_sets)
     sets <- lapply(names(sets),function(x) custom_file(sets[[x]]))
@@ -110,8 +114,8 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
 
   for (gs in names(sets)) {
     assign(gs, split(sets[[gs]], sets[[gs]]$ind), envir = .GlobalEnv)
-    assign(gs, lapply(get(gs), function(x) x<-x[,1]), envir = .GlobalEnv)
-    suppressWarnings(assign(paste0("ssgsea_", gs), gsva(as.matrix(norm_data), get(gs), verbose = F, method = "ssgsea"), envir = .GlobalEnv))
+    assign(gs, lapply(get(gs), function(x) x <- x[,1]), envir = .GlobalEnv)
+    assign(paste0("ssgsea_", gs), gsva(as.matrix(norm_data), get(gs), verbose = F, method = "ssgsea"), envir = .GlobalEnv)
   }
 
   variables <- names(as.list(.GlobalEnv))
@@ -155,7 +159,7 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
       colnames(table)[grep("group1", colnames(table))] <- paste0("mean_",names(group_class)[1])
       colnames(table)[grep("group2", colnames(table))] <- paste0("mean_",names(group_class)[2])
 
-      table <- table %>% arrange(.data$w_adj)
+      table <- table %>% dplyr::arrange(.data$w_adj)
 
       write.table(table, paste0(where_results,outfolder,"tables/",gsub("ssgsea_","",gs),"_stats_",
                                 names(group_class)[1], "_vs_", names(group_class)[2],".txt"),
@@ -168,15 +172,15 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
 
       group1 <- group1 %>%
         as.data.frame() %>%
-        rownames_to_column(var = "geneset") %>%
-        pivot_longer(cols = -.data$geneset,names_to = "pat") %>%
-        mutate(group = names(group_class)[1])
+        tibble::rownames_to_column(var = "geneset") %>%
+        tidyr::pivot_longer(cols = -.data$geneset,names_to = "pat") %>%
+        dplyr::mutate(group = names(group_class)[1])
 
       group2 <- group2 %>%
         as.data.frame() %>%
-        rownames_to_column(var = "geneset") %>%
-        pivot_longer(cols = -.data$geneset,names_to = "pat") %>%
-        mutate(group = names(group_class)[2])
+        tibble::rownames_to_column(var = "geneset") %>%
+        tidyr::pivot_longer(cols = -.data$geneset,names_to = "pat") %>%
+        dplyr::mutate(group = names(group_class)[2])
 
       df <- rbind.data.frame(group1,group2) %>%
         dplyr::filter(.data$geneset %in% sign)
@@ -187,12 +191,12 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
         cod <- data.frame(Term = unique(df$geneset), Term_ID = paste0("TERM_",1:length(unique(df$geneset))))
         write.table(cod,paste0(where_results,outfolder,"plots/codified_term_",gsub("ssgsea_","",gs), ".txt"), sep = "\t", quote = F, row.names = F)
         df <- df %>%
-          left_join(cod, by = c("geneset"="Term")) %>%
-          mutate(Term_ID = factor(.data$Term_ID ,levels = paste0("TERM_",1:length(unique(df$geneset)))))
+          dplyr::left_join(cod, by = c("geneset"="Term")) %>%
+          dplyr::mutate(Term_ID = factor(.data$Term_ID ,levels = paste0("TERM_",1:length(unique(df$geneset)))))
       } else if (full_names) {
         df <- df %>%
-          mutate(Term_ID = .data$geneset) %>%
-          select(-.data$geneset)
+          dplyr::mutate(Term_ID = .data$geneset) %>%
+          dplyr::select(-.data$geneset)
       }
 
       mycolors <- colorRampPalette(RColorBrewer::brewer.pal(8, "Set2"))(length(unique(df$Term_ID)))
@@ -209,16 +213,16 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
       dev.off()
 
       #heatmap
-      group <- group %>% arrange(1)
+      group <- group %>% dplyr::arrange(1)
 
       if (!full_names) {
         filt <- data[sign,group[[1]]] %>%
           as.data.frame() %>%
-          rownames_to_column(var = "geneset") %>%
-          left_join(cod, by = c("geneset"="Term")) %>%
-          mutate(Term_ID = factor(.data$Term_ID ,levels = paste0("TERM_",1:length(unique(df$geneset))))) %>%
-          column_to_rownames(loc = "Term_ID") %>%
-          select(-.data$geneset)
+          tibble::rownames_to_column(var = "geneset") %>%
+          dplyr::left_join(cod, by = c("geneset"="Term")) %>%
+          dplyr::mutate(Term_ID = factor(.data$Term_ID, levels = paste0("TERM_", 1:length(unique(df$geneset))))) %>%
+          textshape::column_to_rownames(loc = "Term_ID") %>%
+          dplyr::select(-.data$geneset)
       } else if (full_names) {
         filt <- data[sign,group[[1]]] %>%
           as.data.frame()
@@ -232,7 +236,7 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
       ha <- HeatmapAnnotation(df = group[[2]], show_annotation_name = F,
                               annotation_legend_param = list(df = list(title = " ")),
                               col = list(df = Var))
-      ht<-Heatmap(z_filt, top_annotation = ha,
+      ht <- Heatmap(z_filt, top_annotation = ha,
                        column_title = paste0("Distribution of significative genesets for ",gsub("ssgsea_","",gs)),
                        col = RColorBrewer::brewer.pal(9, "PuRd"),
                        column_names_rot = 45, heatmap_legend_param = list(title_position='leftcenter-rot'),
@@ -248,11 +252,11 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
       data <- get(gs)
       ordered <- apply(data, 1, mean) %>% as.data.frame()
       colnames(ordered) <- "Mean"
-      ordered <- ordered %>% arrange(desc(.data$Mean))
+      ordered <- ordered %>% dplyr::arrange(dplyr::desc(.data$Mean))
 
       data <- data %>%
         as.data.frame() %>%
-        rownames_to_column(var = "geneset") %>%
+        tibble::rownames_to_column(var = "geneset") %>%
         dplyr::filter(.data$geneset %in% rownames(ordered)[1:15])
 
       if(!dir.exists(paste0(where_results,outfolder,"plots/"))) dir.create(paste0(where_results,outfolder,"plots/"), recursive=T)
@@ -261,24 +265,24 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
         cod <- data.frame(Term = unique(data$geneset), Term_ID = paste0("TERM_",1:length(unique(data$geneset))))
         write.table(cod,paste0(where_results,outfolder,"plots/codified_term_",gsub("ssgsea_","",gs), ".txt"), sep = "\t", quote = F, row.names = F)
         df <- data %>%
-          left_join(cod, by = c("geneset"="Term")) %>%
-          mutate(Term_ID = factor(.data$Term_ID ,levels = paste0("TERM_",1:length(unique(data$geneset))))) %>%
-          select(-.data$geneset) %>%
-          pivot_longer(cols = -.data$Term_ID)
+          dplyr::left_join(cod, by = c("geneset"="Term")) %>%
+          dplyr::mutate(Term_ID = factor(.data$Term_ID ,levels = paste0("TERM_",1:length(unique(data$geneset))))) %>%
+          dplyr::select(-.data$geneset) %>%
+          tidyr::pivot_longer(cols = -.data$Term_ID)
       } else if (full_names) {
         df <- data %>%
-          mutate(Term_ID = .data$geneset) %>%
-          select(-.data$geneset) %>%
-          pivot_longer(cols = -.data$Term_ID)
+          dplyr::mutate(Term_ID = .data$geneset) %>%
+          dplyr::select(-.data$geneset) %>%
+          tidyr::pivot_longer(cols = -.data$Term_ID)
       }
 
       mycolors <- colorRampPalette(RColorBrewer::brewer.pal(8, "Set2"))(length(unique(df$Term_ID)))
-      p<-ggplot(data = df, aes(x = .data$Term_ID, y = .data$value)) +
+      p <- ggplot(data = df, aes(x = .data$Term_ID, y = .data$value)) +
         geom_violin(aes(fill=.data$Term_ID), show.legend = F, trim = F, scale = "width")+
         stat_summary(fun=median, geom="point", size=1, color="black", shape=18) +
-        theme_bw()+
+        theme_bw() +
         labs(x="",y="Enrichment Score",title = paste0("Distribution of significative genesets for ", toupper(gsub("ssgsea_","",gs))))+
-        theme(legend.position = "top", legend.margin = margin(0,0,0,0,"lines"),
+        theme(legend.position = "top", legend.margin = margin(0, 0, 0, 0, "lines"),
               axis.text.x = element_text(angle = 45, hjust = 1)) +
         scale_fill_manual(values = mycolors)
       png(paste0(where_results, outfolder,"plots/distrib_",gsub("ssgsea_","",gs),".png"), width = 4000, height = 2500, res = 300)
@@ -290,14 +294,14 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
       if (!full_names) {
         data <- data %>%
           as.data.frame() %>%
-          left_join(cod, by = c("geneset"="Term")) %>%
-          mutate(Term_ID = factor(.data$Term_ID ,levels = paste0("TERM_",1:length(unique(data$geneset))))) %>%
-          column_to_rownames(loc = "Term_ID") %>%
-          select(-.data$geneset)
+          dplyr::left_join(cod, by = c("geneset"="Term")) %>%
+          dplyr::mutate(Term_ID = factor(.data$Term_ID ,levels = paste0("TERM_",1:length(unique(data$geneset))))) %>%
+          textshape::column_to_rownames(loc = "Term_ID") %>%
+          dplyr::select(-.data$geneset)
       } else if (full_names) {
         data <- data %>%
           as.data.frame() %>%
-          column_to_rownames(loc = "geneset")
+          textshape::column_to_rownames(loc = "geneset")
       }
 
       z_data <- t(scale(t(data)))
@@ -320,4 +324,3 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
     }
   }
 }
-
