@@ -12,8 +12,7 @@ autoGO(
   ensembl = F,
   excel = F,
   where_results = "./",
-  outfolder = "results/",
-  my_autoGO_dir = "~/"
+  outfolder = "results/"
 )
 }
 \arguments{
@@ -30,8 +29,6 @@ autoGO(
 \item{where_results}{Specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.}
 
 \item{outfolder}{The name to assign to the folder in which outputs are saved. Default is: "results/". NOTE: please add "/" at the end.}
-
-\item{my_autoGO_dir}{where have you cloned the auto-go repository, default is your home directory "~/"}
 }
 \description{
 Perform enrichment analysis on all the desired gene lists. This function take advantage of the 'enrichR' package.
