@@ -46,21 +46,20 @@ volcanoplot <- function (res, my_comparison = NULL, highlight_genes = NULL, log2
   up <- res %>%
     dplyr::filter(.data$log2FoldChange >= log2FC_thresh & .data$padj <= padj_thresh) %>%
     dplyr::select(.data$genes) %>%
-    pull()
+    dplyr::pull()
   down <- res %>%
     dplyr::filter(.data$log2FoldChange <= -log2FC_thresh & .data$padj <= padj_thresh) %>%
     dplyr::select(.data$genes) %>%
-    pull()
+    dplyr::pull()
 
   if (!is.null(highlight_genes)) {
     if (is.data.frame(highlight_genes)) {
-      highlight_genes <- pull(highlight_genes)
+      highlight_genes <- dplyr::pull(highlight_genes)
     } else if (is.character(highlight_genes) & !grepl(".txt", highlight_genes)[1])  {
       highlight_genes <- highlight_genes
     } else if (grepl(".txt", highlight_genes)) {
-      highlight_genes <- read_delim(highlight_genes, delim = '\t', col_types = cols(), col_names = F) %>% pull()
+      highlight_genes <- read_delim(highlight_genes, delim = '\t', col_types = cols(), col_names = F) %>% dplyr::pull()
     }
-    require("ggrepel")
     labeled_genes <- volcanoData[rownames(volcanoData) %in% highlight_genes,]
   }
 

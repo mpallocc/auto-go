@@ -8,14 +8,14 @@ ssgsea_wrapper(
   norm_data = "results/deseq_vst_data.txt",
   MSigDB_names = c("hgnc", "entrez"),
   which_gene_set = NULL,
-  write_enrich_tables = F,
+  write_enrich_tables = FALSE,
   group = NULL,
   my_autoGO_dir = "~/",
   where_results = "./",
   outfolder = "ssgsea/",
-  full_names = F,
-  tpm_norm = F,
-  ensembl = F
+  full_names = FALSE,
+  tpm_norm = FALSE,
+  ensembl = FALSE
 )
 }
 \arguments{

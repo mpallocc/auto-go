@@ -12,7 +12,17 @@
 #' @export
 
 
-read_enrich_tables <- function(where_results = "./", outfolder = "results/", log2FC_threshold = 0, padj_threshold = 0.05, which_list = c("up_genes","down_genes","up_down_genes","everything"), from_DE_analysis = T, where_files = NULL, files_format = NULL) {
+read_enrich_tables <- function(where_results = "./",
+                               outfolder = "results/",
+                               log2FC_threshold = 0,
+                               padj_threshold = 0.05,
+                               which_list = c("up_genes",
+                                              "down_genes",
+                                              "up_down_genes",
+                                              "everything"),
+                               from_DE_analysis = TRUE,
+                               where_files = NULL,
+                               files_format = NULL) {
 
   enrich_lists_path <- list.files(path = paste0(where_results,outfolder), recursive = T)
   enrich_lists_path <- paste0(where_results,outfolder,enrich_lists_path)

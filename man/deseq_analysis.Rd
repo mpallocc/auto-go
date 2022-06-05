@@ -10,8 +10,8 @@ deseq_analysis(
   comparisons,
   padj_threshold = 0.05,
   log2FC_threshold = 0,
-  pre_filtering = T,
-  save_excel = F,
+  pre_filtering = TRUE,
+  save_excel = FALSE,
   where_results = "./",
   outfolder = "results/",
   del_csv = ","
@@ -44,6 +44,10 @@ This function allows to perform a differential gene expression analysis using th
 The principal DESeq2 workflow is employed. Raw counts are rounded, if it is necessary, because integers are needed for DESeq2 to run. In case the user provides an .rds file, the tool makes sure that in the assay of the SummarizedExperiment only counts are stored. Then the function DESeqDataSetFromMatrix (or DESeqDataSet for .rds) is employed. A prefiltering is applied in order to remove all genes having sum along the subjects less than 10. The Differential Expression Analysis is performed by employing the function DE and the normalized data matrix is stored in the working directory. This will be useful for further analysis and visualizations. Results are extracted for each comparison of interest. Subfolders will be generated in the "outfolder" (default: results/) with the name of the comparisons made. NOTE: as standard we use the nomenclature "CONTROL_vs_TREATMENT", i.e. the control is on the left. Inside each comparison subfolder we will find a .tsv file with the complete differential analysis and other subfolder based on the pvalue and the log2FC thresholds; inside this we will find a .tsv file with the results of the only filtered genes. This subfolders will be divided in other subfolders as "up_genes", "down_genes" and "up_down_genes". Look the path flow chart at the end of this tutorial (Figure 1).
 }
 \examples{
-groups <- data.frame(sample=c("Pat_1","Pat_2","Pat_3","Pat_4","Pat_5","Pat_6"), group=c("CTRL", "CTRL", "TREAT_A", "TREAT_A", "TREAT_B", "TREAT_B"))
-comparisons <- data.frame(treatment = c("TREAT_A","TREAT_B","TREAT_A"), control = c("CTRL", "CTRL", "TREAT_B"))
+sample <- c("Pat_1", "Pat_2", "Pat_3", "Pat_4", "Pat_5", "Pat_6")
+group <- c("CTRL", "CTRL", "TREAT_A", "TREAT_A", "TREAT_B", "TREAT_B")
+groups <- data.frame(sample, group)
+treatment <- c("TREAT_A", "TREAT_B", "TREAT_A")
+control <- c("CTRL", "CTRL", "TREAT_B")
+comparisons <- data.frame(treatment, control)
 }

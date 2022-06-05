@@ -4,32 +4,30 @@ Version: 0.8
 Authors@R: c(
     person("Eleonora", "Sperandio", , "eleonora.sperandio@ifo.it", role = "aut",
            comment = c(ORCID = "YOUR-ORCID-ID")),
-    person("Lorenzo", "D'Ambrosio", , "lorenzo.dambrosio@ifo.it",
+    person("Lorenzo", "D'Ambrosio", , "lorenzo.dambrosio@ifo.it", role = "aut",
            comment = c(ORCID = "YOUR-ORCID-ID")),
     person("Isabella", "Grassucci", , "isabella.grassucci@gmail.com", role = "cre",
            comment = c(ORCID = "YOUR-ORCID-ID")),
-    person("Matteo", "Pallocca", , "matteo.pallocca@ifo.it",
+    person("Matteo", "Pallocca", , "matteo.pallocca@ifo.it", role = "aut",
            comment = c(ORCID = "YOUR-ORCID-ID")))
 Description: Auto-GO is a framework that enables automated, high quality Gene Ontology enrichment analyses visualizations. It also features a handy wrapper for Differential Expression analysis around the DESeq2 package (Love et. al 2014) and a handy wrapper around the single-sample implementation of the GSEA algorithm (ssGSEA), useful for low-numerosity transcriptional profiles. The whole framework is structured in different, independent functions, in order to let the user decide which steps of the analysis perform and which plot to produce.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 LazyData: true
 Depends: 
-    enrichR,
-    R (>= 2.10),
+    R (>= 3.5.0),
     readr (>= 2.1.2),
-    tidyverse
+    tidyverse,
+    enrichR
+biocViews:
 Imports: 
     ape,
-    circlize,
     ComplexHeatmap,
     DESeq2,
     dichromat,
     dplyr,
-    gdata,
     ggplot2,
     ggrepel,
     grDevices,
@@ -37,15 +35,15 @@ Imports:
     imguR,
     openxlsx,
     purrr,
-    radiant.data,
-    Rcssplot,
+    tibble,
+    RColorBrewer,
     reshape2,
     stats,
     stringr,
     SummarizedExperiment,
     textshape,
     tidyr,
+    tidyselect,
     utils
-Remotes: mikelove/DESeq2,
-Suggests: 
+Suggests:
     rlang
