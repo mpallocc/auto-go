@@ -46,6 +46,7 @@ Imports:
     textshape,
     tidyr,
     utils
-Remotes: mikelove/DESeq2
+Remotes: mikelove/DESeq2,
+    wjawaid/enrichR
 Suggests: 
     rlang
