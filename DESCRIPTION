@@ -18,6 +18,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 LazyData: true
 Depends: 
+    enrichR,
     R (>= 2.10),
     readr (>= 2.1.2),
     tidyverse
@@ -28,7 +29,6 @@ Imports:
     DESeq2,
     dichromat,
     dplyr,
-    enrichR,
     gdata,
     ggplot2,
     ggrepel,
@@ -47,6 +47,5 @@ Imports:
     tidyr,
     utils
 Remotes: mikelove/DESeq2,
-    wjawaid/enrichR
 Suggests: 
     rlang
