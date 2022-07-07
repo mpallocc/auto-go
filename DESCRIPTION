@@ -46,8 +46,7 @@ Imports:
     SummarizedExperiment,
     textshape,
     tidyr,
-    utils,
-    xlsx
+    utils
 Remotes: mikelove/DESeq2
 Suggests: 
     rlang

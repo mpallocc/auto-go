@@ -30,7 +30,7 @@ filtering_DE <- function(padj_threshold=0.05, log2FC_threshold=0, where_results 
     #saving filtered results in different folders by thresholds
     if(!dir.exists(groups_fold)) dir.create(groups_fold, recursive=T)
     write_tsv(filtered, paste0(groups_fold,"/filtered_DE_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".tsv"))
-    if (save_excel) write.xlsx(filtered, file=paste0(groups_fold,"/filtered_DE_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".xlsx"),row.names = F)
+    if (save_excel) openxlsx::write.xlsx(filtered, file=paste0(groups_fold,"/filtered_DE_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".xlsx"),row.names = F)
 
     #saving gene lists
     if(!dir.exists(groups_fold_thresh_up_down)) dir.create(groups_fold_thresh_up_down, recursive=T)
