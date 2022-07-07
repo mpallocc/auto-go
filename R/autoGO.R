@@ -69,17 +69,18 @@ autoGO <- function(list_of_genes, dbs = c("GO_Molecular_Function_2021", "GO_Cell
   })
 
   if (!grepl("\\./results/", my_comparison)) {
-    my_path <- paste0(where_results,outfolder,my_comparison,"/enrichment_tables/")
+    my_path <- pathJoin(where_results,outfolder,my_comparison,"enrichment_tables")
     if (!dir.exists(my_path)) dir.create(my_path, recursive = T)
   } else {
-    my_path <- paste0(gsub("[^\\/]+$","",my_comparison),"/enrichment_tables/")
+    my_path <- pathJoin(gsub("[^\\/]+$","",my_comparison),"enrichment_tables")
     if (!dir.exists(my_path)) dir.create(my_path, recursive=T)
   }
 
   invisible(lapply(seq_along(enriched), function(ind) {
     if (dim(enriched[[ind]])[1] > 0 ) {
-      if(excel) xlsx::write.xlsx(enriched[[ind]], file=paste0(my_path,names(enriched)[ind], ".xlsx"),row.names = F)
-      write.table(enriched[[ind]], sep="\t", quote=F, file=paste0(my_path,names(enriched)[ind], ".tsv"),row.names = F)
+      if(excel) xlsx::write.xlsx(enriched[[ind]], file=paste0(my_path, "/", names(enriched)[ind], ".xlsx"),row.names = F)
+      write.table(enriched[[ind]], sep="\t", quote=F, file=paste0(my_path, "/", names(enriched)[ind], ".tsv"),row.names = F)
+      print(my_path)
       }
   }))
 
