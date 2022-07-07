@@ -80,7 +80,6 @@ autoGO <- function(list_of_genes, dbs = c("GO_Molecular_Function_2021", "GO_Cell
     if (dim(enriched[[ind]])[1] > 0 ) {
       if(excel) xlsx::write.xlsx(enriched[[ind]], file=paste0(my_path, "/", names(enriched)[ind], ".xlsx"),row.names = F)
       write.table(enriched[[ind]], sep="\t", quote=F, file=paste0(my_path, "/", names(enriched)[ind], ".tsv"),row.names = F)
-      print(my_path)
       }
   }))
 
