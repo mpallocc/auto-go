@@ -24,15 +24,15 @@ barplotGO <- function(enrich_table,
   if (is.null(my_comparison)) {
       my_analysis <- str_match(enrich_table_path, pattern = paste0(where_results,outfolder,"(.*?)\\/"))[2]
       dbs <- gsub(".*\\/|\\.tsv", "", enrich_table_path)
-      path_to_save <- paste0(gsub("_tables.*","", enrich_table_path),"_plots")
+      path_to_save <- paste0(gsub("_tables.*", "", enrich_table_path), "_plots")
   } else if (!is.null(my_comparison)) {
     my_analysis <- str_match(my_comparison, pattern = paste0(where_results,outfolder,"(.*?)\\/"))[2]
     if (grepl("\\/", my_comparison)) {
       dbs <- gsub(".*\\/", "", my_comparison)
-      path_to_save <- paste0(gsub("_tables.*","", my_comparison),"_plots/")
-    } else if (!grepl("\\/", my_comparison)){
+      path_to_save <- paste0(gsub("_tables.*", "", my_comparison), "_plots/")
+    } else if (!grepl("\\/", my_comparison)) {
       dbs <- NULL
-      path_to_save <- paste0("./",my_analysis,"/enrichment_plots/")
+      path_to_save <- paste0("./",my_analysis, "/enrichment_plots/")
     }
   }
 
@@ -53,7 +53,7 @@ barplotGO <- function(enrich_table,
   enrich_table <- enrich_table %>%
     arrange(.data$Adjusted.P.value, .data$Term) %>%
     dplyr::slice(1:15) %>%
-    mutate(Term = gsub("\\(GO.*","",.data$Term),
+    mutate(Term = gsub("\\(GO.*", "", .data$Term),
            `-log10(Adjusted.P.value)` = -log10(.data$`Adjusted.P.value`))
 
   ggplot(data=enrich_table, aes(x=reorder(.data$Term, .data$`-log10(Adjusted.P.value)`), y=.data$`-log10(Adjusted.P.value)`)) +

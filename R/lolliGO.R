@@ -21,7 +21,7 @@ lolliGO <- function(enrich_table,
     enrich_table <- read_delim(enrich_table, delim = "\t", col_types = cols())
   }
 
-  pattern <- paste0(where_results, outfolder,"(.*?)\\/")
+  pattern <- paste0(where_results, outfolder, "(.*?)\\/")
   if (is.null(my_comparison)) {
       my_analysis <- str_match(enrich_table_path,
                                pattern = pattern)[2]
@@ -57,14 +57,14 @@ lolliGO <- function(enrich_table,
     dplyr::slice(1:20) %>%
     extract(.data$Overlap,into = c("gene_counts", "gene_total"), regex = "([0-9]+)\\/([0-9]+)") %>%
     type_convert(col_types = cols(gene_counts = col_double(),gene_total = col_double())) %>%
-    mutate(Term = gsub("\\(GO.*","",.data$Term),
-           `-log10(Adjusted.P.value)` = .data$`-log10(Adjusted.P.value)`,
-           percent = round(.data$gene_counts/.data$gene_total, digits = 2),
+    mutate(Term = gsub("\\(GO.*", "", .data$Term),
+           `-log10(Adjusted.P.value)` = -log10(.data$`Adjusted.P.value`),
+           percent = round(.data$gene_counts / .data$gene_total, digits = 2),
            percent = ifelse(.data$percent > 0.4, 0.4, .data$percent))
 
   breaks <- round(seq(min(enrich_table$gene_counts), max(enrich_table$gene_counts), length.out = 6))
 
-  ggplot(enrich_table, aes(x = .data$`-log10(Adjusted.P.value)`, reorder(.data$Term, .data$`-Adjusted.P.value`))) +
+  ggplot(enrich_table, aes(x = .data$`-log10(Adjusted.P.value)`, reorder(.data$Term, .data$`Adjusted.P.value`))) +
     ggtitle(label = title, subtitle = subtitle) +
     geom_segment(aes(xend=0, yend = .data$Term)) +
     geom_point(aes(color=.data$percent, size = .data$gene_counts)) +
