@@ -12,8 +12,8 @@ autoGO(
   dbs = c("GO_Molecular_Function_2021", "GO_Cellular_Component_2021",
     "GO_Biological_Process_2021", "KEGG_2021_Human"),
   my_comparison,
-  ensembl = F,
-  excel = F,
+  ensembl = FALSE,
+  excel = FALSE,
   where_results = "./",
   outfolder = "results/"
 )

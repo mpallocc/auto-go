@@ -10,7 +10,7 @@ read_gene_list(
   log2FC_threshold = 0,
   padj_threshold = 0.05,
   which_list = c("up_genes", "down_genes", "up_down_genes", "everything"),
-  from_DE_analysis = T,
+  from_DE_analysis = TRUE,
   where_files = NULL,
   files_format = NULL
 )

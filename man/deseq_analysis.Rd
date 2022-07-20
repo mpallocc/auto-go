@@ -10,8 +10,8 @@ deseq_analysis(
   comparisons,
   padj_threshold = 0.05,
   log2FC_threshold = 0,
-  pre_filtering = T,
-  save_excel = F,
+  pre_filtering = TRUE,
+  save_excel = FALSE,
   where_results = "./",
   outfolder = "results/",
   del_csv = ","

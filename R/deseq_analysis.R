@@ -23,16 +23,16 @@
 #' @export
 
 
-deseq_analysis <- function (counts,
-                            groups,
-                            comparisons,
-                            padj_threshold = 0.05,
-                            log2FC_threshold = 0,
-                            pre_filtering = TRUE,
-                            save_excel = FALSE,
-                            where_results = "./",
-                            outfolder = "results/",
-                            del_csv = ",") {
+deseq_analysis <- function(counts,
+                           groups,
+                           comparisons,
+                           padj_threshold = 0.05,
+                           log2FC_threshold = 0,
+                           pre_filtering = TRUE,
+                           save_excel = FALSE,
+                           where_results = "./",
+                           outfolder = "results/",
+                           del_csv = ",") {
 
   if (grepl(".tsv", counts)[1]) {
     counts <- read_delim(counts, col_types = cols(), delim = "\t")
@@ -50,7 +50,7 @@ deseq_analysis <- function (counts,
 
   if (!is.data.frame(groups)[1] & grepl(".txt", groups)[1]) {
     groups <- read_delim(groups, delim = '\t', col_types = cols())
-  } else if (dim(groups)[2] < 2){
+  } else if (dim(groups)[2] < 2) {
     warning("Please provide a two column file as groups list as .txt file or data.frame.")
   }
   if (!is.data.frame(comparisons)[1] & grepl(".txt", comparisons)[1]) {
@@ -60,11 +60,11 @@ deseq_analysis <- function (counts,
   }
 
   if (class(counts)[1] == "SummarizedExperiment") {
-    assays(counts) <- assay(counts,1)
+    assays(counts) <- assay(counts, 1)
     assay(counts) <- as.matrix(round(assay(counts)))
 
     rownames(groups) <- groups[[1]]
-    if (!all(colnames(counts)==groups[[1]])) {
+    if (!all(colnames(counts) == groups[[1]])) {
       groups <- groups[match(groups[[1]], colnames(counts)), ]
     }
 
@@ -72,20 +72,20 @@ deseq_analysis <- function (counts,
     dds <- DESeqDataSet(se = counts, design = ~ group)
   } else {
     colnames(counts)[1] <- "gene_id"
-    counts <- counts  %>%
-      distinct(.data$gene_id, .keep_all = TRUE) %>% #rimozione di geni "doppi"
-      column_to_rownames(loc = "gene_id") %>%
-      dplyr::select(sort(names(.data$`.`))) %>%
-      mutate(across(where(is.numeric), round))
+    counts <- counts %>%
+      dplyr::distinct(.data$gene_id, .keep_all = TRUE) %>% # removing duplicated genes
+      textshape::column_to_rownames(loc = "gene_id") %>%
+      dplyr::relocate(sort(tidyselect::peek_vars())) %>%
+      dplyr::mutate(across(where(is.numeric), round))
 
-      if(dim(counts)[2] != dim(groups)[1]){
+      if (dim(counts)[2] != dim(groups)[1]) {
         stop("Please provide all counts columns in your groups dataframe.")
       }
 
-    if (!all(colnames(counts)==groups[[1]])) {
-      groups <- groups[match(colnames(counts),groups[[1]]), ]
+    if (!all(colnames(counts) == groups[[1]])) {
+      groups <- groups[match(colnames(counts), groups[[1]]), ]
     }
-    dds <- DESeqDataSetFromMatrix(countData = counts, colData = groups, design = ~ group)
+    dds <- DESeq2::DESeqDataSetFromMatrix(countData = counts, colData = groups, design = ~ group)
   }
 
   #pre-filtering
