@@ -12,18 +12,26 @@
 #' @export
 
 
-
-read_gene_list <- function(where_results = "./", outfolder = "results/", log2FC_threshold=0, padj_threshold=0.05, which_list = c("up_genes","down_genes","up_down_genes","everything"), from_DE_analysis = T, where_files = NULL, files_format = NULL) {
-
+read_gene_list <- function(where_results = "./",
+                           outfolder = "results/",
+                           log2FC_threshold = 0,
+                           padj_threshold = 0.05,
+                           which_list = c("up_genes",
+                                          "down_genes",
+                                          "up_down_genes",
+                                          "everything"),
+                           from_DE_analysis = TRUE,
+                           where_files = NULL,
+                           files_format = NULL) {
   if (from_DE_analysis) {
-    gene_lists_path <- list.files(path = paste0(where_results,outfolder), pattern = ".*genes_list_.*.txt", recursive = T)
-    gene_lists_path <- paste0(where_results,outfolder,gene_lists_path)
-    to_read <- gene_lists_path[grepl(pattern = paste0("thFC",log2FC_threshold,"_thPval",padj_threshold), gene_lists_path)]
+    gene_lists_path <- list.files(path = paste0(where_results, outfolder), pattern = ".*genes_list_.*.txt", recursive = TRUE)
+    gene_lists_path <- paste0(where_results, outfolder, gene_lists_path)
+    to_read <- gene_lists_path[grepl(pattern = paste0("thFC", log2FC_threshold, "_thPval", padj_threshold), gene_lists_path)]
   } else if (!from_DE_analysis) {
     if (is.null(where_files)) stop("Required parameter: 'where_files' for path of gene lists.")
     if (is.null(files_format)) stop("Required parameter: 'files_format' for extension of gene lists, should be like '.txt' or '.tsv', etc.")
-    gene_lists_path <- list.files(path = paste0(where_files), pattern = ".txt", recursive = T)
-    gene_lists_path <- paste0(where_files,gene_lists_path)
+    gene_lists_path <- list.files(path = paste0(where_files), pattern = ".txt", recursive = TRUE)
+    gene_lists_path <- paste0(where_files, gene_lists_path)
     to_read <- gene_lists_path
     which_list <- "everything"
   }
@@ -38,8 +46,8 @@ read_gene_list <- function(where_results = "./", outfolder = "results/", log2FC_
     to_read <- to_read
   }
 
-  readed <- lapply(to_read, function (x) read.table(x, header = F, sep = '\n'))
-  names(readed) <- dirname(gsub(paste0(where_results,outfolder,where_files,"|.txt"), "",to_read))
+  readed <- lapply(to_read, function(x) read.table(x, header = FALSE, sep = "\n"))
+  names(readed) <- dirname(gsub(paste0(where_results, outfolder, where_files, "|.txt"), "", to_read))
 
   return(readed)
 }

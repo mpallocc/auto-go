@@ -19,7 +19,8 @@ LazyData: true
 Depends: 
     R (>= 2.10),
     readr (>= 2.1.2),
-    tidyverse
+    tidyverse,
+    enrichR
 biocViews:
 Imports: 
     ape,
@@ -28,7 +29,6 @@ Imports:
     DESeq2,
     dichromat,
     dplyr,
-    enrichR,
     gdata,
     ggplot2,
     ggrepel,
@@ -46,8 +46,8 @@ Imports:
     SummarizedExperiment,
     textshape,
     tidyr,
-    utils,
-    xlsx
-Remotes: mikelove/DESeq2
+    utils
+Remotes:
+    mikelove/DESeq2
 Suggests: 
     rlang

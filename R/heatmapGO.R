@@ -11,13 +11,23 @@
 #' @export
 
 
-heatmapGO <- function(lib, where_results = "./", outfolder = "results/", log2FC_threshold = 0, padj_threshold = 0.05, which_list = c("up_genes", "down_genes","up_down_genes", "not_from_DE")) {
-
-  x <- list.files(pattern = paste0(lib, ".tsv"), path = paste0(where_results,outfolder), recursive = T, all.files = T)
-  x <- paste0(where_results,outfolder,x)
+heatmapGO <- function(lib,
+                      where_results = "./",
+                      outfolder = "results/",
+                      log2FC_threshold = 0,
+                      padj_threshold = 0.05,
+                      which_list = c("up_genes",
+                                     "down_genes",
+                                     "up_down_genes",
+                                     "not_from_DE")) {
+  x <- list.files(pattern = paste0(lib, ".tsv"),
+                  path = paste0(where_results, outfolder),
+                  recursive = TRUE,
+                  all.files = TRUE)
+  x <- paste0(where_results, outfolder, x)
 
   if (which_list != "not_from_DE") {
-    to_read <- x[grepl(pattern = paste0("thFC",log2FC_threshold,"_thPval",padj_threshold), x)]
+    to_read <- x[grepl(pattern = paste0("thFC", log2FC_threshold,"_thPval", padj_threshold), x)]
   }
 
   if (which_list == "up_down_genes") {

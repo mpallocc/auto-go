@@ -9,7 +9,10 @@
 #' @export
 
 
-barplotGO <- function(enrich_table,  my_comparison = NULL, where_results = "./", outfolder = "results/") {
+barplotGO <- function(enrich_table,
+                      my_comparison = NULL,
+                      where_results = "./",
+                      outfolder = "results/") {
 
   if (is.data.frame(enrich_table)) {
     enrich_table <- enrich_table
@@ -17,7 +20,6 @@ barplotGO <- function(enrich_table,  my_comparison = NULL, where_results = "./",
     enrich_table_path <- enrich_table
     enrich_table <- read_delim(enrich_table, delim = "\t", col_types = cols())
   }
-
 
   if (is.null(my_comparison)) {
       my_analysis <- str_match(enrich_table_path, pattern = paste0(where_results,outfolder,"(.*?)\\/"))[2]

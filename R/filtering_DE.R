@@ -10,12 +10,16 @@
 #' @export
 
 
-
-filtering_DE <- function(padj_threshold=0.05, log2FC_threshold=0, where_results = "./", outfolder = "results/", save_excel = F) {
-  all_res <- list.files(path = paste0(where_results,outfolder), pattern = "_allres.tsv", recursive = T)
-  all_res <- paste0(where_results,outfolder,all_res)
+filtering_DE <- function(padj_threshold = 0.05,
+                         log2FC_threshold = 0,
+                         where_results = "./",
+                         outfolder = "results/",
+                         save_excel = FALSE) {
+  all_res <- list.files(path = paste0(where_results, outfolder),
+                        pattern = "_allres.tsv", recursive = TRUE)
+  all_res <- paste0(where_results, outfolder, all_res)
   readed <- lapply(all_res, function (x) read_tsv(x, col_types = cols()))
-  names(readed) <- gsub(paste0(where_results,outfolder,"|\\/.*"),"",all_res)
+  names(readed) <- gsub(paste0(where_results, outfolder, "|\\/.*"), "", all_res)
 
   for (files in names(readed)) {
     data <- readed[[files]]

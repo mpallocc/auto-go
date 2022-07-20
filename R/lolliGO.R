@@ -9,7 +9,10 @@
 #' @export
 
 
-lolliGO <- function (enrich_table,  my_comparison = NULL, where_results = "./", outfolder = "results/") {
+lolliGO <- function(enrich_table,
+                    my_comparison = NULL,
+                    where_results = "./",
+                    outfolder = "results/") {
 
   if (is.data.frame(enrich_table)) {
     enrich_table <- enrich_table
@@ -18,19 +21,20 @@ lolliGO <- function (enrich_table,  my_comparison = NULL, where_results = "./", 
     enrich_table <- read_delim(enrich_table, delim = "\t", col_types = cols())
   }
 
-
+  pattern <- paste0(where_results, outfolder,"(.*?)\\/")
   if (is.null(my_comparison)) {
-      my_analysis <- str_match(enrich_table_path, pattern = paste0(where_results,outfolder,"(.*?)\\/"))[2]
+      my_analysis <- str_match(enrich_table_path,
+                               pattern = pattern)[2]
       dbs <- gsub(".*\\/|\\.tsv", "", enrich_table_path)
-      path_to_save <- paste0(gsub("_tables.*","", enrich_table_path),"_plots")
+      path_to_save <- paste0(gsub("_tables.*", "", enrich_table_path), "_plots")
   } else if (!is.null(my_comparison)) {
-    my_analysis <- str_match(my_comparison, pattern = paste0(where_results,outfolder,"(.*?)\\/"))[2]
+    my_analysis <- str_match(my_comparison, pattern = pattern)[2]
     if (grepl("\\/", my_comparison)) {
       dbs <- gsub(".*\\/", "", my_comparison)
-      path_to_save <- paste0(gsub("_tables.*","", my_comparison),"_plots/")
-    } else if (!grepl("\\/", my_comparison)){
+      path_to_save <- paste0(gsub("_tables.*", "", my_comparison), "_plots/")
+    } else if (!grepl("\\/", my_comparison)) {
       dbs <- NULL
-      path_to_save <- paste0("./",my_analysis,"/enrichment_plots/")
+      path_to_save <- paste0("./", my_analysis, "/enrichment_plots/")
     }
   }
 

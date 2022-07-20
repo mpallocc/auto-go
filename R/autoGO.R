@@ -39,45 +39,53 @@
 #' @import grDevices
 
 
-
-
-
-autoGO <- function(list_of_genes, dbs = c("GO_Molecular_Function_2021", "GO_Cellular_Component_2021", "GO_Biological_Process_2021", "KEGG_2021_Human"),
-                   my_comparison, ensembl = F, excel = F, where_results = "./", outfolder = "results/") {
-
+autoGO <- function(list_of_genes,
+                   dbs = c("GO_Molecular_Function_2021",
+                           "GO_Cellular_Component_2021",
+                           "GO_Biological_Process_2021",
+                           "KEGG_2021_Human"),
+                   my_comparison,
+                   ensembl = FALSE,
+                   excel = FALSE,
+                   where_results = "./",
+                   outfolder = "results/") {
   if (is.data.frame(list_of_genes)) {
     list_of_genes <- list_of_genes %>% pull()
   } else if (is.character(list_of_genes) & !grepl(".txt", list_of_genes)[1]) {
     list_of_genes <- list_of_genes
   } else if (grepl(".txt", list_of_genes)) {
-    list_of_genes <- read_delim(list_of_genes, delim = '\t', col_types = cols(), col_names = F) %>% pull()
+    list_of_genes <- read_delim(list_of_genes,
+                                delim = "\t",
+                                col_types = cols(),
+                                col_names = FALSE) %>% pull()
   }
 
   if (ensembl) {
     all_genes_conversion <- conversion_ensembl
-    list_of_genes <- as.data.frame(list_of_genes) %>% inner_join(all_genes_conversion, by=c("list_of_genes"="ensembl_gene_id")) %>%  pull()
-    }
+    list_of_genes <- as.data.frame(list_of_genes) %>%
+      inner_join(all_genes_conversion, by = c("list_of_genes" = "ensembl_gene_id")) %>%
+      pull()
+  }
 
   enriched <- enrichr(list_of_genes, dbs)
-  tables <- lapply(seq_along(enriched), function(i) {
-    enriched[[i]] <- enriched[[i]][!is.na(enriched[[i]]$Term),]
+  lapply(seq_along(enriched), function(i) {
+    enriched[[i]] <- enriched[[i]][!is.na(enriched[[i]]$Term), ]
     enriched[[i]]$`-log10(Adjusted.P.value)` <- -log10(enriched[[i]]$Adjusted.P.value)
-    enriched[[i]] <- enriched[[i]][order(enriched[[i]]$Adjusted.P.value),]
+    enriched[[i]] <- enriched[[i]][order(enriched[[i]]$Adjusted.P.value), ]
   })
 
   if (!grepl("\\./results/", my_comparison)) {
-    my_path <- paste0(where_results,outfolder,my_comparison,"/enrichment_tables/")
+    my_path <- paste0(where_results, outfolder, my_comparison, "/enrichment_tables/")
     if (!dir.exists(my_path)) dir.create(my_path, recursive = T)
   } else {
-    my_path <- paste0(gsub("[^\\/]+$","",my_comparison),"/enrichment_tables/")
-    if (!dir.exists(my_path)) dir.create(my_path, recursive=T)
+    my_path <- paste0(gsub("[^\\/]+$", "", my_comparison), "/enrichment_tables/")
+    if (!dir.exists(my_path)) dir.create(my_path, recursive = T)
   }
 
   invisible(lapply(seq_along(enriched), function(ind) {
-    if (dim(enriched[[ind]])[1] > 0 ) {
-      if(excel) xlsx::write.xlsx(enriched[[ind]], file=paste0(my_path,names(enriched)[ind], ".xlsx"),row.names = F)
-      write.table(enriched[[ind]], sep="\t", quote=F, file=paste0(my_path,names(enriched)[ind], ".tsv"),row.names = F)
-      }
+    if (dim(enriched[[ind]])[1] > 0) {
+      if (excel) xlsx::write.xlsx(enriched[[ind]], file = paste0(my_path, names(enriched)[ind], ".xlsx"), row.names = F)
+      write.table(enriched[[ind]], sep = "\t", quote = F, file = paste0(my_path, names(enriched)[ind], ".tsv"), row.names = F)
+    }
   }))
-
 }

@@ -16,7 +16,17 @@
 #' @export
 
 
-ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_names = c("hgnc","entrez"), which_gene_set = NULL, write_enrich_tables = F, group = NULL, my_autoGO_dir = "~/",  where_results = "./", outfolder = "ssgsea/", full_names = F, tpm_norm = F, ensembl = F) {
+ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
+                           MSigDB_names = c("hgnc","entrez"),
+                           which_gene_set = NULL,
+                           write_enrich_tables = FALSE,
+                           group = NULL,
+                           my_autoGO_dir = "~/",
+                           where_results = "./",
+                           outfolder = "ssgsea/",
+                           full_names = FALSE,
+                           tpm_norm = FALSE,
+                           ensembl = FALSE) {
 
   if (grepl(".tsv", norm_data)[1]) {
     norm_data <- read_tsv(norm_data, col_types = cols())
@@ -226,7 +236,7 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
       ha <- HeatmapAnnotation(df = group[[2]], show_annotation_name = F,
                               annotation_legend_param = list(df = list(title = " ")),
                               col = list(df = Var))
-      ht<-Heatmap(z_filt, top_annotation = ha,
+      ht <- Heatmap(z_filt, top_annotation = ha,
                        column_title = paste0("Distribution of significative genesets for ",gsub("ssgsea_","",gs)),
                        col = RColorBrewer::brewer.pal(9, "PuRd"),
                        column_names_rot = 45, heatmap_legend_param = list(title_position='leftcenter-rot'),
@@ -267,12 +277,12 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
       }
 
       mycolors <- colorRampPalette(RColorBrewer::brewer.pal(8, "Set2"))(length(unique(df$Term_ID)))
-      p<-ggplot(data = df, aes(x = .data$Term_ID, y = .data$value)) +
+      p <- ggplot(data = df, aes(x = .data$Term_ID, y = .data$value)) +
         geom_violin(aes(fill=.data$Term_ID), show.legend = F, trim = F, scale = "width")+
         stat_summary(fun=median, geom="point", size=1, color="black", shape=18) +
-        theme_bw()+
+        theme_bw() +
         labs(x="",y="Enrichment Score",title = paste0("Distribution of significative genesets for ", toupper(gsub("ssgsea_","",gs))))+
-        theme(legend.position = "top", legend.margin = margin(0,0,0,0,"lines"),
+        theme(legend.position = "top", legend.margin = margin(0, 0, 0, 0, "lines"),
               axis.text.x = element_text(angle = 45, hjust = 1)) +
         scale_fill_manual(values = mycolors)
       png(paste0(where_results, outfolder,"plots/distrib_",gsub("ssgsea_","",gs),".png"), width = 4000, height = 2500, res = 300)
@@ -314,4 +324,3 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt", MSigDB_name
     }
   }
 }
-
