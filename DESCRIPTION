@@ -14,7 +14,7 @@ Description: Auto-GO is a framework that enables automated, high quality Gene On
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 LazyData: true
 Depends: 
     R (>= 2.10),
@@ -46,6 +46,7 @@ Imports:
     SummarizedExperiment,
     textshape,
     tidyr,
+    tidyselect,
     utils
 Suggests: 
     rlang
