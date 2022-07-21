@@ -52,7 +52,7 @@ barplotGO <- function(enrich_table,  my_comparison = NULL, where_results = "./",
     arrange(.data$Adjusted.P.value, .data$Term) %>%
     dplyr::slice(1:15) %>%
     mutate(Term = gsub("\\(GO.*","",.data$Term),
-           `-log10(Adjusted.P.value)` = -log10(.data$`(Adjusted.P.value`))
+           `-log10(Adjusted.P.value)` = -log10(.data$`Adjusted.P.value`))
 
   ggplot(data=enrich_table, aes(x=reorder(.data$Term, .data$`-log10(Adjusted.P.value)`), y=.data$`-log10(Adjusted.P.value)`)) +
     geom_bar(stat="identity",fill="#91bbdb", width = 0.5) +
