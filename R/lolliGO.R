@@ -34,7 +34,7 @@ lolliGO <- function (enrich_table,  my_comparison = NULL, where_results = "./", 
     }
   }
 
-  if (grepl("down_genes", path_to_save)) {
+  if (grepl("/down_genes", path_to_save)) {
     title <- paste0(gsub("_"," ",dbs), " for Down Regulated Genes")
     subtitle <- ifelse(is.na(gsub("_", " ", my_analysis)), "", gsub("_", " ", my_analysis))
   } else if (grepl("up_genes", path_to_save)) {
@@ -60,7 +60,8 @@ lolliGO <- function (enrich_table,  my_comparison = NULL, where_results = "./", 
 
   breaks <- round(seq(min(enrich_table$gene_counts), max(enrich_table$gene_counts), length.out = 6))
 
-  ggplot(enrich_table, aes(x = "-log10(Adjusted.P.value)", reorder(.data$"Term", .data$"-Adjusted.P.value"))) +
+  print("aiuto")
+  ggplot(enrich_table, aes(x = "-log10(Adjusted.P.value)", reorder(Term, `Adjusted.P.value`))) +
     ggtitle(label = title, subtitle = subtitle) +
     geom_segment(aes(xend=0, yend = .data$Term)) +
     geom_point(aes(color=.data$percent, size = .data$gene_counts)) +

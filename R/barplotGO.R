@@ -34,7 +34,7 @@ barplotGO <- function(enrich_table,  my_comparison = NULL, where_results = "./",
     }
   }
 
-  if (grepl("down_genes", path_to_save)) {
+  if (grepl("/down_genes", path_to_save)) {
     title <- paste0(gsub("_"," ",dbs), " for Down Regulated Genes")
     subtitle <- ifelse(is.na(gsub("_", " ", my_analysis)), "", gsub("_", " ", my_analysis))
   } else if (grepl("up_genes", path_to_save)) {
@@ -52,7 +52,7 @@ barplotGO <- function(enrich_table,  my_comparison = NULL, where_results = "./",
     arrange(.data$Adjusted.P.value, .data$Term) %>%
     dplyr::slice(1:15) %>%
     mutate(Term = gsub("\\(GO.*","",.data$Term),
-           `-log10(Adjusted.P.value)` = .data$`-log10(Adjusted.P.value`)
+           `-log10(Adjusted.P.value)` = -log10(.data$`(Adjusted.P.value`))
 
   ggplot(data=enrich_table, aes(x=reorder(.data$Term, .data$`-log10(Adjusted.P.value)`), y=.data$`-log10(Adjusted.P.value)`)) +
     geom_bar(stat="identity",fill="#91bbdb", width = 0.5) +
