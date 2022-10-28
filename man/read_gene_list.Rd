@@ -5,21 +5,15 @@
 \title{Read genes list}
 \usage{
 read_gene_list(
-  where_results = "./",
-  outfolder = "results/",
+  gene_lists_path = "./results",
   log2FC_threshold = 0,
   padj_threshold = 0.05,
   which_list = c("up_genes", "down_genes", "up_down_genes", "everything"),
   from_DE_analysis = TRUE,
-  where_files = NULL,
-  files_format = NULL
+  files_format = ".txt"
 )
 }
 \arguments{
-\item{where_results}{Specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.}
-
-\item{outfolder}{The name assigned to the folder in which outputs are saved. Default is: "results/". NOTE: please add "/" at the end.}
-
 \item{log2FC_threshold}{Threshold value for log2(Fold Change) for considering genes as differentially expressed (default = 0).}
 
 \item{padj_threshold}{Threshold value for adjusted p-value significance (Defaults to 0.05).}
@@ -28,9 +22,13 @@ read_gene_list(
 
 \item{from_DE_analysis}{Default is TRUE, set FALSE if the lists you want to upload are not from a differential expression analysis.where_files}
 
-\item{where_files}{(Default = NULL). When from_DE_analysis = T it is mandatory to provide a path to specify where the list of genes are.}
-
 \item{files_format}{(Default = NULL). when from_DE_analysis = T it is mandatory to provide the extension of the list of genes to upload.}
+
+\item{where_results}{Specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.}
+
+\item{outfolder}{The name assigned to the folder in which outputs are saved. Default is: "results/". NOTE: please add "/" at the end.}
+
+\item{where_files}{(Default = NULL). When from_DE_analysis = T it is mandatory to provide a path to specify where the list of genes are.}
 }
 \description{
 Function employed for reading all the gene lists on which the enrichment will be performed.

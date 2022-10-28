@@ -12,8 +12,7 @@
 #' @export
 
 
-read_gene_list <- function(where_results = "./",
-                           outfolder = "results/",
+read_gene_list <- function(gene_lists_path = "./results",
                            log2FC_threshold = 0,
                            padj_threshold = 0.05,
                            which_list = c(
@@ -23,33 +22,29 @@ read_gene_list <- function(where_results = "./",
                              "everything"
                            ),
                            from_DE_analysis = TRUE,
-                           where_files = NULL,
-                           files_format = NULL) {
+                           files_format = ".txt") {
   if (from_DE_analysis) {
-    gene_lists_path <- list.files(path = paste0(where_results, outfolder), pattern = ".*genes_list_.*.txt", recursive = TRUE)
-    gene_lists_path <- paste0(where_results, outfolder, gene_lists_path)
-    to_read <- gene_lists_path[grepl(pattern = paste0("thFC", log2FC_threshold, "_thPval", padj_threshold), gene_lists_path)]
+    gene_lists_files <- list.files(path = gene_lists_path, pattern = ".*genes_list_.*.txt", recursive = TRUE, full.names = TRUE)
+    to_read <- gene_lists_files[grepl(pattern = paste0("thFC", log2FC_threshold, "_thPval", padj_threshold), gene_lists_path)]
   } else if (!from_DE_analysis) {
-    if (is.null(where_files)) stop("Required parameter: 'where_files' for path of gene lists.")
-    if (is.null(files_format)) stop("Required parameter: 'files_format' for extension of gene lists, should be like '.txt' or '.tsv', etc.")
-    gene_lists_path <- list.files(path = paste0(where_files), pattern = ".txt", recursive = TRUE)
-    gene_lists_path <- paste0(where_files, gene_lists_path)
-    to_read <- gene_lists_path
+    gene_lists_files <- list.files(path = gene_lists_path, pattern = files_format, recursive = TRUE, full.names = TRUE)
+    to_read <- gene_lists_files
     which_list <- "everything"
   }
 
   if (which_list == "up_down_genes") {
-    to_read <- to_read[grepl(pattern = "up_down_genes", to_read)]
+    to_read <- to_read[grepl(pattern = "/up_down_genes", to_read)]
   } else if (which_list == "up_genes") {
-    to_read <- to_read[grepl(pattern = "up_genes", to_read)]
+    to_read <- to_read[grepl(pattern = "/up_genes", to_read)]
   } else if (which_list == "down_genes") {
     to_read <- to_read[grepl(pattern = "/down_genes", to_read)]
   } else if (which_list == "everything") {
     to_read <- to_read
   }
 
-  readed <- lapply(to_read, function(x) read.table(x, header = FALSE, sep = "\n"))
-  names(readed) <- dirname(gsub(paste0(where_results, outfolder, where_files, "|.txt"), "", to_read))
+  gene_lists <- lapply(to_read, function(x) read.table(x, header = FALSE, sep = "\n"))
+  #names(gene_lists) <- dirname(gsub(paste0(gene_lists_path, "|.txt"), "", to_read))
+  names(gene_lists) <- tools::file_path_sans_ext(basename(to_read))
 
-  return(readed)
+  return(gene_lists)
 }

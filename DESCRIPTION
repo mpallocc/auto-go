@@ -49,4 +49,7 @@ Imports:
     tidyselect,
     utils
 Suggests:
-    rlang
+    knitr,
+    rlang,
+    rmarkdown
+VignetteBuilder: knitr

@@ -28,10 +28,10 @@ filtering_DE <- function(padj_threshold = 0.05,
     filtered <- data %>%
       dplyr::filter(.data$padj < padj_threshold & abs(.data$log2FoldChange) > log2FC_threshold)
 
-    groups_fold <- paste0(where_results, outfolder, files, "/filtered_DE_", files, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
-    groups_fold_thresh_up_down <- paste0(groups_fold, "/up_down_genes_", files, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
-    groups_fold_thresh_up <- paste0(groups_fold, "/up_genes_", files, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
-    groups_fold_thresh_down <- paste0(groups_fold, "/down_genes_", files, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
+    groups_fold <- paste0(where_results, outfolder, files, "/filtered_DE", "_thFC", log2FC_threshold, "_thPval", padj_threshold)
+    groups_fold_thresh_up_down <- paste0(groups_fold, "/up_down_genes")
+    groups_fold_thresh_up <- paste0(groups_fold, "/up_genes")
+    groups_fold_thresh_down <- paste0(groups_fold, "/down_genes")
 
     # saving filtered results in different folders by thresholds
     if (!dir.exists(groups_fold)) dir.create(groups_fold, recursive = T)
