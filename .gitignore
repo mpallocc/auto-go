@@ -2,3 +2,5 @@
 *.code-workspace
 .RData
 .Rhistory
+R/.RData
+R/.Rhistory

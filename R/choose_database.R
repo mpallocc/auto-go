@@ -1,28 +1,20 @@
 #' @title choose_database
 #'
 #' @description It allows the user to choose the databases on which to perform the enrichment analysis. Either it returns all the possible databases or a subset of them.
-#' @param dbs_search (Default = NULL), it is a string pattern based on the name of certain databases in order to return only some databases of interest
+#' @param db_search (Default = NULL), is the string pattern to be matched against the list of enrichR databases. Any matching DBs will be returned. 
 #' @export
 
 
+choose_database <- function(db_search = NULL) {
 
-choose_database <- function (dbs_search = NULL) {
-
-  #setEnrichrSite("Enrichr")
   dbs_table <- listEnrichrDbs()
   dbs <- dbs_table$libraryName
-  #return(dbs)
 
-  if (!is.null(dbs_search)) {
-
-    index <- grepl(dbs_search, dbs)
+  if (!is.null(db_search)) {
+    index <- grepl(db_search, dbs)
     correlated_dbs_list <- dbs[index]
     return(correlated_dbs_list)
-
+  } else {
+    return(dbs)
   }
-
-  else {
-    return (dbs)
-  }
-
 }
