@@ -130,7 +130,7 @@ volcanoplot <- function(res, my_comparison = NULL, highlight_genes = NULL, log2F
     scale_y_continuous(expand = expansion(mult = c(0, 0.01))) +
     scale_x_continuous(expand = expansion(mult = c(0.01, 0.01)), limits = c(xlim_n, xlim_p))
 
-  my_volcano_dir <- paste0(where_results, outfolder, my_comparison, "/filtered_DE_", my_comparison, "_thFC", log2FC_thresh, "_thPval", padj_thresh)
+  my_volcano_dir <- paste0(where_results, outfolder, my_comparison, "/filtered_DE", "_thFC", log2FC_thresh, "_thPval", padj_thresh)
 
   if (!dir.exists(my_volcano_dir)) dir.create(my_volcano_dir, recursive = T)
 

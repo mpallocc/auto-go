@@ -141,9 +141,10 @@ deseq_analysis <- function(counts,
 
     # generating folders
     groups_fold <- paste0(where_results, outfolder, b, "_vs_", a)
-    groups_fold_thresh_up_down <- paste0(groups_fold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, "/up_down_genes_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
-    groups_fold_thresh_up <- paste0(groups_fold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, "/up_genes_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
-    groups_fold_thresh_down <- paste0(groups_fold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, "/down_genes_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
+    groups_fold_filtered <- paste0(groups_fold, "/filtered_DE", "_thFC", log2FC_threshold, "_thPval", padj_threshold)
+    groups_fold_thresh_up_down <- paste0(groups_fold_filtered, "/up_down_genes")
+    groups_fold_thresh_up <- paste0(groups_fold_filtered, "/up_genes")
+    groups_fold_thresh_down <- paste0(groups_fold_filtered, "/down_genes")
 
     # saving complete results
     if (!dir.exists(groups_fold)) dir.create(groups_fold, recursive = T)
@@ -155,8 +156,8 @@ deseq_analysis <- function(counts,
 
     # saving filtered results in different folders by thresholds
     if (!dir.exists(groups_fold_thresh_up_down)) dir.create(groups_fold_thresh_up_down, recursive = T)
-    write_tsv(filtered, paste0(groups_fold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".tsv"))
-    if (save_excel) openxlsx::write.xlsx(filtered, file = paste0(groups_fold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".xlsx"), row.names = F)
+    write_tsv(filtered, paste0(groups_fold_thresh_up_down, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".tsv"))
+    if (save_excel) openxlsx::write.xlsx(filtered, file = paste0(groups_fold_thresh_up_down, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".xlsx"), row.names = F)
 
     # saving gene lists
     write.table(filtered$genes, paste0(groups_fold_thresh_up_down, "/up_down_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt"), quote = F, row.names = F, col.names = F)

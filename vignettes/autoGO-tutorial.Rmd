@@ -1,0 +1,508 @@
+---
+title: "AutoGO: Reproducible, Robust and High Quality Ontology Enrichment Visualizations"
+author: 
+  name: "Isabella Grassucci"
+  affiliation: "IRCSS Regina Elena National Cancer Institute, Rome"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    df_print: paged
+
+---
+
+```{r setup_package, include=FALSE}
+knitr::opts_chunk$set(echo = T, error = TRUE, eval = F)
+```
+
+## Introduction
+
+This tutorial provides a walk through tutorial on how to use AutoGO to perform gene ontology enrichment analysis from gene lists or directly from raw counts performing differential expression analysis.
+
+The AutoGO package is structured in different, independent functions, in order to let the user decide which steps of the whole analysis perform and which visualization to produce.
+The whole workflow includes: Differential Expression Analysis with the employment of DESeq2; Generation of a Volcano Plot; Gene Ontology Enrichment Analysis with the employment of enrichR on databases chosen by the user; Visualization of the enrichment results with Barplot, Lollipop and Heatmap; In experiments with few samples autoGO allow to perform Single-sample Gene Set Enrichment Analysis (ssGSEA) with visualization of results by violin plot and heatmap.
+
+## Installation
+
+The autoGO package can be directly installed from github.
+```{r, message=FALSE, warning=FALSE}
+library(devtools)
+#install_github("mpallocc/auto-go", ref = "add-tutorial-vignette", force = T)
+install(".")
+library(autoGO)
+```
+
+
+## Loading data
+
+Loading example data to run the tutorial.
+```{r, message=FALSE, warning=FALSE}
+data(counts, groups, comparisons)
+
+```
+
+
+
+## Differential Gene Expression
+
+```{r}
+deseq_analysis(counts,
+               groups,
+               comparisons,
+               padj_threshold = 0.05,
+               log2FC_threshold = 1,
+               pre_filtering = T,
+               save_excel = F,
+               where_results = "./", 
+               outfolder = "results/", 
+               del_csv = ",")
+```
+
+#### Parameters:
+
+* *counts*: path to raw counts file. Accepted formats: .txt, .csv, .tsv, .rds or a dataframe. [genes x samples]
+
+* *groups*: it is the sample information table needed by DESeq2, constituted by the column *sample*, including samples barcode and by the column *group* including the condition to which each sample belongs. It can be provided as a .txt file or as a dataframe.
+
+```{r, echo=FALSE, eval=TRUE}
+groups <- data.frame(sample=c("Pat_1","Pat_2","Pat_3","Pat_4","Pat_5","Pat_6"), group=c("CTRL", "CTRL", "TREAT_A", "TREAT_A", "TREAT_B", "TREAT_B"))
+groups
+```
+
+* *comparisons*: it is the comparison table needed by DESeq2, constituted by the column *treatment* and by the column *control*. It can be provided as a .txt file or as a dataframe.
+
+```{r, echo=FALSE, eval=TRUE}
+comparisons <- data.frame(treatment = c("TREAT_A","TREAT_B","TREAT_A"), control = c("CTRL", "CTRL", "TREAT_B"))
+comparisons
+```
+
+* *padj_threshold* and *log2FC_threshold*: Defaults are padj_threshold = 0.05, log2FC_threshold = 1
+
+* *pre_filtering*: It removes the genes which sum in the raw counts is less than 10.
+
+* *save_excel*: default False. If True it allows to save all the output tables in .xlsx format.
+
+* *where_results* : the parent folder in which the user wants to save the outputs. Default is the working directory. NOTE: please add "/" at the end.
+
+* *outfolder* : the name of the output folder. Default is: "results/". NOTE: please add "/" at the end.
+
+* *del_csv* : default ",". The delimiter of the counts file.
+
+#### Workflow:
+The DESeq2 workflow is employed. Raw counts are rounded, because integers are needed for DESeq2. A prefiltering is applied, if the user choose to, in order to remove all genes having sum along the sample less than 10.
+
+The normalized data matrix is stored in the *outfolder* (default: results/). Subfolders will be generated with the name of the comparisons in the related file furnished by the user. Here there will be saved results from differential analysis. Inside those other subfolders will be generated 
+
+ based on the threshold of the log2FC and of the Adj. P. Value where the user can find the list of the filtered genes and downstream analysis results.
+
+
+## Filtering DESeq results
+
+It allows to filter the Differential Expression Analysis results directly from the output table "*_allres.tsv" without repeating the whole workflow.
+
+```{r}
+filtering_DE(padj_threshold=0.05, 
+             log2FC_threshold=0, 
+             where_results = "./", 
+             outfolder = "results/", 
+             save_excel = F)
+```
+
+The function searches inside the folders *where_results* and *outfolder* the files "_allres.tsv", the output from differential analysis, and generates the results with the new filters for foldchange and padj respectively.
+
+
+## Volcano Plot
+
+```{r}
+filename <- "./results/H460.2D_vs_H460.3D.2p/DE_H460.2D_vs_H460.3D.2p_allres.tsv"
+volcanoplot(res = filename, 
+            my_comparison = "H460.2D_vs_H460.3D.2p",
+            log2FC_thresh = 1, 
+            padj_thresh = 0.05,
+            highlight_genes = NULL,
+            del_csv = ",",
+            where_results = "./", 
+            outfolder = "results/")
+```
+
+#### Parameters:
+
+* *res*: it accepts both a file (.tsv, .csv, tab-separated .txt) or a dataframe (see example below). It is necessary that the columns _genes_, _log2FoldChange_ and _padj_ are present.
+
+* *padj_threshold* and *log2FC_threshold*: the threshold for the significance (adjusted pvalue) and for the difference in expression (log2 Fold Change). Defaults are padj_threshold = 0.05, log2FC_threshold = 0
+
+* *my_comparison*: the comparison the user would like to plot (control_vs_treatment, a_vs_b, ...)
+
+* *highlight_genes*: a list of genes the user would like to highlight in the volcano plot. It accepts a dataframe, a character vector or a path to a file that has to be in .txt format.
+
+* *where_results* : specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
+
+* *outfolder* : the name with which to call the folder to save the outputs. Default is: "results/". NOTE: please add "/" at the end.
+
+* *del_csv* : specify the delimiter of the .csv file, default is ",". This is because opening .csv files with Excel messes up the format and changes the delimiter in ";".
+
+
+If the user had more conditions in the differential analysis he probably produced many comparisons, so it is possible to apply the following structure to realize the volcano plots for all the comparisons:
+```{r}
+path_res <- "results"
+all_path_res <- list.files(path = path_res, pattern = "_allres.tsv", recursive = T, full.names = T)
+res_lists <- lapply(all_path_res, function (x) read_tsv(x, col_types = cols()))
+names(res_lists) <- gsub("results/|/DE_.*", "",all_path_res)
+
+invisible(lapply(names(res_lists), function (i) volcanoplot(res_lists[[i]], my_comparison = i)))
+```
+
+It is also possible to call the function in a for loop in order to realize volcano plots with different threshold, for example:
+```{r}
+for (th in c(1,2,3)) {
+  lapply(names(res_lists), function (i) volcanoplot(res_lists[[i]], my_comparison = i, log2FC_thresh = th))
+}
+```
+
+#### Workflow:
+If the user does not provide *my_comparison* (default: NULL), the function will extract the name of the first subfolder inside "results/" and employ it.
+
+
+#########################################################
+
+
+## Choose of database
+This function allows the user to search over all the Enrichr databases on which it is possible to perform the enrichment analysis. In this way the user is able to select only the databases for which it is interested for the downstream analysis.
+
+```{r}
+choose_database(db_search = "GO")
+```
+
+#### Parameters:
+* *dbs_search*: allows to restrict the research for a string pattern (i.e. "GO", "TF") in order to return a smaller set on which to choose, based on a pattern in the name of the databases.
+
+
+## Reading gene_lists
+*read_gene_list.R* is the function employed to read all the gene lists on which the enrichment will then be performed.
+
+```{r}
+#DO NOT RUN FOR SINGLE LIST
+
+##TO DO: DEBUG WHERE FILES READGENELIST
+gene_lists_path = "./results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/down_genes"
+list_of_genes <- read_gene_list(gene_lists_path = gene_lists_path,
+               log2FC_threshold = 0, 
+               padj_threshold = 0.05, 
+               which_list = "down_genes",#,"down_genes","up_down_genes","everything"),
+               from_DE_analysis = T,
+               files_format = NULL)
+```
+
+#### Parameters:
+
+* *where_results* : specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
+
+* *outfolder* : the name with which to call the folder to save the outputs. Default is: "results/". NOTE: please add "/" at the end.
+
+* *padj_threshold* and *log2FC_threshold*: the threshold for the significance (adjusted pvalue) and for the difference in expression (log2 Fold Change). Defaults are padj_threshold = 0.05, log2FC_threshold = 0
+
+* *which_list* = c("up_genes","down_genes","up_down_genes","everything")_ : select with list of genes the user would like to choose to perform the enrichment. Respectively, both up and down regulated genes (up_down_genes), only up regulated genes (up_genes), only down regulated genes (down_genes), or everything allow to load all the three kind of lists separately.
+
+* *from_DE_analysis* : default is TRUE, set FALSE if the lists you want to upload are not from a differential expression analysis. 
+
+* *where_files* : dafult NULL, when from_DE_analysis = T it is mandatory to provide a path to specify where the list of genes are.
+
+* *files_format* : default NULL, when from_DE_analysis = T it is mandatory to provide the extension of the list of genes you want to upload.
+
+#### Workflow:
+The function allows to load in a variable all the gene lists on which the enrichment will be performed.
+
+
+
+## Enrichment analysis
+To perform the enrichment analysis on all the desired gene lists the function *autoGO.R* is required. This function take advantage of the *enrichR* package.
+
+```{r}
+autoGO(list_of_genes = list_of_genes$down_genes_list_H460.2D_vs_H460.3D.2p_thFC0_thPval0.05, 
+       dbs = c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human"), 
+       my_comparison = "H460.2D_vs_H460.3D.2p", 
+       ensembl = F,
+       excel = F, 
+       where_results = "./", 
+       outfolder = "results/")
+```
+
+#### Parameters:
+
+* *list_of_genes*: it can be a list of dataframe (i.e. the output of *read_gene_list.R*), a vector or a dataframe containing the list of the genes or the path to the file .txt where the gene list is contained.
+
+* *dbs*: databases for which the enrichment will be performed, based on the enrichR libraries. Default are *GO_Molecular_Function_2021*, *GO_Cellular_Component_2021*, *GO_Biological_Process_2021*, *KEGG_2021_Human*.
+
+* *my_comparison*: name of the comparison the user would like to inspect
+
+* *ensembl*: default False, set TRUE if the provided gene list contains Ensembl IDs. A conversion to HGNC will be performed.
+
+* *excel*: default FALSE, set TRUE if you want to save tables in .xlsx format.
+
+* *where_results* : specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
+
+* *outfolder* : the name with which to call the folder to save the outputs. Default is: "results/". NOTE: please add "/" at the end.
+_
+* *my_autoGO_dir*: where have you cloned the auto-go repository, default is your home directory "~/"
+
+
+If there are more lists on which to perform the enrichment analysis it is suggested to proceed with the following approach:
+```{r}
+gene_list <- read_gene_list(which_list = "down_genes")
+lapply(names(gene_list), function (i) autoGO(gene_list[[i]], my_comparison = i))
+```
+
+#### Workflow:
+Each gene list is enriched by the employment of the ernichR package. Results are stored in the "enrichment_tables/" subfolder for each comparison, look Figure 1.
+
+
+## Reading enrichment tables
+To read the enrichment results the function *read_enrich_tables.R* is employed. 
+
+```{r}
+DO NOT RUN FOR SINGLE ENRICHMENT TABLE
+read_enrich_tables(where_results = "./", 
+                   outfolder = "results/",
+                   log2FC_threshold = 0, 
+                   padj_threshold = 0.05, 
+                   which_list = C("up_genes", "down_genes", "up_down_genes", "everything"), 
+                   from_DE_analysis = T,
+                   where_files = NULL,
+                   files_format = NULL)
+```
+
+#### Parameters:
+
+* *where_results* : specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
+
+* *outfolder* : the name with which to call the folder to save the outputs. Default is: "results/". NOTE: please add "/" at the end.
+
+* *padj_threshold* and *log2FC_threshold*: the threshold for the significance (adjusted pvalue) and for the difference in expression (log2 Fold Change). Defaults are padj_threshold = 0.05, log2FC_threshold = 0
+
+* *which_list* = c("up_genes","down_genes","up_down_genes","everything")_ : select with list of genes the user would like to choose to perform the enrichment. Respectively, both up and down regulated genes (up_down_genes), only up regulated genes (up_genes), only down regulated genes (down_genes), or everything allow to load all the three kind of lists separately.
+
+* *from_DE_analysis* : default is TRUE, set FALSE if the lists you want to upload are not from a differential expression analysis. 
+
+* *where_files* : dafult NULL, when from_DE_analysis = T it is mandatory to provide a path to specify where the list of genes are.
+
+* *files_format* : default NULL, when from_DE_analysis = T it is mandatory to provide the extension of the list of genes you want to upload.
+
+#### Workflow:
+The function allows to upload all the enrichment results in order to proceed with the visualization in an automated way.
+
+
+## Visualization:
+Auto-GO allows the user to choose which plot to produce and then it will make them in an automated way. The visualizations it will produce are Barplot, Lollipo and a Comparison Heatmap if you have multiple groups to compare. It is possible to produce all of them. 
+
+
+## Barplot
+The function *barplotGO.R* implement the barplot of the first 15 enrichment terms.
+
+```{r}
+filename <- "./results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_tables/GO_Biological_Process_2021.tsv"
+barplotGO(enrich_table = filename,  
+          my_comparison = "H460.2D_vs_H460.3D.2p", 
+          where_results = "./", 
+          outfolder = "results/")
+```
+
+#### Parameters:
+
+* *enrich_table*: dataframe containing the enrichment results or a path to your .tsv file containing the enrichment results. It is necessary that it contains the columns *Term* and *Adjusted.P.Value*.
+
+* *my_comparison* :  name of the comparison the user would like to inspect
+
+* *where_results* : specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
+
+* *outfolder* : the name with which to call the folder to save the outputs. Default is: "results/". NOTE: please add "/" at the end.
+
+
+If there are more lists on which the enrichment has been performed it is suggested to proceed with the following approach:
+```{r}
+enrich_list <- read_enrich_tables(which_list = "everything")
+lapply(names(enrich_list), function (i) barplotGO(enrich_list[[i]], my_comparison = i))
+
+```
+
+#### Workflow:
+For each enrichment result table a barplot is produced. Results are stored in the "enrichment_plots" subfolder for each comparison, look Figure 1.
+
+<!--
+![barplotGO1](/home/isa/Desktop/IFO/analisi_mirna/results_6g/enrichment/thFC1_thPval0.05/Unt_6g_vs_MAPKi_6g/plots/barplotGO/GO_Molecular_Function_2021.png){#id .class width=95% height=25%}
+-->
+
+## Lollipop
+The function *lolliGO.R* implement the lollipop plot of the first 20 enrichment terms.
+
+```{r}
+filename <- "./results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_tables/GO_Biological_Process_2021.tsv"
+lolliGO(enrich_table = filename,  
+        my_comparison = "H460.2D_vs_H460.3D.2p",
+        where_results = "./", 
+        outfolder = "results/")
+```
+
+#### Parameters:
+
+* *enrich_table*: dataframe containing the enrichment results or a path to your .tsv file containing the enrichment results. It is necessary that it contains the columns *Term* and *Adjusted.P.Value*. It has to contain also the column *Overlap* which indicates the number of genes in our list enriched over the total genes of that term (format n/N).
+
+* *my_comparison* :  name of the comparison the user would like to inspect
+
+* *where_results* : specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
+
+* *outfolder* : the name with which to call the folder to save the outputs. Default is: "results/". NOTE: please add "/" at the end.
+
+If there are more lists on which the enrichment has been performed it is suggested to proceed with the following approach:
+```{r}
+enrich_list <- read_enrich_tables(which_list = "everything")
+lapply(names(enrich_list), function (i) lolliGO(enrich_list[[i]], my_comparison = i))
+```
+
+#### Workflow:
+For each enrichment result table a lollipop plot is produced. Results are stored in the "enrichment_plots" subfolder for each comparison, look Figure 1.
+
+<!--
+![lolliGO1](/home/isa/Desktop/IFO/analisi_mirna/results_6g/enrichment/thFC1_thPval0.05/Unt_6g_vs_MAPKi_6g/plots/lolliGO/GO_Molecular_Function_2021.png){#id .class width=95% height=30%}
+![lolliGO2](/home/isa/Desktop/IFO/analisi_mirna/results_6g/enrichment/thFC1_thPval0.05/Unt_6g_vs_MAPKi_6g/plots/lolliGO/GO_Biological_Process_2021.png){#id .class width=95% height=30%}
+-->
+
+## HeatmapGO
+If the analysis has been performed on more conditions it is interest to have a look at the difference in the enrichment results between the groups. This can be performed by *heatmapGO.R*.
+```{r}
+heatmapGO(lib, 
+          where_results = "./",
+          outfolder = "results/", 
+          log2FC_threshold = 0, 
+          padj_threshold = 0.05, 
+          which_list = c("up_genes", "down_genes","up_down_genes", "not_from_DE"))
+```
+
+#### Parameters:
+
+* *lib*: database for which we would like to produce the heatmap. It has to be one for which the enrichment analysis has been performed.
+
+* *where_results* : specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
+
+* *outfolder* : the name with which to call the folder to save the outputs. Default is: "results/". NOTE: please add "/" at the end.
+
+* *adj_threshold* and *log2FC_threshold*: the threshold for the significance (adjusted pvalue) and for the difference in expression (log2 Fold Change). Defaults are padj_threshold = 0.05, log2FC_threshold = 0
+
+
+* *which_list* = c("up_genes", "down_genes","up_down_genes", "not_from_DE")_: select the kind of data the user would like to plot. Respectively, enrichment on both up and down regulated genes (up_down_genes), only up regulated genes (up_genes), only down regulated genes ("down_genes") or select "not_from_DE" if your enrichment is made on a list of genes that does not come from a differential expression analysis.
+
+For a faster process it is possible to define a vector containing the employed database and produce the heatmap automatically:
+```{r}
+dbs <- c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human")
+lapply(dbs, function (i) heatmapGO(lib = i, which_list = "down_genes"))
+```
+
+#### Workflow:
+The function automatically reads all the enrichment results of the chosen database. A heatmap is produced for each database, all the terms are merged together and a filter is applied as follows: only terms with a significant pvalue (i.e. less than padj_threshold) in at least one comparison will be retained and plotted.
+These plots will be saved in the "Comparison_Heatmap" folder (Figure 1).In order to have readable plots, if many terms are enriched for a database several images will be created (indexed _1, _2, ...).
+
+<!--
+![heatmapGO1](/home/isa/Desktop/IFO/analisi_mirna/results_6g/enrichment/thFC1_thPval0.05/up_genes/Comparison_Heatmap_GO_Biological_Process_2021_2.png){#id .class width=49% height=50%}
+![heatmapGO2](/home/isa/Desktop/IFO/analisi_mirna/results_6g/enrichment/thFC1_thPval0.05/up_genes/Comparison_Heatmap_GO_Biological_Process_2021_1.png){#id .class width=49% height=50%}
+-->
+
+## Single-sample Gene Set Enrichment Analysis
+
+It is possible to perform a single-sample Gene Set Enrichment Analysis with the function *ssgsea.wrapper.R* . This kind of analysis is recommended when there are too few samples. In the end the analysis will produce an enrichment score for each sample and associated visualizations.
+
+```{r}
+ssgsea_wrapper(norm_data = "results/deseq_vst_data.txt", 
+               MSigDB_names = c("hgnc","entrez"), 
+               which_gene_set = NULL, 
+               write_enrich_tables = F,
+               group = NULL, 
+               where_results = "./", 
+               outfolder = "ssgsea/", 
+               full_names = F, 
+               tpm_norm = F, 
+               ensembl = F)  
+```
+
+#### Parameters:
+
+* *norm_data*: path of the normalized matrix. By default it is the "deseq_vst_data.txt" computed with the function "deseq_analysis.R", but if you have other normalization matrix (like TPMs) they can be passed to the function. Requirements: first column gene names.
+
+* *MSigDB_name*: choose if you have gene names in hgnc or entrez
+
+* *which_gene_set*: default NULL, it means that all the gene sets are considered. You can specify one or more specific gene_sets (c1,c2,c3, c4, c5, c6, c7, c8, h )
+
+* *write_enrich_tables*: default False. set True if you want to save the matrix with enrichment scores.
+
+* *group*: if you have a table you can give the path or pass a df that is in your global environment. This is to add an annotation on the heatmap and do the statistical analysis.
+
+* *where_results* : specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
+
+* *outfolder* : the name with which to call the folder to save the outputs. Default is: "ssgsea/". NOTE: please add "/" at the end.
+
+* *full_names* : default FALSE, this is for the visualizations, if you want to plot all the term full name change it to TRUE, else a codified notation will be generated.
+
+* *tpm_norm* : default FALSE, if you only have a count matrix, you can perform a TPM normalization by setting this parameter to TRUE.
+
+* *ensembl* : default FALSE, if your genes are in ENSEMBL, by setting this parameter to TRUE they will be automatically converted in HGNC Symbols.
+
+#### Workflow
+The function ssGSEA is implemented by the employment of GSVA package. It will produces an heatmap and a violin plot. If chosen to, it will produce also the enrichment score table.
+All the necessary data are already provided with the autoGO package (as the MSigDB gene sets). It is possible to choose whether to perform ssGSEA with all the MSigDB (database) or with a sub-group.
+
+<!--
+![gsea1](/home/isa/Downloads/heatmap_c2.png){#id .class width=49% height=50%}
+![gsea2](/home/isa/Downloads/distrib_c1.png){#id .class width=49% height=50%}
+-->
+
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+
+# Figure 1
+
+```{r, echo=FALSE, out.width = '100%', eval=TRUE}
+knitr::include_graphics("export.png")
+```
+
+Note: in Figure 1 we show the path flow chart for the outputs of our package. We report the main elements with the defaults of the functions. The default of "where_results" folder is "./", that is your current working directory and the "outfolder" is the name of the folder in which you want to save results, default is "results". Furthermore, inside the outfolder ("results") folder you will find many "CONTROL_vs_TREATMENT" folder as much as there are your comparisons.
+For "ssgsea_wrapper", default is that a "outfolder" (default named as "ssgsea") will be generate in "where_results", that is your current working directory, as already said. You can play with this parameter to change the position of "ssgsea" results folder, for example, in ssgsea_wrapper function you can set where_results not as the current working directory, but the general results folder, as follow:
+
+```{r, echo=FALSE, out.width = '100%', eval=TRUE}
+knitr::include_graphics("export_2.png")
+```
+
+
+
+
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

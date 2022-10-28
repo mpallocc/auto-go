@@ -14,7 +14,6 @@
 autoGO <- function(list_of_genes,
                    dbs = c(
                      "GO_Molecular_Function_2021",
-                     "GO_Cellular_Component_2021",
                      "GO_Biological_Process_2021",
                      "KEGG_2021_Human"
                    ),
