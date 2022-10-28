@@ -39,13 +39,15 @@ Auto-GO is a framework that enables automated, high quality Gene Ontology enrich
 Perform enrichment analysis on all the desired gene lists. This function take advantage of the 'enrichR' package.
 }
 \author{
-\strong{Maintainer}: Isabella Grassucci \email{isabella.grassucci@gmail.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Isabella Grassucci \email{isabella.grassucci@gmail.com} (\href{https://orcid.org/0000-0002-2484-8570}{ORCID})
 
 Authors:
 \itemize{
-  \item Eleonora Sperandio \email{eleonora.sperandio@ifo.it} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
-  \item Lorenzo D'Ambrosio \email{lorenzo.dambrosio@ifo.it} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
-  \item Matteo Pallocca \email{matteo.pallocca@ifo.it} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+  \item Eleonora Sperandio \email{eleonora.sperandio@ifo.it} (\href{https://orcid.org/0000-0002-8572-6788}{ORCID})
+  \item Lorenzo D'Ambrosio \email{lorenzo.dambrosio@ifo.it} (\href{https://orcid.org/0000-0002-9656-7436}{ORCID})
+  \item Matteo Pallocca \email{matteo.pallocca@ifo.it} (\href{https://orcid.org/0000-0002-7756-3579}{ORCID})
+  \item Fabio Ticconi \email{fabio.ticconi@gmail.com} (\href{https://orcid.org/0000-0001-8905-6657}{ORCID})
+  \item Alice Massacci \email{alice.massacci@ifo.it} (\href{https://orcid.org/0000-0001-7780-809X}{ORCID})
 }
 
 }
