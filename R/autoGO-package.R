@@ -5,7 +5,6 @@
 "_PACKAGE"
 
 ## usethis namespace: start
-#' @import tidyverse
 #' @import readr
 #' @import reshape2
 #' @import DESeq2
@@ -16,13 +15,14 @@
 #' @import ggplot2
 #' @import stringr
 #' @import SummarizedExperiment
-#' @import textshape
 #' @import ape
 #' @import dichromat
 #' @import grid
 #' @import imguR
 #' @import ggrepel
 #' @import grDevices
+#' @import dplyr
 #' @importFrom stats median na.omit p.adjust reorder setNames t.test wilcox.test
+#' @importFrom textshape column_to_rownames
 ## usethis namespace: end
 NULL
