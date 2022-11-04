@@ -33,7 +33,6 @@ deseq_analysis <- function(counts,
                            where_results = "./",
                            outfolder = "results/",
                            del_csv = ",") {
-
   if (grepl(".tsv", counts)[1]) {
     counts <- read_delim(counts, col_types = cols(), delim = "\t")
   } else if (grepl(".csv", counts)[1]) {
@@ -49,14 +48,14 @@ deseq_analysis <- function(counts,
   }
 
   if (!is.data.frame(groups)[1] & grepl(".txt", groups)[1]) {
-    groups <- read_delim(groups, delim = '\t', col_types = cols())
+    groups <- read_delim(groups, delim = "\t", col_types = cols())
   } else if (dim(groups)[2] < 2) {
     warning("Please provide a two column file as groups list as .txt file or data.frame.")
   }
   if (!is.data.frame(comparisons)[1] & grepl(".txt", comparisons)[1]) {
-    comparisons <- read_delim(comparisons, delim = '\t', col_types = cols())
-  } else if(dim(comparisons)[2] < 2) {
-     warning("Please provide a two column file as comparison list as .txt file or data.frame.")
+    comparisons <- read_delim(comparisons, delim = "\t", col_types = cols())
+  } else if (dim(comparisons)[2] < 2) {
+    warning("Please provide a two column file as comparison list as .txt file or data.frame.")
   }
 
   if (class(counts)[1] == "SummarizedExperiment") {
@@ -69,7 +68,7 @@ deseq_analysis <- function(counts,
     }
 
     colData(counts) <- data.frame(groups)
-    dds <- DESeqDataSet(se = counts, design = ~ group)
+    dds <- DESeqDataSet(se = counts, design = ~group)
   } else {
     colnames(counts)[1] <- "gene_id"
     counts <- counts %>%
@@ -78,87 +77,94 @@ deseq_analysis <- function(counts,
       dplyr::relocate(sort(tidyselect::peek_vars())) %>%
       dplyr::mutate(dplyr::across(where(is.numeric), round))
 
-      if (dim(counts)[2] != dim(groups)[1]) {
-        stop("Please provide all counts columns in your groups dataframe.")
-      }
+    if (dim(counts)[2] != dim(groups)[1]) {
+      stop("Please provide all counts columns in your groups dataframe.")
+    }
 
     if (!all(colnames(counts) == groups[[1]])) {
       groups <- groups[match(colnames(counts), groups[[1]]), ]
     }
-    dds <- DESeq2::DESeqDataSetFromMatrix(countData = counts, colData = groups, design = ~ group)
+    dds <- DESeq2::DESeqDataSetFromMatrix(countData = counts, colData = groups, design = ~group)
   }
 
-  #pre-filtering
+  # pre-filtering
   if (pre_filtering) {
     keep <- rowSums(counts(dds)) >= 10
-    dds <- dds[keep,]
+    dds <- dds[keep, ]
   }
 
-  #DE analysis
+  # DE analysis
   dds <- DESeq(dds)
-  cc <- counts(dds, normalized=T)
+  cc <- counts(dds, normalized = T)
   vsd <- varianceStabilizingTransformation(dds, blind = T)
   vst <- SummarizedExperiment::assay(vsd)
 
-  if(!dir.exists(paste0(where_results,outfolder))) {dir.create(paste0(where_results,outfolder), recursive = T)}
-  write.table(cc, paste0(where_results,outfolder,"deseq_norm_data.txt"), quote = F, sep = '\t', row.names = T, col.names = NA)
-  write.table(vst, paste0(where_results,outfolder,"deseq_vst_data.txt"), quote = F, sep = '\t', row.names = T, col.names = NA)
+  if (!dir.exists(paste0(where_results, outfolder))) {
+    dir.create(paste0(where_results, outfolder), recursive = T)
+  }
+  write.table(cc, paste0(where_results, outfolder, "deseq_norm_data.txt"), quote = F, sep = "\t", row.names = T, col.names = NA)
+  write.table(vst, paste0(where_results, outfolder, "deseq_vst_data.txt"), quote = F, sep = "\t", row.names = T, col.names = NA)
 
-  group_list <- split(groups, groups[[2]] )
+  group_list <- split(groups, groups[[2]])
   for (i in seq(dim(comparisons)[1])) {
-    c <- comparisons [i, ]
+    c <- comparisons[i, ]
 
-    a <- c[,1] #treatment
-    if (is.data.frame(a)) { a <- dplyr::pull(a) }
-    b <- c[,2] #control
-    if (is.data.frame(b)) { b <- dplyr::pull(b) }
+    a <- c[, 1] # treatment
+    if (is.data.frame(a)) {
+      a <- dplyr::pull(a)
+    }
+    b <- c[, 2] # control
+    if (is.data.frame(b)) {
+      b <- dplyr::pull(b)
+    }
 
     a_group <- group_list[[a]][[1]]
     b_group <- group_list[[b]][[1]]
 
-    rr <- results(dds, contrast = c("group",a,b), alpha = 0.05)
+    rr <- results(dds, contrast = c("group", a, b), alpha = 0.05)
     rr <- na.omit(rr)
     rr <- as.data.frame(rr)
 
-    means <- data.frame(mean_A=rowMeans(cc[,a_group]),mean_B=rowMeans(cc[,b_group]))
-    names(means) <- c(paste0("mean_", a), paste0("mean_",b))
-    means_vst <- data.frame(mean_A=rowMeans(vst[,a_group]),mean_B=rowMeans(vst[,b_group]))
-    names(means_vst) <- c(paste0("mean_", a), paste0("mean_",b))
+    means <- data.frame(mean_A = rowMeans(cc[, a_group]), mean_B = rowMeans(cc[, b_group]))
+    names(means) <- c(paste0("mean_", a), paste0("mean_", b))
+    means_vst <- data.frame(mean_A = rowMeans(vst[, a_group]), mean_B = rowMeans(vst[, b_group]))
+    names(means_vst) <- c(paste0("mean_", a), paste0("mean_", b))
 
-    rr <- merge(rr,means_vst, by=0) %>%
-      dplyr::rename(genes=.data$Row.names) %>% dplyr::select(-.data$baseMean, -.data$lfcSE, -stat) %>%
-      dplyr::select(c(1:4,6,5)) %>%
+    rr <- merge(rr, means_vst, by = 0) %>%
+      dplyr::rename(genes = .data$Row.names) %>%
+      dplyr::select(-.data$baseMean, -.data$lfcSE, -stat) %>%
+      dplyr::select(c(1:4, 6, 5)) %>%
       dplyr::arrange(.data$padj)
 
     filtered <- rr %>%
-      dplyr::filter(rr$padj  < padj_threshold & abs(rr$log2FoldChange) > log2FC_threshold)
+      dplyr::filter(rr$padj < padj_threshold & abs(rr$log2FoldChange) > log2FC_threshold)
 
-    #generating folders
-    groups_fold <- paste0(where_results,outfolder,b,"_vs_",a)
-    groups_fold_thresh_up_down <- paste0(groups_fold,"/filtered_DE_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,"/up_down_genes_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold)
-    groups_fold_thresh_up <- paste0(groups_fold,"/filtered_DE_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,"/up_genes_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold)
-    groups_fold_thresh_down <- paste0(groups_fold,"/filtered_DE_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,"/down_genes_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold)
+    # generating folders
+    groups_fold <- paste0(where_results, outfolder, b, "_vs_", a)
+    groups_fold_thresh_up_down <- paste0(groups_fold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, "/up_down_genes_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
+    groups_fold_thresh_up <- paste0(groups_fold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, "/up_genes_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
+    groups_fold_thresh_down <- paste0(groups_fold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, "/down_genes_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
 
-    #saving complete results
-    if(!dir.exists(groups_fold)) dir.create(groups_fold, recursive=T)
-    write_tsv(rr, paste0(groups_fold, "/DE_",b, "_vs_",a,"_allres.tsv"))
+    # saving complete results
+    if (!dir.exists(groups_fold)) dir.create(groups_fold, recursive = T)
+    write_tsv(rr, paste0(groups_fold, "/DE_", b, "_vs_", a, "_allres.tsv"))
 
     if (save_excel) {
-      openxlsx::write.xlsx(rr, file=paste0(groups_fold, "/DE_", b, "_vs_",a,"_allres.xlsx"),row.names = F)
+      openxlsx::write.xlsx(rr, file = paste0(groups_fold, "/DE_", b, "_vs_", a, "_allres.xlsx"), row.names = F)
     }
 
-    #saving filtered results in different folders by thresholds
-    if(!dir.exists(groups_fold_thresh_up_down)) dir.create(groups_fold_thresh_up_down, recursive=T)
-    write_tsv(filtered, paste0(groups_fold,"/filtered_DE_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,"/filtered_DE_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".tsv"))
-    if (save_excel) openxlsx::write.xlsx(filtered, file=paste0(groups_fold,"/filtered_DE_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,"/filtered_DE_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".xlsx"),row.names = F)
+    # saving filtered results in different folders by thresholds
+    if (!dir.exists(groups_fold_thresh_up_down)) dir.create(groups_fold_thresh_up_down, recursive = T)
+    write_tsv(filtered, paste0(groups_fold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".tsv"))
+    if (save_excel) openxlsx::write.xlsx(filtered, file = paste0(groups_fold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".xlsx"), row.names = F)
 
-    #saving gene lists
-    write.table(filtered$genes, paste0(groups_fold_thresh_up_down, "/up_down_genes_list_", b, "_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".txt"), quote = F, row.names = F, col.names = F)
+    # saving gene lists
+    write.table(filtered$genes, paste0(groups_fold_thresh_up_down, "/up_down_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt"), quote = F, row.names = F, col.names = F)
 
-    if(!dir.exists(groups_fold_thresh_up)) dir.create(groups_fold_thresh_up, recursive=T)
-    write.table(filtered$genes[filtered$log2FoldChange>0], paste0(groups_fold_thresh_up,"/up_genes_list_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".txt"), quote = F, row.names = F, col.names = F)
+    if (!dir.exists(groups_fold_thresh_up)) dir.create(groups_fold_thresh_up, recursive = T)
+    write.table(filtered$genes[filtered$log2FoldChange > 0], paste0(groups_fold_thresh_up, "/up_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt"), quote = F, row.names = F, col.names = F)
 
-    if(!dir.exists(groups_fold_thresh_down)) dir.create(groups_fold_thresh_down, recursive=T)
-    write.table(filtered$genes[filtered$log2FoldChange<0], paste0(groups_fold_thresh_down,"/down_genes_list_",b,"_vs_",a,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".txt"), quote = F, row.names = F, col.names = F)
+    if (!dir.exists(groups_fold_thresh_down)) dir.create(groups_fold_thresh_down, recursive = T)
+    write.table(filtered$genes[filtered$log2FoldChange < 0], paste0(groups_fold_thresh_down, "/down_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt"), quote = F, row.names = F, col.names = F)
   }
 }

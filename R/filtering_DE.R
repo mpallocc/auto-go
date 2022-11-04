@@ -15,10 +15,12 @@ filtering_DE <- function(padj_threshold = 0.05,
                          where_results = "./",
                          outfolder = "results/",
                          save_excel = FALSE) {
-  all_res <- list.files(path = paste0(where_results, outfolder),
-                        pattern = "_allres.tsv", recursive = TRUE)
+  all_res <- list.files(
+    path = paste0(where_results, outfolder),
+    pattern = "_allres.tsv", recursive = TRUE
+  )
   all_res <- paste0(where_results, outfolder, all_res)
-  readed <- lapply(all_res, function (x) read_tsv(x, col_types = cols()))
+  readed <- lapply(all_res, function(x) read_tsv(x, col_types = cols()))
   names(readed) <- gsub(paste0(where_results, outfolder, "|\\/.*"), "", all_res)
 
   for (files in names(readed)) {
@@ -26,26 +28,24 @@ filtering_DE <- function(padj_threshold = 0.05,
     filtered <- data %>%
       dplyr::filter(.data$padj < padj_threshold & abs(.data$log2FoldChange) > log2FC_threshold)
 
-    groups_fold <- paste0(where_results,outfolder,files,"/filtered_DE_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold)
-    groups_fold_thresh_up_down <- paste0(groups_fold,"/up_down_genes_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold)
-    groups_fold_thresh_up <- paste0(groups_fold,"/up_genes_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold)
-    groups_fold_thresh_down <- paste0(groups_fold,"/down_genes_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold)
+    groups_fold <- paste0(where_results, outfolder, files, "/filtered_DE_", files, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
+    groups_fold_thresh_up_down <- paste0(groups_fold, "/up_down_genes_", files, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
+    groups_fold_thresh_up <- paste0(groups_fold, "/up_genes_", files, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
+    groups_fold_thresh_down <- paste0(groups_fold, "/down_genes_", files, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
 
-    #saving filtered results in different folders by thresholds
-    if(!dir.exists(groups_fold)) dir.create(groups_fold, recursive=T)
-    write_tsv(filtered, paste0(groups_fold,"/filtered_DE_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".tsv"))
-    if (save_excel) openxlsx::write.xlsx(filtered, file=paste0(groups_fold,"/filtered_DE_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".xlsx"),row.names = F)
+    # saving filtered results in different folders by thresholds
+    if (!dir.exists(groups_fold)) dir.create(groups_fold, recursive = T)
+    write_tsv(filtered, paste0(groups_fold, "/filtered_DE_", files, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".tsv"))
+    if (save_excel) openxlsx::write.xlsx(filtered, file = paste0(groups_fold, "/filtered_DE_", files, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".xlsx"), row.names = F)
 
-    #saving gene lists
-    if(!dir.exists(groups_fold_thresh_up_down)) dir.create(groups_fold_thresh_up_down, recursive=T)
-    write.table(filtered$genes, paste0(groups_fold_thresh_up_down, "/up_down_genes_list_", files,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".txt"), quote = F, row.names = F, col.names = F)
+    # saving gene lists
+    if (!dir.exists(groups_fold_thresh_up_down)) dir.create(groups_fold_thresh_up_down, recursive = T)
+    write.table(filtered$genes, paste0(groups_fold_thresh_up_down, "/up_down_genes_list_", files, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt"), quote = F, row.names = F, col.names = F)
 
-    if(!dir.exists(groups_fold_thresh_up)) dir.create(groups_fold_thresh_up, recursive=T)
-    write.table(filtered$genes[filtered$log2FoldChange>0], paste0(groups_fold_thresh_up,"/up_genes_list_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".txt"), quote = F, row.names = F, col.names = F)
+    if (!dir.exists(groups_fold_thresh_up)) dir.create(groups_fold_thresh_up, recursive = T)
+    write.table(filtered$genes[filtered$log2FoldChange > 0], paste0(groups_fold_thresh_up, "/up_genes_list_", files, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt"), quote = F, row.names = F, col.names = F)
 
-    if(!dir.exists(groups_fold_thresh_down)) dir.create(groups_fold_thresh_down, recursive=T)
-    write.table(filtered$genes[filtered$log2FoldChange<0], paste0(groups_fold_thresh_down,"/down_genes_list_",files,"_thFC",log2FC_threshold,"_thPval",padj_threshold,".txt"), quote = F, row.names = F, col.names = F)
-
-
+    if (!dir.exists(groups_fold_thresh_down)) dir.create(groups_fold_thresh_down, recursive = T)
+    write.table(filtered$genes[filtered$log2FoldChange < 0], paste0(groups_fold_thresh_down, "/down_genes_list_", files, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt"), quote = F, row.names = F, col.names = F)
   }
 }

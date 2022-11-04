@@ -2,6 +2,7 @@
 
 export(autoGO)
 export(barplotGO)
+export(choose_database)
 export(deseq_analysis)
 export(filtering_DE)
 export(heatmapGO)

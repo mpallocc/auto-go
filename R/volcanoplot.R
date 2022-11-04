@@ -12,9 +12,8 @@
 #' @param outfolder The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.
 #' @export
 
-volcanoplot <- function (res, my_comparison = NULL, highlight_genes = NULL, log2FC_thresh = 0, padj_thresh = 0.05, del_csv = ",", where_results = "./", outfolder = "results/") {
-
-  if (is.data.frame(res)){
+volcanoplot <- function(res, my_comparison = NULL, highlight_genes = NULL, log2FC_thresh = 0, padj_thresh = 0.05, del_csv = ",", where_results = "./", outfolder = "results/") {
+  if (is.data.frame(res)) {
     res <- res
   } else if (grepl(".tsv", res)) {
     res_path <- res
@@ -25,18 +24,18 @@ volcanoplot <- function (res, my_comparison = NULL, highlight_genes = NULL, log2
   } else if (grepl(".txt")) {
     res_path <- res
     res <- read_delim(res, delim = "\t", col_types = cols())
-  } else if (! is.data.frame(res)) {
+  } else if (!is.data.frame(res)) {
     warning("Provide a file .tsv, .csv, .txt tab-separated, or a data.frame")
   }
   if (is.null(my_comparison)) {
     if (grepl("_vs_", res_path)) {
-      my_comparison <- str_match(res_path, pattern = paste0(outfolder,"(.*?)\\/"))[2]
-      title <- paste0("Volcano Plot for ",gsub("_"," ",my_comparison))
+      my_comparison <- str_match(res_path, pattern = paste0(outfolder, "(.*?)\\/"))[2]
+      title <- paste0("Volcano Plot for ", gsub("_", " ", my_comparison))
     } else {
       title <- paste0("Volcano Plot")
     }
   } else if (!is.null(my_comparison)) {
-    title <- paste0("Volcano Plot for ",gsub("_"," ",my_comparison))
+    title <- paste0("Volcano Plot for ", gsub("_", " ", my_comparison))
   }
 
   volcanoData <- cbind.data.frame(res$log2FoldChange, -log10(res$padj))
@@ -55,71 +54,92 @@ volcanoplot <- function (res, my_comparison = NULL, highlight_genes = NULL, log2
   if (!is.null(highlight_genes)) {
     if (is.data.frame(highlight_genes)) {
       highlight_genes <- dplyr::pull(highlight_genes)
-    } else if (is.character(highlight_genes) & !grepl(".txt", highlight_genes)[1])  {
+    } else if (is.character(highlight_genes) & !grepl(".txt", highlight_genes)[1]) {
       highlight_genes <- highlight_genes
     } else if (grepl(".txt", highlight_genes)) {
-      highlight_genes <- read_delim(highlight_genes, delim = '\t', col_types = cols(), col_names = F) %>% dplyr::pull()
+      highlight_genes <- read_delim(highlight_genes, delim = "\t", col_types = cols(), col_names = F) %>% dplyr::pull()
     }
-    labeled_genes <- volcanoData[rownames(volcanoData) %in% highlight_genes,]
+    labeled_genes <- volcanoData[rownames(volcanoData) %in% highlight_genes, ]
   }
 
   volcanoData$`-log10(padj)`[volcanoData$`-log10(padj)` == Inf] <- max(volcanoData$`-log10(padj)`[is.finite(volcanoData$`-log10(padj)`)])
 
 
   if (abs(round(min(volcanoData$logFC, na.rm = T))) > round(max(volcanoData$logFC, na.rm = T))) {
-    xlim_n <- round(min(volcanoData$logFC, na.rm = T))-1
-    xlim_p <- abs(round(min(volcanoData$logFC, na.rm = T)))+1
+    xlim_n <- round(min(volcanoData$logFC, na.rm = T)) - 1
+    xlim_p <- abs(round(min(volcanoData$logFC, na.rm = T))) + 1
 
     x_high_n <- xlim_n + 10
     x_high_p <- max(volcanoData$logFC, na.rm = T) - 5
-
   } else {
-    xlim_n <- -round(max(volcanoData$logFC, na.rm = T))-1
-    xlim_p <- round(max(volcanoData$logFC, na.rm = T))+1
+    xlim_n <- -round(max(volcanoData$logFC, na.rm = T)) - 1
+    xlim_p <- round(max(volcanoData$logFC, na.rm = T)) + 1
 
-    x_high_n <- min(volcanoData$logFC, na.rm = T)-5
+    x_high_n <- min(volcanoData$logFC, na.rm = T) - 5
     x_high_p <- xlim_p - 10
   }
 
-  p<-ggplot(volcanoData, aes(x=.data$logFC,y=.data$`-log10(padj)`)) +
-    theme_classic()+
-    ggtitle(label = title ,subtitle = paste0("|logFC|>",log2FC_thresh," & padj<",padj_thresh)) +
-    theme(plot.title = element_text(size = (15), face = "bold.italic"),
-          legend.title = element_blank(),
-          legend.position="bottom") +
-    geom_point(aes(colour="Not_DE"), size=0.8) +
-    geom_point(data=volcanoData[rownames(volcanoData) %in% up,],
-               aes(x=.data$logFC,y=.data$`-log10(padj)`, colour="Upregulated"), size=1.5) +
-    geom_point(data=volcanoData[rownames(volcanoData) %in% down,],
-               aes(x=.data$logFC,y=.data$`-log10(padj)`, colour="Downregulated"), size=1.5) +
-    {if (!is.null(highlight_genes)) geom_text_repel(data = subset(labeled_genes, .data$logFC > 0), size=3, segment.size  = 0.15,
-                                                    xlim = c(x_high_p,NA), ylim = c(max(volcanoData$`-log10(padj)`)/3, NA),
-                                                    segment.color = "grey50", direction = "y", box.padding = 1, max.overlaps = 50,
-                                                    aes(x=.data$logFC,y=.data$`-log10(padj)`, label = rownames(subset(labeled_genes, .data$logFC > 0))))} +
-    {if (!is.null(highlight_genes)) geom_text_repel(data = subset(labeled_genes, .data$logFC < 0), size=3, segment.size  = 0.15,
-                                                    xlim = c(NA,x_high_n), ylim = c(max(volcanoData$`-log10(padj)`)/3, NA),
-                                                    segment.color = "grey50",direction = "y", box.padding = 1, max.overlaps = 50,
-                                                    aes(x=.data$logFC,y=.data$`-log10(padj)`, label = rownames(subset(labeled_genes, .data$logFC < 0))))} +
-    {if (!is.null(highlight_genes)) geom_point(data = labeled_genes, pch = 10)} +
+  p <- ggplot(volcanoData, aes(x = .data$logFC, y = .data$`-log10(padj)`)) +
+    theme_classic() +
+    ggtitle(label = title, subtitle = paste0("|logFC|>", log2FC_thresh, " & padj<", padj_thresh)) +
+    theme(
+      plot.title = element_text(size = (15), face = "bold.italic"),
+      legend.title = element_blank(),
+      legend.position = "bottom"
+    ) +
+    geom_point(aes(colour = "Not_DE"), size = 0.8) +
+    geom_point(
+      data = volcanoData[rownames(volcanoData) %in% up, ],
+      aes(x = .data$logFC, y = .data$`-log10(padj)`, colour = "Upregulated"), size = 1.5
+    ) +
+    geom_point(
+      data = volcanoData[rownames(volcanoData) %in% down, ],
+      aes(x = .data$logFC, y = .data$`-log10(padj)`, colour = "Downregulated"), size = 1.5
+    ) +
+    {
+      if (!is.null(highlight_genes)) {
+        geom_text_repel(
+          data = subset(labeled_genes, .data$logFC > 0), size = 3, segment.size = 0.15,
+          xlim = c(x_high_p, NA), ylim = c(max(volcanoData$`-log10(padj)`) / 3, NA),
+          segment.color = "grey50", direction = "y", box.padding = 1, max.overlaps = 50,
+          aes(x = .data$logFC, y = .data$`-log10(padj)`, label = rownames(subset(labeled_genes, .data$logFC > 0)))
+        )
+      }
+    } +
+    {
+      if (!is.null(highlight_genes)) {
+        geom_text_repel(
+          data = subset(labeled_genes, .data$logFC < 0), size = 3, segment.size = 0.15,
+          xlim = c(NA, x_high_n), ylim = c(max(volcanoData$`-log10(padj)`) / 3, NA),
+          segment.color = "grey50", direction = "y", box.padding = 1, max.overlaps = 50,
+          aes(x = .data$logFC, y = .data$`-log10(padj)`, label = rownames(subset(labeled_genes, .data$logFC < 0)))
+        )
+      }
+    } +
+    {
+      if (!is.null(highlight_genes)) geom_point(data = labeled_genes, pch = 10)
+    } +
     scale_fill_continuous(guide = guide_legend()) +
-    scale_color_manual(aesthetics = "colour",values = c("Not_DE"="grey79","Downregulated"="#66C2A5","Upregulated"="#D53E4F"),
-                       breaks = c("Downregulated","Upregulated")) +
+    scale_color_manual(
+      aesthetics = "colour", values = c("Not_DE" = "grey79", "Downregulated" = "#66C2A5", "Upregulated" = "#D53E4F"),
+      breaks = c("Downregulated", "Upregulated")
+    ) +
     geom_vline(xintercept = log2FC_thresh, col = "grey", linetype = "dotted", size = 0.5) +
     geom_vline(xintercept = -log2FC_thresh, col = "grey", linetype = "dotted", size = 0.5) +
-    geom_hline(yintercept = -log10(padj_thresh), col = "grey", linetype = "dotted", size = 0.5)  +
-    scale_y_continuous(expand = expansion(mult = c(0,0.01))) +
-    scale_x_continuous(expand = expansion(mult = c(0.01,0.01)), limits = c(xlim_n, xlim_p))
+    geom_hline(yintercept = -log10(padj_thresh), col = "grey", linetype = "dotted", size = 0.5) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.01))) +
+    scale_x_continuous(expand = expansion(mult = c(0.01, 0.01)), limits = c(xlim_n, xlim_p))
 
-  my_volcano_dir <- paste0(where_results,outfolder,my_comparison,"/filtered_DE_",my_comparison,"_thFC",log2FC_thresh,"_thPval",padj_thresh)
+  my_volcano_dir <- paste0(where_results, outfolder, my_comparison, "/filtered_DE_", my_comparison, "_thFC", log2FC_thresh, "_thPval", padj_thresh)
 
-  if(!dir.exists(my_volcano_dir)) dir.create(my_volcano_dir, recursive=T)
+  if (!dir.exists(my_volcano_dir)) dir.create(my_volcano_dir, recursive = T)
 
   if (!is.null(highlight_genes)) {
-    png(paste0(my_volcano_dir,"/", "volcanoplot_highlighted.png"), width = 2200, height = 2200, res=300)
+    png(paste0(my_volcano_dir, "/", "volcanoplot_highlighted.png"), width = 2200, height = 2200, res = 300)
     print(p)
     dev.off()
   } else {
-    png(paste0(my_volcano_dir,"/", "volcano.png"), width = 2200, height = 2200, res = 300)
+    png(paste0(my_volcano_dir, "/", "volcano.png"), width = 2200, height = 2200, res = 300)
     print(p)
     dev.off()
   }

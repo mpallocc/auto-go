@@ -17,7 +17,7 @@
 
 
 ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
-                           MSigDB_names = c("hgnc","entrez"),
+                           MSigDB_names = c("hgnc", "entrez"),
                            which_gene_set = NULL,
                            write_enrich_tables = FALSE,
                            group = NULL,
@@ -27,7 +27,6 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
                            full_names = FALSE,
                            tpm_norm = FALSE,
                            ensembl = FALSE) {
-
   if (grepl(".tsv", norm_data)[1]) {
     norm_data <- read_tsv(norm_data, col_types = cols())
   } else if (grepl(".csv", norm_data)[1]) {
@@ -43,8 +42,8 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
   }
 
   norm_data <- as.data.frame(norm_data)
-  rownames(norm_data) <- norm_data[,1]
-  norm_data[,1] <- NULL
+  rownames(norm_data) <- norm_data[, 1]
+  norm_data[, 1] <- NULL
 
   if (ensembl) {
     conversion <- conversion_ensembl
@@ -53,7 +52,7 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
     norm_data <- merge(norm_data, all_genes_conversion, by = 0) %>%
       dplyr::select(-.data$Row.names)
 
-    if(sum(duplicated(norm_data$external_gene_name)) != 0) warning("Conversion from ENSEMBL to HGNC has produced ", sum(duplicated(norm_data$external_gene_name)), " duplicated gene names. They are going to be filtered.")
+    if (sum(duplicated(norm_data$external_gene_name)) != 0) warning("Conversion from ENSEMBL to HGNC has produced ", sum(duplicated(norm_data$external_gene_name)), " duplicated gene names. They are going to be filtered.")
 
     norm_data <- norm_data %>%
       dplyr::filter(!duplicated(.data$external_gene_name)) %>%
@@ -67,46 +66,48 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
     norm_data <- norm_data %>%
       dplyr::filter(rownames(norm_data) %in% gene_length$external_gene_name)
 
-    if (!all(gene_length$external_gene_name == rownames(norm_data))) gene_length <- gene_length[match(rownames(norm_data), gene_length$external_gene_name),]
-    gene_length <- gene_length %>% dplyr::select(width) %>% dplyr::pull()
+    if (!all(gene_length$external_gene_name == rownames(norm_data))) gene_length <- gene_length[match(rownames(norm_data), gene_length$external_gene_name), ]
+    gene_length <- gene_length %>%
+      dplyr::select(width) %>%
+      dplyr::pull()
 
-    tpm <- function(counts,len) {
-      x <- counts/len
-      return(t(t(x)*1e6/colSums(x)))
+    tpm <- function(counts, len) {
+      x <- counts / len
+      return(t(t(x) * 1e6 / colSums(x)))
     }
-    norm_data <- tpm(norm_data,gene_length) %>% as.data.frame()
+    norm_data <- tpm(norm_data, gene_length) %>% as.data.frame()
   }
 
-  #read MSignDB genesets
+  # read MSignDB genesets
   custom_file <- function(string) {
     string <- string %>% strsplit("\t")
     names(string) <- sapply(string, function(x) x[1])
-    string <-lapply(string, function(x) x[-c(1,2)])
+    string <- lapply(string, function(x) x[-c(1, 2)])
     string <- stack(string)
     return(string)
   }
 
   if (MSigDB_names == "hgnc") {
-    msigdb_dir = system.file("extdata", "MSigDB", package = "autoGO", mustWork = TRUE)
+    msigdb_dir <- system.file("extdata", "MSigDB", package = "autoGO", mustWork = TRUE)
     gene_sets <- list.files(path = msigdb_dir, pattern = "symbols.gmt", recursive = T, all.files = T, full.names = T)
     sets <- lapply(gene_sets, readLines)
-    names(sets) <- gsub(".*MSigDB/| |\\.all.*","",gene_sets)
-    sets <- lapply(names(sets),function(x) custom_file(sets[[x]]))
-    names(sets) <- gsub(".*MSigDB/| |\\.all.*","",gene_sets)
+    names(sets) <- gsub(".*MSigDB/| |\\.all.*", "", gene_sets)
+    sets <- lapply(names(sets), function(x) custom_file(sets[[x]]))
+    names(sets) <- gsub(".*MSigDB/| |\\.all.*", "", gene_sets)
   } else if (MSigDB_names == "entrez") {
     gene_sets <- list.files(path = msigdb_dir, pattern = "entrez.gmt", recursive = T, all.files = T, full.names = T)
     sets <- lapply(gene_sets, readLines)
-    names(sets) <- gsub(".*MSigDB/| |\\.all.*","",gene_sets)
-    sets <- lapply(names(sets),function(x) custom_file(sets[[x]]))
-    names(sets) <- gsub(".*MSigDB/| |\\.all.*","",gene_sets)
+    names(sets) <- gsub(".*MSigDB/| |\\.all.*", "", gene_sets)
+    sets <- lapply(names(sets), function(x) custom_file(sets[[x]]))
+    names(sets) <- gsub(".*MSigDB/| |\\.all.*", "", gene_sets)
   } else {
     stop("MSigDB_names parameter should be 'hgnc' or 'entrez'.")
   }
 
-  if(!dir.exists(paste0(where_results,outfolder))) dir.create(paste0(where_results,outfolder), recursive=T)
+  if (!dir.exists(paste0(where_results, outfolder))) dir.create(paste0(where_results, outfolder), recursive = T)
 
-  if(!is.null(which_gene_set)) {
-    if (sum(which_gene_set %in% c("c1","c2","c3","c4","c5","c6","c7","c8","h")) != length(which_gene_set)) {
+  if (!is.null(which_gene_set)) {
+    if (sum(which_gene_set %in% c("c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "h")) != length(which_gene_set)) {
       stop("which_gene_set must be one (ore more) of 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'h'.")
     }
     sets <- sets[which_gene_set]
@@ -114,26 +115,26 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
 
   for (gs in names(sets)) {
     assign(gs, split(sets[[gs]], sets[[gs]]$ind), envir = .GlobalEnv)
-    assign(gs, lapply(get(gs), function(x) x <- x[,1]), envir = .GlobalEnv)
+    assign(gs, lapply(get(gs), function(x) x <- x[, 1]), envir = .GlobalEnv)
     assign(paste0("ssgsea_", gs), gsva(as.matrix(norm_data), get(gs), verbose = F, method = "ssgsea"), envir = .GlobalEnv)
   }
 
   variables <- names(as.list(.GlobalEnv))
-  variables <- variables[grepl("ssgsea",variables) & !grepl("wrapper", variables) & grepl(paste(which_gene_set,collapse = "|"), variables)]
+  variables <- variables[grepl("ssgsea", variables) & !grepl("wrapper", variables) & grepl(paste(which_gene_set, collapse = "|"), variables)]
 
   if (write_enrich_tables) {
-    if(!dir.exists(paste0(where_results,outfolder,"tables/"))) dir.create(paste0(where_results,outfolder,"tables/"), recursive=T)
+    if (!dir.exists(paste0(where_results, outfolder, "tables/"))) dir.create(paste0(where_results, outfolder, "tables/"), recursive = T)
     for (var in variables) {
-      write.table(get(var), paste0(where_results,outfolder,"tables/",var, "_EnrichmentScore.tsv"), sep = "\t", quote = F, col.names = NA, row.names = T)
+      write.table(get(var), paste0(where_results, outfolder, "tables/", var, "_EnrichmentScore.tsv"), sep = "\t", quote = F, col.names = NA, row.names = T)
     }
   }
 
-  if (!is.null(group)){
+  if (!is.null(group)) {
     if (!is.data.frame(group)[1] & grepl(".txt", group)[1]) {
-      group <- read_delim(group, delim = '\t', col_types = cols())
+      group <- read_delim(group, delim = "\t", col_types = cols())
     } else if (is.data.frame(group)) {
       group <- group
-      } else {
+    } else {
       stop("Provide a data.frame or a .txt file for group variable.")
     }
 
@@ -141,58 +142,63 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
 
     for (gs in variables) {
       data <- get(gs)
-      group1 <- data[,group_class[[1]][[1]]]
-      group2 <- data[,group_class[[2]][[1]]]
+      group1 <- data[, group_class[[1]][[1]]]
+      group2 <- data[, group_class[[2]][[1]]]
 
       table <- data.frame()
       for (x in rownames(data)) {
-        w_res <- wilcox.test(as.numeric(group1[x,]),as.numeric(group2[x,]))
-        t_res <- t.test(as.numeric(group1[x,]),as.numeric(group2[x,]))
-        tb <- data.frame(GeneSet=x, wilcoxon=w_res$p.value, t_test=t_res$p.value,
-                         mean_group1 = t_res$estimate[["mean of x"]],
-                         mean_group2 = t_res$estimate[["mean of y"]])
+        w_res <- wilcox.test(as.numeric(group1[x, ]), as.numeric(group2[x, ]))
+        t_res <- t.test(as.numeric(group1[x, ]), as.numeric(group2[x, ]))
+        tb <- data.frame(
+          GeneSet = x, wilcoxon = w_res$p.value, t_test = t_res$p.value,
+          mean_group1 = t_res$estimate[["mean of x"]],
+          mean_group2 = t_res$estimate[["mean of y"]]
+        )
         table <- rbind.data.frame(table, tb)
       }
       table$w_adj <- p.adjust(table$wilcoxon, method = "BH")
       table$t_adj <- p.adjust(table$t_test, method = "BH")
 
-      colnames(table)[grep("group1", colnames(table))] <- paste0("mean_",names(group_class)[1])
-      colnames(table)[grep("group2", colnames(table))] <- paste0("mean_",names(group_class)[2])
+      colnames(table)[grep("group1", colnames(table))] <- paste0("mean_", names(group_class)[1])
+      colnames(table)[grep("group2", colnames(table))] <- paste0("mean_", names(group_class)[2])
 
       table <- table %>% dplyr::arrange(.data$w_adj)
 
-      write.table(table, paste0(where_results,outfolder,"tables/",gsub("ssgsea_","",gs),"_stats_",
-                                names(group_class)[1], "_vs_", names(group_class)[2],".txt"),
-                  quote = F, sep = "\t", row.names = F)
+      write.table(table, paste0(
+        where_results, outfolder, "tables/", gsub("ssgsea_", "", gs), "_stats_",
+        names(group_class)[1], "_vs_", names(group_class)[2], ".txt"
+      ),
+      quote = F, sep = "\t", row.names = F
+      )
       sign <- table$GeneSet[(table$wilcoxon <= 0.05 | table$t_test <= 0.05)]
       if (length(sign) >= 20) {
-        #sign <- table$GeneSet[(table$wilcoxon <= 0.01 | table$t_test <= 0.01)]
+        # sign <- table$GeneSet[(table$wilcoxon <= 0.01 | table$t_test <= 0.01)]
         sign <- table$GeneSet[1:20]
       }
 
       group1 <- group1 %>%
         as.data.frame() %>%
         tibble::rownames_to_column(var = "geneset") %>%
-        tidyr::pivot_longer(cols = -.data$geneset,names_to = "pat") %>%
+        tidyr::pivot_longer(cols = -.data$geneset, names_to = "pat") %>%
         dplyr::mutate(group = names(group_class)[1])
 
       group2 <- group2 %>%
         as.data.frame() %>%
         tibble::rownames_to_column(var = "geneset") %>%
-        tidyr::pivot_longer(cols = -.data$geneset,names_to = "pat") %>%
+        tidyr::pivot_longer(cols = -.data$geneset, names_to = "pat") %>%
         dplyr::mutate(group = names(group_class)[2])
 
-      df <- rbind.data.frame(group1,group2) %>%
+      df <- rbind.data.frame(group1, group2) %>%
         dplyr::filter(.data$geneset %in% sign)
 
-      if(!dir.exists(paste0(where_results,outfolder,"plots/"))) dir.create(paste0(where_results,outfolder,"plots/"), recursive=T)
+      if (!dir.exists(paste0(where_results, outfolder, "plots/"))) dir.create(paste0(where_results, outfolder, "plots/"), recursive = T)
 
       if (!full_names) {
-        cod <- data.frame(Term = unique(df$geneset), Term_ID = paste0("TERM_",1:length(unique(df$geneset))))
-        write.table(cod,paste0(where_results,outfolder,"plots/codified_term_",gsub("ssgsea_","",gs), ".txt"), sep = "\t", quote = F, row.names = F)
+        cod <- data.frame(Term = unique(df$geneset), Term_ID = paste0("TERM_", 1:length(unique(df$geneset))))
+        write.table(cod, paste0(where_results, outfolder, "plots/codified_term_", gsub("ssgsea_", "", gs), ".txt"), sep = "\t", quote = F, row.names = F)
         df <- df %>%
-          dplyr::left_join(cod, by = c("geneset"="Term")) %>%
-          dplyr::mutate(Term_ID = factor(.data$Term_ID ,levels = paste0("TERM_",1:length(unique(df$geneset)))))
+          dplyr::left_join(cod, by = c("geneset" = "Term")) %>%
+          dplyr::mutate(Term_ID = factor(.data$Term_ID, levels = paste0("TERM_", 1:length(unique(df$geneset)))))
       } else if (full_names) {
         df <- df %>%
           dplyr::mutate(Term_ID = .data$geneset) %>%
@@ -200,55 +206,61 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
       }
 
       mycolors <- colorRampPalette(RColorBrewer::brewer.pal(8, "Set2"))(length(unique(df$Term_ID)))
-      p<-ggplot(data = df, aes(x = .data$Term_ID, y = .data$value)) +
-        geom_violin(aes(fill=.data$Term_ID), show.legend = F, trim = F, scale = "width")+
-        stat_summary(fun=median, geom="point", size=1, color="black", shape=18) +
-        theme_bw()+
-        labs(x="",y="Enrichment Score",title = paste0("Distribution of significative genesets for ", toupper(gsub("ssgsea_","",gs))))+
-        theme(legend.position = "top", legend.margin = margin(0,0,0,0,"lines"),
-              axis.text.x = element_text(angle = 45, hjust = 1)) +
+      p <- ggplot(data = df, aes(x = .data$Term_ID, y = .data$value)) +
+        geom_violin(aes(fill = .data$Term_ID), show.legend = F, trim = F, scale = "width") +
+        stat_summary(fun = median, geom = "point", size = 1, color = "black", shape = 18) +
+        theme_bw() +
+        labs(x = "", y = "Enrichment Score", title = paste0("Distribution of significative genesets for ", toupper(gsub("ssgsea_", "", gs)))) +
+        theme(
+          legend.position = "top", legend.margin = margin(0, 0, 0, 0, "lines"),
+          axis.text.x = element_text(angle = 45, hjust = 1)
+        ) +
         scale_fill_manual(values = mycolors)
-      png(paste0(where_results,outfolder,"plots/","distrib_",gsub("ssgsea_","",gs),".png"), width = 4000, height = 2500, res = 300)
+      png(paste0(where_results, outfolder, "plots/", "distrib_", gsub("ssgsea_", "", gs), ".png"), width = 4000, height = 2500, res = 300)
       print(p)
       dev.off()
 
-      #heatmap
+      # heatmap
       group <- group %>% dplyr::arrange(1)
 
       if (!full_names) {
-        filt <- data[sign,group[[1]]] %>%
+        filt <- data[sign, group[[1]]] %>%
           as.data.frame() %>%
           tibble::rownames_to_column(var = "geneset") %>%
-          dplyr::left_join(cod, by = c("geneset"="Term")) %>%
+          dplyr::left_join(cod, by = c("geneset" = "Term")) %>%
           dplyr::mutate(Term_ID = factor(.data$Term_ID, levels = paste0("TERM_", 1:length(unique(df$geneset))))) %>%
           textshape::column_to_rownames(loc = "Term_ID") %>%
           dplyr::select(-.data$geneset)
       } else if (full_names) {
-        filt <- data[sign,group[[1]]] %>%
+        filt <- data[sign, group[[1]]] %>%
           as.data.frame()
       }
 
       z_filt <- t(scale(t(filt)))
       head(z_filt)
 
-      Var <- setNames(c("#446455","#FDD262"), unique(group[[2]]))
+      Var <- setNames(c("#446455", "#FDD262"), unique(group[[2]]))
 
-      ha <- HeatmapAnnotation(df = group[[2]], show_annotation_name = F,
-                              annotation_legend_param = list(df = list(title = " ")),
-                              col = list(df = Var))
-      ht <- Heatmap(z_filt, top_annotation = ha,
-                       column_title = paste0("Distribution of significative genesets for ",gsub("ssgsea_","",gs)),
-                       col = RColorBrewer::brewer.pal(9, "PuRd"),
-                       column_names_rot = 45, heatmap_legend_param = list(title_position='leftcenter-rot'),
-                       name = "zscore(ES)", show_row_dend = F,rect_gp = gpar(col = "white", lwd = 0.5))
+      ha <- HeatmapAnnotation(
+        df = group[[2]], show_annotation_name = F,
+        annotation_legend_param = list(df = list(title = " ")),
+        col = list(df = Var)
+      )
+      ht <- Heatmap(z_filt,
+        top_annotation = ha,
+        column_title = paste0("Distribution of significative genesets for ", gsub("ssgsea_", "", gs)),
+        col = RColorBrewer::brewer.pal(9, "PuRd"),
+        column_names_rot = 45, heatmap_legend_param = list(title_position = "leftcenter-rot"),
+        name = "zscore(ES)", show_row_dend = F, rect_gp = gpar(col = "white", lwd = 0.5)
+      )
 
-      png(paste0(where_results,outfolder,"plots/","heatmap_",gsub("ssgsea_","",gs),".png"), width = 3000, height = 3000, res = 300)
-      draw(ht, heatmap_legend_side='left', annotation_legend_side = "left", merge_legends = T)
+      png(paste0(where_results, outfolder, "plots/", "heatmap_", gsub("ssgsea_", "", gs), ".png"), width = 3000, height = 3000, res = 300)
+      draw(ht, heatmap_legend_side = "left", annotation_legend_side = "left", merge_legends = T)
       dev.off()
     }
   } else {
     print("Plots will be generated with the top 15 TERMS ordered by mean for sample.")
-    for (gs in variables){
+    for (gs in variables) {
       data <- get(gs)
       ordered <- apply(data, 1, mean) %>% as.data.frame()
       colnames(ordered) <- "Mean"
@@ -259,14 +271,14 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
         tibble::rownames_to_column(var = "geneset") %>%
         dplyr::filter(.data$geneset %in% rownames(ordered)[1:15])
 
-      if(!dir.exists(paste0(where_results,outfolder,"plots/"))) dir.create(paste0(where_results,outfolder,"plots/"), recursive=T)
+      if (!dir.exists(paste0(where_results, outfolder, "plots/"))) dir.create(paste0(where_results, outfolder, "plots/"), recursive = T)
 
       if (!full_names) {
-        cod <- data.frame(Term = unique(data$geneset), Term_ID = paste0("TERM_",1:length(unique(data$geneset))))
-        write.table(cod,paste0(where_results,outfolder,"plots/codified_term_",gsub("ssgsea_","",gs), ".txt"), sep = "\t", quote = F, row.names = F)
+        cod <- data.frame(Term = unique(data$geneset), Term_ID = paste0("TERM_", 1:length(unique(data$geneset))))
+        write.table(cod, paste0(where_results, outfolder, "plots/codified_term_", gsub("ssgsea_", "", gs), ".txt"), sep = "\t", quote = F, row.names = F)
         df <- data %>%
-          dplyr::left_join(cod, by = c("geneset"="Term")) %>%
-          dplyr::mutate(Term_ID = factor(.data$Term_ID ,levels = paste0("TERM_",1:length(unique(data$geneset))))) %>%
+          dplyr::left_join(cod, by = c("geneset" = "Term")) %>%
+          dplyr::mutate(Term_ID = factor(.data$Term_ID, levels = paste0("TERM_", 1:length(unique(data$geneset))))) %>%
           dplyr::select(-.data$geneset) %>%
           tidyr::pivot_longer(cols = -.data$Term_ID)
       } else if (full_names) {
@@ -278,14 +290,16 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
 
       mycolors <- colorRampPalette(RColorBrewer::brewer.pal(8, "Set2"))(length(unique(df$Term_ID)))
       p <- ggplot(data = df, aes(x = .data$Term_ID, y = .data$value)) +
-        geom_violin(aes(fill=.data$Term_ID), show.legend = F, trim = F, scale = "width")+
-        stat_summary(fun=median, geom="point", size=1, color="black", shape=18) +
+        geom_violin(aes(fill = .data$Term_ID), show.legend = F, trim = F, scale = "width") +
+        stat_summary(fun = median, geom = "point", size = 1, color = "black", shape = 18) +
         theme_bw() +
-        labs(x="",y="Enrichment Score",title = paste0("Distribution of significative genesets for ", toupper(gsub("ssgsea_","",gs))))+
-        theme(legend.position = "top", legend.margin = margin(0, 0, 0, 0, "lines"),
-              axis.text.x = element_text(angle = 45, hjust = 1)) +
+        labs(x = "", y = "Enrichment Score", title = paste0("Distribution of significative genesets for ", toupper(gsub("ssgsea_", "", gs)))) +
+        theme(
+          legend.position = "top", legend.margin = margin(0, 0, 0, 0, "lines"),
+          axis.text.x = element_text(angle = 45, hjust = 1)
+        ) +
         scale_fill_manual(values = mycolors)
-      png(paste0(where_results, outfolder,"plots/distrib_",gsub("ssgsea_","",gs),".png"), width = 4000, height = 2500, res = 300)
+      png(paste0(where_results, outfolder, "plots/distrib_", gsub("ssgsea_", "", gs), ".png"), width = 4000, height = 2500, res = 300)
       print(p)
       dev.off()
 
@@ -294,8 +308,8 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
       if (!full_names) {
         data <- data %>%
           as.data.frame() %>%
-          dplyr::left_join(cod, by = c("geneset"="Term")) %>%
-          dplyr::mutate(Term_ID = factor(.data$Term_ID ,levels = paste0("TERM_",1:length(unique(data$geneset))))) %>%
+          dplyr::left_join(cod, by = c("geneset" = "Term")) %>%
+          dplyr::mutate(Term_ID = factor(.data$Term_ID, levels = paste0("TERM_", 1:length(unique(data$geneset))))) %>%
           textshape::column_to_rownames(loc = "Term_ID") %>%
           dplyr::select(-.data$geneset)
       } else if (full_names) {
@@ -312,14 +326,15 @@ ssgsea_wrapper <- function(norm_data = "results/deseq_vst_data.txt",
       }
 
 
-      ht<-Heatmap(z_data,
-                       column_title = paste0("Distribution of significative genesets for ",gsub("ssgsea_","",gs)),
-                       col = RColorBrewer::brewer.pal(9, "PuRd"),
-                       column_names_rot = 45, heatmap_legend_param = list(title_position='leftcenter-rot'),
-                       name = "zscore(ES)", show_row_dend = F,rect_gp = gpar(col = "white", lwd = 0.5))
+      ht <- Heatmap(z_data,
+        column_title = paste0("Distribution of significative genesets for ", gsub("ssgsea_", "", gs)),
+        col = RColorBrewer::brewer.pal(9, "PuRd"),
+        column_names_rot = 45, heatmap_legend_param = list(title_position = "leftcenter-rot"),
+        name = "zscore(ES)", show_row_dend = F, rect_gp = gpar(col = "white", lwd = 0.5)
+      )
 
-      png(paste0(where_results,outfolder,"plots/heatmap_",gsub("ssgsea_","",gs),".png"), width = 3000, height = 3000, res = 300)
-      draw(ht, heatmap_legend_side='left')
+      png(paste0(where_results, outfolder, "plots/heatmap_", gsub("ssgsea_", "", gs), ".png"), width = 3000, height = 3000, res = 300)
+      draw(ht, heatmap_legend_side = "left")
       dev.off()
     }
   }

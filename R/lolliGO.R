@@ -13,7 +13,6 @@ lolliGO <- function(enrich_table,
                     my_comparison = NULL,
                     where_results = "./",
                     outfolder = "results/") {
-
   if (is.data.frame(enrich_table)) {
     enrich_table <- enrich_table
   } else if (grepl(".tsv", enrich_table)) {
@@ -23,10 +22,11 @@ lolliGO <- function(enrich_table,
 
   pattern <- paste0(where_results, outfolder, "(.*?)\\/")
   if (is.null(my_comparison)) {
-      my_analysis <- str_match(enrich_table_path,
-                               pattern = pattern)[2]
-      dbs <- gsub(".*\\/|\\.tsv", "", enrich_table_path)
-      path_to_save <- paste0(gsub("_tables.*", "", enrich_table_path), "_plots")
+    my_analysis <- str_match(enrich_table_path,
+      pattern = pattern
+    )[2]
+    dbs <- gsub(".*\\/|\\.tsv", "", enrich_table_path)
+    path_to_save <- paste0(gsub("_tables.*", "", enrich_table_path), "_plots")
   } else if (!is.null(my_comparison)) {
     my_analysis <- str_match(my_comparison, pattern = pattern)[2]
     if (grepl("\\/", my_comparison)) {
@@ -39,13 +39,13 @@ lolliGO <- function(enrich_table,
   }
 
   if (grepl("/down_genes", path_to_save)) {
-    title <- paste0(gsub("_"," ",dbs), " for Down Regulated Genes")
+    title <- paste0(gsub("_", " ", dbs), " for Down Regulated Genes")
     subtitle <- ifelse(is.na(gsub("_", " ", my_analysis)), "", gsub("_", " ", my_analysis))
   } else if (grepl("up_genes", path_to_save)) {
-    title <- paste0(gsub("_"," ",dbs), " for Up Regulated Genes")
+    title <- paste0(gsub("_", " ", dbs), " for Up Regulated Genes")
     subtitle <- ifelse(is.na(gsub("_", " ", my_analysis)), "", gsub("_", " ", my_analysis))
   } else if (grepl("up_down_genes", path_to_save)) {
-    title <- paste0(gsub("_"," ",dbs), " for all DE Genes")
+    title <- paste0(gsub("_", " ", dbs), " for all DE Genes")
     subtitle <- ifelse(is.na(gsub("_", " ", my_analysis)), "", gsub("_", " ", my_analysis))
   } else {
     title <- ifelse(is.na(gsub("_", " ", dbs)), "", gsub("_", " ", dbs))
@@ -55,32 +55,37 @@ lolliGO <- function(enrich_table,
   enrich_table <- enrich_table %>%
     dplyr::arrange(.data$Adjusted.P.value, .data$Term) %>%
     dplyr::slice(1:20) %>%
-    tidyr::extract(.data$Overlap,into = c("gene_counts", "gene_total"), regex = "([0-9]+)\\/([0-9]+)") %>%
-    type_convert(col_types = cols(gene_counts = col_double(),gene_total = col_double())) %>%
-    dplyr::mutate(Term = gsub("\\(GO.*", "", .data$Term),
-           `-log10(Adjusted.P.value)` = -log10(.data$`Adjusted.P.value`),
-           percent = round(.data$gene_counts / .data$gene_total, digits = 2),
-           percent = ifelse(.data$percent > 0.4, 0.4, .data$percent))
+    tidyr::extract(.data$Overlap, into = c("gene_counts", "gene_total"), regex = "([0-9]+)\\/([0-9]+)") %>%
+    type_convert(col_types = cols(gene_counts = col_double(), gene_total = col_double())) %>%
+    dplyr::mutate(
+      Term = gsub("\\(GO.*", "", .data$Term),
+      `-log10(Adjusted.P.value)` = -log10(.data$`Adjusted.P.value`),
+      percent = round(.data$gene_counts / .data$gene_total, digits = 2),
+      percent = ifelse(.data$percent > 0.4, 0.4, .data$percent)
+    )
 
   breaks <- round(seq(min(enrich_table$gene_counts), max(enrich_table$gene_counts), length.out = 6))
 
   ggplot(enrich_table, aes(x = .data$`-log10(Adjusted.P.value)`, reorder(.data$Term, .data$`Adjusted.P.value`))) +
     ggtitle(label = title, subtitle = subtitle) +
-    geom_segment(aes(xend=0, yend = .data$Term)) +
-    geom_point(aes(color=.data$percent, size = .data$gene_counts)) +
-    scale_color_viridis_c(guide=guide_colorbar(reverse=TRUE), option = "plasma", breaks = seq(0,0.4,0.1), limits = c(0,0.4), labels = c("0 %","10 %","20 %","30 %","> 40 %")) +
-    scale_size_continuous(range = c(5,12), breaks = breaks) +
+    geom_segment(aes(xend = 0, yend = .data$Term)) +
+    geom_point(aes(color = .data$percent, size = .data$gene_counts)) +
+    scale_color_viridis_c(guide = guide_colorbar(reverse = TRUE), option = "plasma", breaks = seq(0, 0.4, 0.1), limits = c(0, 0.4), labels = c("0 %", "10 %", "20 %", "30 %", "> 40 %")) +
+    scale_size_continuous(range = c(5, 12), breaks = breaks) +
     theme_minimal() +
-    scale_x_continuous(expand = expansion(mult = c(0.02,0.05)))+
+    scale_x_continuous(expand = expansion(mult = c(0.02, 0.05))) +
     labs(x = "-log10(adjp_val)", y = "") +
-    geom_vline(xintercept = -log10(0.05), size = 1, colour = "#e09696", linetype="longdash")+
-    theme(title = element_text(size = 23),  plot.background = element_rect(fill = "#ffffff"),
-          axis.text=element_text(size=18), axis.title = element_text(size = 20),
-          axis.title.x = element_text(margin = margin(t = 30, r = 0, b = 0, l = 0))) +
-    guides(colour = guide_colourbar(title = "Percentage", order = 1, title.position = "top", title.theme = element_text(size = 15), label.vjust = 0.5, label.theme = element_text(size = 12), ticks.colour = "black"),
-           size = guide_legend(title = "Counts", order = 2, title.position = "top", title.theme = element_text(size = 15), reverse = T, label.theme = element_text(size = 12)))
+    geom_vline(xintercept = -log10(0.05), size = 1, colour = "#e09696", linetype = "longdash") +
+    theme(
+      title = element_text(size = 23), plot.background = element_rect(fill = "#ffffff"),
+      axis.text = element_text(size = 18), axis.title = element_text(size = 20),
+      axis.title.x = element_text(margin = margin(t = 30, r = 0, b = 0, l = 0))
+    ) +
+    guides(
+      colour = guide_colourbar(title = "Percentage", order = 1, title.position = "top", title.theme = element_text(size = 15), label.vjust = 0.5, label.theme = element_text(size = 12), ticks.colour = "black"),
+      size = guide_legend(title = "Counts", order = 2, title.position = "top", title.theme = element_text(size = 15), reverse = T, label.theme = element_text(size = 12))
+    )
 
-  if (!dir.exists(path_to_save)) dir.create(path_to_save, recursive=T)
-  ggsave(filename=paste0(path_to_save,"lolliGO_",dbs,".png"), plot=last_plot(), width = unit(20,'cm'), height = unit(10,'cm'))
-
+  if (!dir.exists(path_to_save)) dir.create(path_to_save, recursive = T)
+  ggsave(filename = paste0(path_to_save, "lolliGO_", dbs, ".png"), plot = last_plot(), width = unit(20, "cm"), height = unit(10, "cm"))
 }
