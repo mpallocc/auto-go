@@ -24,8 +24,9 @@ read_gene_list <- function(gene_lists_path = "./results",
                            from_DE_analysis = TRUE,
                            files_format = ".txt") {
   if (from_DE_analysis) {
-    gene_lists_files <- list.files(path = gene_lists_path, pattern = ".*genes_list_.*.txt", recursive = TRUE, full.names = TRUE)
-    to_read <- gene_lists_files[grepl(pattern = paste0("thFC", log2FC_threshold, "_thPval", padj_threshold), gene_lists_path)]
+     gene_lists_files <- list.files(path = gene_lists_path, pattern = ".*genes_list_.*.txt", recursive = TRUE, full.names = TRUE)
+     to_read <- gene_lists_files[grepl(pattern = paste0("thFC", log2FC_threshold, "_thPval", padj_threshold), gene_lists_files)]
+
   } else if (!from_DE_analysis) {
     gene_lists_files <- list.files(path = gene_lists_path, pattern = files_format, recursive = TRUE, full.names = TRUE)
     to_read <- gene_lists_files
@@ -42,9 +43,9 @@ read_gene_list <- function(gene_lists_path = "./results",
     to_read <- to_read
   }
 
+
   gene_lists <- lapply(to_read, function(x) read.table(x, header = FALSE, sep = "\n"))
-  #names(gene_lists) <- dirname(gsub(paste0(gene_lists_path, "|.txt"), "", to_read))
-  names(gene_lists) <- tools::file_path_sans_ext(basename(to_read))
+  names(gene_lists) <- tools::file_path_sans_ext(to_read)
 
   return(gene_lists)
 }

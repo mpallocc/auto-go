@@ -14,6 +14,9 @@ lolliGO <- function(enrich_table,
                     where_results = "./",
                     outfolder = "results/") {
   if (is.data.frame(enrich_table)) {
+      if (is.null(my_comparison)) {
+          stop("If enrich_table is a dataframe you must specify my comparison.")
+      }
     enrich_table <- enrich_table
   } else if (grepl(".tsv", enrich_table)) {
     enrich_table_path <- enrich_table

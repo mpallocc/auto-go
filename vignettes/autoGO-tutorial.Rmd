@@ -4,9 +4,11 @@ author:
   name: "Isabella Grassucci"
   affiliation: "IRCSS Regina Elena National Cancer Institute, Rome"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output:
-  html_document:
-    df_print: paged
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{AutoGO: Reproducible, Robust and High Quality Ontology Enrichment Visualizations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 
 ---
 
@@ -26,7 +28,7 @@ The whole workflow includes: Differential Expression Analysis with the employmen
 The autoGO package can be directly installed from github.
 ```{r, message=FALSE, warning=FALSE}
 library(devtools)
-#install_github("mpallocc/auto-go", ref = "add-tutorial-vignette", force = T)
+#install_github("mpallocc/auto-go", ref = "develop", force = T)
 install(".")
 library(autoGO)
 ```
@@ -49,7 +51,7 @@ deseq_analysis(counts,
                groups,
                comparisons,
                padj_threshold = 0.05,
-               log2FC_threshold = 1,
+               log2FC_threshold = 0,
                pre_filtering = T,
                save_excel = F,
                where_results = "./", 
@@ -101,7 +103,7 @@ It allows to filter the Differential Expression Analysis results directly from t
 
 ```{r}
 filtering_DE(padj_threshold=0.05, 
-             log2FC_threshold=0, 
+             log2FC_threshold=1, 
              where_results = "./", 
              outfolder = "results/", 
              save_excel = F)
@@ -116,7 +118,7 @@ The function searches inside the folders *where_results* and *outfolder* the fil
 filename <- "./results/H460.2D_vs_H460.3D.2p/DE_H460.2D_vs_H460.3D.2p_allres.tsv"
 volcanoplot(res = filename, 
             my_comparison = "H460.2D_vs_H460.3D.2p",
-            log2FC_thresh = 1, 
+            log2FC_thresh = 0, 
             padj_thresh = 0.05,
             highlight_genes = NULL,
             del_csv = ",",
@@ -151,25 +153,16 @@ names(res_lists) <- gsub("results/|/DE_.*", "",all_path_res)
 invisible(lapply(names(res_lists), function (i) volcanoplot(res_lists[[i]], my_comparison = i)))
 ```
 
-It is also possible to call the function in a for loop in order to realize volcano plots with different threshold, for example:
-```{r}
-for (th in c(1,2,3)) {
-  lapply(names(res_lists), function (i) volcanoplot(res_lists[[i]], my_comparison = i, log2FC_thresh = th))
-}
-```
 
 #### Workflow:
 If the user does not provide *my_comparison* (default: NULL), the function will extract the name of the first subfolder inside "results/" and employ it.
-
-
-#########################################################
 
 
 ## Choose of database
 This function allows the user to search over all the Enrichr databases on which it is possible to perform the enrichment analysis. In this way the user is able to select only the databases for which it is interested for the downstream analysis.
 
 ```{r}
-choose_database(db_search = "GO")
+choose_database(db_search = "KEGG")
 ```
 
 #### Parameters:
@@ -190,9 +183,12 @@ list_of_genes <- read_gene_list(gene_lists_path = gene_lists_path,
                which_list = "down_genes",#,"down_genes","up_down_genes","everything"),
                from_DE_analysis = T,
                files_format = NULL)
+names(list_of_genes)
 ```
 
 #### Parameters:
+
+* *gene_list_path* : TO DO: IT HAS TO BE THE PARENT FOLDER OF THE LIST??? NO, CAN'T BE A FOLDER (SOLVED)
 
 * *where_results* : specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
 
@@ -217,13 +213,14 @@ The function allows to load in a variable all the gene lists on which the enrich
 To perform the enrichment analysis on all the desired gene lists the function *autoGO.R* is required. This function take advantage of the *enrichR* package.
 
 ```{r}
-autoGO(list_of_genes = list_of_genes$down_genes_list_H460.2D_vs_H460.3D.2p_thFC0_thPval0.05, 
-       dbs = c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human"), 
-       my_comparison = "H460.2D_vs_H460.3D.2p", 
-       ensembl = F,
-       excel = F, 
-       where_results = "./", 
-       outfolder = "results/")
+gene_list <- list_of_genes$`./results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/down_genes/down_genes_list_H460.2D_vs_H460.3D.2p_thFC0_thPval0.05`
+autoGO(list_of_genes = gene_list, 
+      dbs = c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human"), 
+      my_comparison = "H460.2D_vs_H460.3D.2p", 
+      ensembl = F,
+      excel = F, 
+      where_results = "./", 
+      outfolder = "results/")
 ```
 
 #### Parameters:
@@ -245,10 +242,19 @@ _
 * *my_autoGO_dir*: where have you cloned the auto-go repository, default is your home directory "~/"
 
 
-If there are more lists on which to perform the enrichment analysis it is suggested to proceed with the following approach:
+If there are more lists on which to perform the enrichment analysis it is suggested to proceed with the following 
+approach:
+
 ```{r}
-gene_list <- read_gene_list(which_list = "down_genes")
+gene_list <- read_gene_list(gene_lists_path = "./results/", log2FC_threshold = 0, from_DE_analysis = T, which_list = "down_genes")
+names(gene_list)
 lapply(names(gene_list), function (i) autoGO(gene_list[[i]], my_comparison = i))
+```
+
+
+```{r}
+#gene_list <- read_gene_list(gene_lists_path = "./results/", from_DE_analysis = T, which_list = "down_genes")
+#lapply(names(gene_list), function (i) autoGO(gene_list[[i]], my_comparison = i))
 ```
 
 #### Workflow:
@@ -268,6 +274,15 @@ read_enrich_tables(where_results = "./",
                    from_DE_analysis = T,
                    where_files = NULL,
                    files_format = NULL)
+```
+
+```{r}
+#TO DO: test read_enrich_table
+enrich_table_path <- "./results/H460.2D_vs_H460.3D.SM/"
+enrich_tables <- read_enrich_tables(enrich_table_path = enrich_table_path,log2FC_threshold = 0,
+                   padj_threshold = 0.05, which_list = "down_genes", from_DE_analysis = T,
+                   where_files = NULL, files_format = NULL)
+names(enrich_tables)
 ```
 
 #### Parameters:
@@ -297,10 +312,12 @@ Auto-GO allows the user to choose which plot to produce and then it will make th
 ## Barplot
 The function *barplotGO.R* implement the barplot of the first 15 enrichment terms.
 
+
 ```{r}
-filename <- "./results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_tables/GO_Biological_Process_2021.tsv"
-barplotGO(enrich_table = filename,  
-          my_comparison = "H460.2D_vs_H460.3D.2p", 
+#TO DO: test read_enrich_table
+enrich_table <- enrich_tables$`./results/H460.2D_vs_H460.3D.SM/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_tables/GO_Biological_Process_2021`
+barplotGO(enrich_table = enrich_table,  
+          my_comparison = "H460.2D_vs_H460.3D.SM", 
           where_results = "./", 
           outfolder = "results/")
 ```
@@ -318,8 +335,10 @@ barplotGO(enrich_table = filename,
 
 If there are more lists on which the enrichment has been performed it is suggested to proceed with the following approach:
 ```{r}
-enrich_list <- read_enrich_tables(which_list = "everything")
-lapply(names(enrich_list), function (i) barplotGO(enrich_list[[i]], my_comparison = i))
+#TO DO: test read_enrich_table
+enrich_list <- read_enrich_tables(enrich_table_path = "results/", which_list = "down_genes")
+names(enrich_list)
+lapply(names(enrich_list), function (i) {barplotGO(enrich_list[[i]], my_comparison = i)})
 
 ```
 
@@ -334,11 +353,12 @@ For each enrichment result table a barplot is produced. Results are stored in th
 The function *lolliGO.R* implement the lollipop plot of the first 20 enrichment terms.
 
 ```{r}
-filename <- "./results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_tables/GO_Biological_Process_2021.tsv"
+TO DO: test read_enrich_table
+filename <- enrich_table$"./results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_tables/GO_Biological_Process_2021.tsv"
 lolliGO(enrich_table = filename,  
-        my_comparison = "H460.2D_vs_H460.3D.2p",
-        where_results = "./", 
-        outfolder = "results/")
+          my_comparison = "H460.2D_vs_H460.3D.2p", 
+          where_results = "./", 
+          outfolder = "results/")
 ```
 
 #### Parameters:
@@ -368,6 +388,7 @@ For each enrichment result table a lollipop plot is produced. Results are stored
 ## HeatmapGO
 If the analysis has been performed on more conditions it is interest to have a look at the difference in the enrichment results between the groups. This can be performed by *heatmapGO.R*.
 ```{r}
+TO DO: enrich_tables_path instead of wr and of, but yet keep wr and of for the output
 heatmapGO(lib, 
           where_results = "./",
           outfolder = "results/", 

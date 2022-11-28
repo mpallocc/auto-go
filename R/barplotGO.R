@@ -14,6 +14,9 @@ barplotGO <- function(enrich_table,
                       where_results = "./",
                       outfolder = "results/") {
   if (is.data.frame(enrich_table)) {
+      if (is.null(my_comparison)) {
+          stop("If enrich_table is a dataframe you must specify my comparison.")
+      }
     enrich_table <- enrich_table
   } else if (grepl(".tsv", enrich_table)) {
     enrich_table_path <- enrich_table
@@ -24,7 +27,7 @@ barplotGO <- function(enrich_table,
     my_analysis <- str_match(enrich_table_path, pattern = paste0(where_results, outfolder, "(.*?)\\/"))[2]
     dbs <- gsub(".*\\/|\\.tsv", "", enrich_table_path)
     path_to_save <- paste0(gsub("_tables.*", "", enrich_table_path), "_plots")
-  } else if (!is.null(my_comparison)) {
+  } else {
     my_analysis <- str_match(my_comparison, pattern = paste0(where_results, outfolder, "(.*?)\\/"))[2]
     if (grepl("\\/", my_comparison)) {
       dbs <- gsub(".*\\/", "", my_comparison)
