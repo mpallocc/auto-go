@@ -12,7 +12,8 @@
 #' @export
 
 
-read_enrich_tables <- function(where_results = "./",
+read_enrich_tables <- function(enrich_table_path = "./results/",
+                                where_results = "./",
                                outfolder = "results/",
                                log2FC_threshold = 0,
                                padj_threshold = 0.05,
@@ -25,34 +26,35 @@ read_enrich_tables <- function(where_results = "./",
                                from_DE_analysis = TRUE,
                                where_files = NULL,
                                files_format = NULL) {
-  enrich_lists_path <- list.files(path = paste0(where_results, outfolder), recursive = T)
-  enrich_lists_path <- paste0(where_results, outfolder, enrich_lists_path)
-  enrich_lists_path <- enrich_lists_path[!grepl(pattern = ".xlsx", enrich_lists_path)]
-  enrich_lists_path <- enrich_lists_path[grepl(pattern = "enrichment_tables", enrich_lists_path)]
+  enrich_lists_path <- list.files(path = enrich_table_path, recursive = T)
+  enrich_lists_path <- paste0(enrich_table_path, enrich_lists_path)
+  enrich_lists_path <- enrich_lists_path[!grepl(pattern = ".xlsx", x = enrich_lists_path)]
+  enrich_lists_path <- enrich_lists_path[grepl(pattern = "enrichment_tables", x = enrich_lists_path)]
 
   if (from_DE_analysis) {
     to_read <- enrich_lists_path[grepl(pattern = paste0("thFC", log2FC_threshold, "_thPval", padj_threshold), enrich_lists_path)]
   } else if (!from_DE_analysis) {
     if (is.null(where_files)) stop("Required parameter: 'where_files' for path of enrichment tables.")
     if (is.null(files_format)) stop("Required parameter: 'files_format' for extension of enrichment tables, should be like '.txt' or '.tsv', etc.")
-    enrich_lists_path <- list.files(path = where_files, pattern = files_format, recursive = T)
-    enrich_lists_path <- paste0(where_files, enrich_lists_path)
+    enrich_lists_path <- list.files(path = enrich_table_path, pattern = files_format, recursive = T)
+    #enrich_lists_path <- paste0(where_files, enrich_lists_path)
     to_read <- enrich_lists_path
     which_list <- "everything"
   }
 
   if (which_list == "up_down_genes") {
-    to_read <- to_read[grepl(pattern = "up_down_genes", to_read)]
+    to_read <- to_read[grepl(pattern = "/up_down_genes", to_read)]
   } else if (which_list == "up_genes") {
-    to_read <- to_read[grepl(pattern = "up_genes", to_read)]
+    to_read <- to_read[grepl(pattern = "/up_genes", to_read)]
   } else if (which_list == "down_genes") {
     to_read <- to_read[grepl(pattern = "/down_genes", to_read)]
   } else if (which_list == "everything") {
     to_read <- to_read
   }
 
-  readed <- lapply(to_read, function(x) read_tsv(x, col_types = cols()))
-  names(readed) <- gsub(".tsv", "", to_read)
+  enrich_tables <- lapply(to_read, function(x) read_tsv(x, col_types = cols()))
+  names(enrich_tables) <- tools::file_path_sans_ext(to_read)
+  #names(readed) <- gsub(".tsv", "", to_read)
 
-  return(readed)
+  return(enrich_tables)
 }

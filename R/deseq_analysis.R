@@ -156,7 +156,7 @@ deseq_analysis <- function(counts,
 
     # saving filtered results in different folders by thresholds
     if (!dir.exists(groups_fold_thresh_up_down)) dir.create(groups_fold_thresh_up_down, recursive = T)
-    write_tsv(filtered, paste0(groups_fold_thresh_up_down, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".tsv"))
+    write_tsv(filtered, paste0(groups_fold_filtered, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".tsv"))
     if (save_excel) openxlsx::write.xlsx(filtered, file = paste0(groups_fold_thresh_up_down, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".xlsx"), row.names = F)
 
     # saving gene lists
