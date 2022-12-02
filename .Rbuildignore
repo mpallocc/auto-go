@@ -2,3 +2,5 @@
 ^auto-go.code-workspace$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+results/
+vignettes/results/

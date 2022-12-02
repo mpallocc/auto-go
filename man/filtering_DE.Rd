@@ -6,7 +6,7 @@
 \usage{
 filtering_DE(
   padj_threshold = 0.05,
-  log2FC_threshold = 0,
+  log2FC_threshold = 1,
   where_results = "./",
   outfolder = "results/",
   save_excel = FALSE

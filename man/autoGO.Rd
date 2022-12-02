@@ -10,27 +10,24 @@
 autoGO(
   list_of_genes,
   dbs = c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human"),
-  my_comparison,
+  my_comparison = NULL,
   ensembl = FALSE,
   excel = FALSE,
-  where_results = "./",
-  outfolder = "results/"
+  outfolder = NULL
 )
 }
 \arguments{
-\item{list_of_genes}{it can be a list of dataframe (i.e. the output of read_gene_list()), a vector or a dataframe containing a list of genes or a path to the .txt file.}
+\item{list_of_genes}{it can be a list of dataframes containing gene names (i.e. from the output of read_gene_lists()), a single dataframe or character vector of gene names, or a path to a .txt file containing one gene name per row.}
 
 \item{dbs}{Databases over which the enrichment will be performed, based on the enrichR libraries. Default are GO_Molecular_Function_2021, GO_Cellular_Component_2021, GO_Biological_Process_2021, KEGG_2021_Human.}
 
-\item{my_comparison}{Name of the comparison the user would like to inspect.}
+\item{my_comparison}{Name of the comparison the user would like to inspect. Ignored if list_of_genes is a list.}
 
 \item{ensembl}{(Default = FALSE). Set to TRUE if the provided gene list contains Ensembl IDs. A conversion to HGNC will be performed.}
 
 \item{excel}{(Default = FALSE). Set to TRUE if you want to save output tables in .xlsx format.}
 
-\item{where_results}{Specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.}
-
-\item{outfolder}{The name to assign to the folder in which outputs are saved. Default is: "results/". NOTE: please add "/" at the end.}
+\item{outfolder}{The name to assign to the folder in which outputs are saved. Ignored if list_of_genes is a list.}
 }
 \description{
 Auto-GO is a framework that enables automated, high quality Gene Ontology enrichment analyses visualizations. It also features a handy wrapper for Differential Expression analysis around the DESeq2 package (Love et. al 2014) and a handy wrapper around the single-sample implementation of the GSEA algorithm (ssGSEA), useful for low-numerosity transcriptional profiles. The whole framework is structured in different, independent functions, in order to let the user decide which steps of the analysis perform and which plot to produce.

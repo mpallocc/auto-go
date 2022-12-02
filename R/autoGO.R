@@ -1,13 +1,12 @@
 #' @title autoGO
 #'
 #' @description Perform enrichment analysis on all the desired gene lists. This function take advantage of the 'enrichR' package.
-#' @param list_of_genes it can be a list of dataframe (i.e. the output of read_gene_list()), a vector or a dataframe containing a list of genes or a path to the .txt file.
+#' @param list_of_genes it can be a list of dataframes containing gene names (i.e. from the output of read_gene_lists()), a single dataframe or character vector of gene names, or a path to a .txt file containing one gene name per row.
 #' @param dbs Databases over which the enrichment will be performed, based on the enrichR libraries. Default are GO_Molecular_Function_2021, GO_Cellular_Component_2021, GO_Biological_Process_2021, KEGG_2021_Human.
-#' @param my_comparison Name of the comparison the user would like to inspect.
+#' @param my_comparison Name of the comparison the user would like to inspect. Ignored if list_of_genes is a list.
 #' @param ensembl (Default = FALSE). Set to TRUE if the provided gene list contains Ensembl IDs. A conversion to HGNC will be performed.
 #' @param excel (Default = FALSE). Set to TRUE if you want to save output tables in .xlsx format.
-#' @param where_results Specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
-#' @param outfolder The name to assign to the folder in which outputs are saved. Default is: "results/". NOTE: please add "/" at the end.
+#' @param outfolder The name to assign to the folder in which outputs are saved. Ignored if list_of_genes is a list.
 #' @export
 
 
@@ -17,21 +16,78 @@ autoGO <- function(list_of_genes,
                      "GO_Biological_Process_2021",
                      "KEGG_2021_Human"
                    ),
-                   my_comparison,
+                   my_comparison = NULL,
                    ensembl = FALSE,
                    excel = FALSE,
-                   where_results = "./",
-                   outfolder = "results/") {
+                   outfolder = NULL) {
+  if (!is.data.frame(list_of_genes) && is.list(list_of_genes)) {
+    # a list of data frames, with each containing gene names.
+    # this is the preferred option and the name of the list
+    # is used to derive the output path.
+
+    if (!is.null(my_comparison) || !is.null(outfolder)) {
+      warning("when providing a list of dataframes from read_gene_lists, my_comparison as well as outfolder will be derived from the path and any user-supplied values, will be ignored.")
+    }
+
+    invisible(lapply(
+      names(list_of_genes),
+      function(df_metadata) {
+        # for each data frame of the list, run autoGO separately.
+        # the results will be put in separated directories according
+        # to the `names` as stored in the list
+        set_of_genes <- list_of_genes[[df_metadata]]
+        do_autogo(
+          list_of_genes = set_of_genes,
+          dbs = dbs,
+          my_comparison = "",
+          ensembl = ensembl,
+          excel = excel,
+          outfolder = dirname(df_metadata)
+        )
+      }
+    ))
+  } else {
+    invisible(do_autogo(
+      list_of_genes = list_of_genes,
+      dbs = dbs,
+      my_comparison = my_comparison,
+      ensembl = ensembl,
+      excel = excel,
+      outfolder = outfolder
+    ))
+  }
+}
+
+do_autogo <- function(list_of_genes,
+                      dbs,
+                      my_comparison,
+                      ensembl,
+                      excel,
+                      outfolder) {
   if (is.data.frame(list_of_genes)) {
+    if (is.null(outfolder)) {
+      stop("The output folder must be specified, unless the output of read_gene_lists is used")
+    }
+    # a data frame of gene names
     list_of_genes <- list_of_genes %>% dplyr::pull()
   } else if (is.character(list_of_genes) & !grepl(".txt", list_of_genes)[1]) {
+    if (is.null(outfolder)) {
+      stop("The output folder must be specified, unless the output of read_gene_lists is used")
+    }
+    # a character vector of gene names
     list_of_genes <- list_of_genes
   } else if (grepl(".txt", list_of_genes)) {
+    if (is.null(outfolder)) {
+      stop("The output folder must be specified, unless the output of read_gene_lists is used")
+    }
+    # a file, tab-delimited, where each row contains a gene name
     list_of_genes <- read_delim(list_of_genes,
       delim = "\t",
       col_types = cols(),
       col_names = FALSE
     ) %>% dplyr::pull()
+  } else {
+    stop("list_of_genes parameter not valid: should be either a list of data.frames, a data.frame, a character vector or a .txt file")
   }
 
   if (ensembl) {
@@ -48,18 +104,13 @@ autoGO <- function(list_of_genes,
     enriched[[i]] <- enriched[[i]][order(enriched[[i]]$Adjusted.P.value), ]
   })
 
-  if (!grepl("\\./results/", my_comparison)) {
-    my_path <- paste0(where_results, outfolder, my_comparison, "/enrichment_tables/")
-    if (!dir.exists(my_path)) dir.create(my_path, recursive = T)
-  } else {
-    my_path <- paste0(gsub("[^\\/]+$", "", my_comparison), "/enrichment_tables/")
-    if (!dir.exists(my_path)) dir.create(my_path, recursive = T)
-  }
+  my_path <- file.path(outfolder, my_comparison, "enrichment_tables")
+  if (!dir.exists(my_path)) dir.create(my_path, recursive = T)
 
   invisible(lapply(seq_along(enriched), function(ind) {
     if (dim(enriched[[ind]])[1] > 0) {
-      if (excel) openxlsx::write.xlsx(enriched[[ind]], file = paste0(my_path, names(enriched)[ind], ".xlsx"), row.names = F)
-      write.table(enriched[[ind]], sep = "\t", quote = F, file = paste0(my_path, names(enriched)[ind], ".tsv"), row.names = F)
+      if (excel) openxlsx::write.xlsx(enriched[[ind]], file = file.path(my_path, paste0(names(enriched)[ind], ".xlsx")), row.names = F)
+      write.table(enriched[[ind]], sep = "\t", quote = F, file = file.path(my_path, paste0(names(enriched)[ind], ".tsv")), row.names = F)
     }
   }))
 }

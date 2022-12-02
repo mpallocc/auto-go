@@ -5,7 +5,7 @@
 \title{Volcano Plot}
 \usage{
 volcanoplot(
-  res,
+  DE_results,
   my_comparison = NULL,
   highlight_genes = NULL,
   log2FC_thresh = 0,
@@ -16,7 +16,7 @@ volcanoplot(
 )
 }
 \arguments{
-\item{res}{DESeq2 results table. Accepts both a file (.tsv, .csv, tab-separated .txt) or a dataframe (see example below). Requires 'log2FoldChange' and 'padj' columns.}
+\item{DE_results}{DESeq2 results table. Accepts both a file (.tsv, .csv, tab-separated .txt) or a dataframe (see example below). Requires 'log2FoldChange' and 'padj' columns.}
 
 \item{my_comparison}{The comparison to plot (control_vs_treatment, a_vs_b, ...).}
 

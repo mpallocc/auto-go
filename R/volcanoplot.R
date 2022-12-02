@@ -12,11 +12,18 @@
 #' @param outfolder The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.
 #' @export
 
-volcanoplot <- function(DE_results, my_comparison = NULL, highlight_genes = NULL, log2FC_thresh = 0, padj_thresh = 0.05, del_csv = ",", where_results = "./", outfolder = "results/") {
+volcanoplot <- function(DE_results,
+                        my_comparison = NULL,
+                        highlight_genes = NULL,
+                        log2FC_thresh = 0,
+                        padj_thresh = 0.05,
+                        del_csv = ",",
+                        where_results = "./",
+                        outfolder = "results/") {
   if (is.data.frame(DE_results)) {
     if (is.null(my_comparison)) {
-         stop("If DE results is a dataframe you must specify my comparison.")
-      }
+      stop("If DE results is a dataframe you must specify my comparison.")
+    }
     res <- DE_results
   } else if (grepl(".tsv", DE_results)) {
     res_path <- DE_results

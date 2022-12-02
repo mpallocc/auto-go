@@ -4,21 +4,16 @@
 \alias{barplotGO}
 \title{barplotGO}
 \usage{
-barplotGO(
-  enrich_table,
-  my_comparison = NULL,
-  where_results = "./",
-  outfolder = "results/"
-)
+barplotGO(enrich_tables, title = NULL, outfolder = NULL, from_autoGO = TRUE)
 }
 \arguments{
-\item{enrich_table}{Dataframe containing the enrichment results or a path to your .tsv file containing the enrichment results. Columns 'Term' and 'Adjusted.P.Value' are required.}
+\item{enrich_tables}{Dataframe containing the enrichment results or a path to your .tsv file containing the enrichment results. Columns 'Term' and 'Adjusted.P.Value' are required.}
 
-\item{my_comparison}{Name of the comparison the user would like to inspect.}
+\item{title}{Default to NULL. When enrich_tables is not from autoGO and thus from read_enrich_tables, the user can specify title and subtitle of the plot as 2-element character vector, for example: c("This is the title", "this is the subtitle")}
 
-\item{where_results}{Specify the folder in which you want to save outputs. (Default = "./"). Note: if you are working with R Notebooks the default working directory (if not specified) is the folder in which the .Rmd is saved.}
+\item{outfolder}{The name to assign to the folder for output saving. (Default = "enrichment_plots").}
 
-\item{outfolder}{The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.}
+\item{from_autoGO}{Default is TRUE, set to FALSE if the enrichment tables you want to use are not from a differential expression analysis.}
 }
 \description{
 The function barplotGO.R implement the barplot of the first 15 enrichment terms.

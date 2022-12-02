@@ -2,54 +2,95 @@
 #'
 #' @description The function barplotGO.R implement the barplot of the first 15 enrichment terms.
 #' @description For each enrichment result table a barplot is produced. Results are stored in the "enrichment_plots" subfolder for each comparison.
-#' @param enrich_table Dataframe containing the enrichment results or a path to your .tsv file containing the enrichment results. Columns 'Term' and 'Adjusted.P.Value' are required.
-#' @param my_comparison Name of the comparison the user would like to inspect.
-#' @param where_results Specify the folder in which you want to save outputs. (Default = "./"). Note: if you are working with R Notebooks the default working directory (if not specified) is the folder in which the .Rmd is saved.
-#' @param outfolder The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.
+#' @param enrich_tables Dataframe containing the enrichment results or a path to your .tsv file containing the enrichment results. Columns 'Term' and 'Adjusted.P.Value' are required.
+#' @param title Default to NULL. When enrich_tables is not from autoGO and thus from read_enrich_tables, the user can specify title and subtitle of the plot as 2-element character vector, for example: c("This is the title", "this is the subtitle")
+#' @param outfolder The name to assign to the folder for output saving. (Default = "enrichment_plots").
+#' @param from_autoGO Default is TRUE, set to FALSE if the enrichment tables you want to use are not from a differential expression analysis.
 #' @export
 
 
-barplotGO <- function(enrich_table,
-                      my_comparison = NULL,
-                      where_results = "./",
-                      outfolder = "results/") {
-  if (is.data.frame(enrich_table)) {
-      if (is.null(my_comparison)) {
-          stop("If enrich_table is a dataframe you must specify my comparison.")
-      }
-    enrich_table <- enrich_table
-  } else if (grepl(".tsv", enrich_table)) {
-    enrich_table_path <- enrich_table
-    enrich_table <- read_delim(enrich_table, delim = "\t", col_types = cols())
-  }
+barplotGO <- function(enrich_tables,
+                      title = NULL,
+                      outfolder = NULL,
+                      from_autoGO = TRUE) {
+  if (!is.data.frame(enrich_tables) && is.list(enrich_tables)) {
+    # a list of data frames, with each containing an enrich table.
+    # this is the preferred option and the name of the list
+    # is used to derive the output path.
 
-  if (is.null(my_comparison)) {
-    my_analysis <- str_match(enrich_table_path, pattern = paste0(where_results, outfolder, "(.*?)\\/"))[2]
-    dbs <- gsub(".*\\/|\\.tsv", "", enrich_table_path)
-    path_to_save <- paste0(gsub("_tables.*", "", enrich_table_path), "_plots")
-  } else {
-    my_analysis <- str_match(my_comparison, pattern = paste0(where_results, outfolder, "(.*?)\\/"))[2]
-    if (grepl("\\/", my_comparison)) {
-      dbs <- gsub(".*\\/", "", my_comparison)
-      path_to_save <- paste0(gsub("_tables.*", "", my_comparison), "_plots/")
-    } else if (!grepl("\\/", my_comparison)) {
-      dbs <- NULL
-      path_to_save <- paste0("./", my_analysis, "/enrichment_plots/")
+    if (from_autoGO && (!is.null(title) || !is.null(outfolder))) {
+      stop("when providing a list of dataframes generated from autoGO pipeline, title as well as outfolder will be derived from the path and any user-supplied values, will be ignored.")
+    } else if (!from_autoGO && (is.null(title) || is.null(outfolder))) {
+      stop("when providing a list of dataframes not generated from autoGO pipeline, title as well as outfolder must be specified")
     }
-  }
 
-  if (grepl("/down_genes", path_to_save)) {
-    title <- paste0(gsub("_", " ", dbs), " for Down Regulated Genes")
-    subtitle <- ifelse(is.na(gsub("_", " ", my_analysis)), "", gsub("_", " ", my_analysis))
-  } else if (grepl("up_genes", path_to_save)) {
-    title <- paste0(gsub("_", " ", dbs), " for Up Regulated Genes")
-    subtitle <- ifelse(is.na(gsub("_", " ", my_analysis)), "", gsub("_", " ", my_analysis))
-  } else if (grepl("up_down_genes", path_to_save)) {
-    title <- paste0(gsub("_", " ", dbs), " for all DE Genes")
-    subtitle <- ifelse(is.na(gsub("_", " ", my_analysis)), "", gsub("_", " ", my_analysis))
+    invisible(lapply(
+      names(enrich_tables),
+      function(df_metadata) {
+        # for each data frame of the list, run barplot separately.
+        # the results will be put in separated directories according
+        # to the `names` as stored in the list
+
+        if (from_autoGO) {
+          # example of a path:
+          # "./results/MCF7.3D.2p_vs_MCF7.3D.SM/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_tables/KEGG_2021_Human"
+          # PS: don't hate us :'(
+
+          my_comparison <- basename(dirname(dirname(dirname(dirname(df_metadata)))))
+          db <- basename(df_metadata)
+          outfolder <- file.path(dirname(dirname(df_metadata)), "enrichment_plots")
+
+          # the path must include information about up/down regulated genes
+          # example of a title:
+          # GO Biological Process 2021 for Up Regulated Genes (db and gene set)
+          # H460 2D vs H460 3D (comparison)
+          if (grepl("/down_genes", df_metadata)) {
+            title <- paste0(gsub("_", " ", db), " for Down Regulated Genes")
+            subtitle <- ifelse(is.na(gsub("_", " ", my_comparison)), "", gsub("_", " ", my_comparison))
+          } else if (grepl("/up_genes", df_metadata)) {
+            title <- paste0(gsub("_", " ", db), " for Up Regulated Genes")
+            subtitle <- ifelse(is.na(gsub("_", " ", my_comparison)), "", gsub("_", " ", my_comparison))
+          } else if (grepl("/up_down_genes", df_metadata)) {
+            title <- paste0(gsub("_", " ", db), " for all DE Genes")
+            subtitle <- ifelse(is.na(gsub("_", " ", my_comparison)), "", gsub("_", " ", my_comparison))
+          } else {
+            title <- ifelse(is.na(gsub("_", " ", db)), "", gsub("_", " ", db))
+            subtitle <- ifelse(is.na(gsub("_", " ", my_comparison)), "", gsub("_", " ", my_comparison))
+          }
+
+          title <- c(title, subtitle)
+        }
+
+        enrich_table <- enrich_tables[[df_metadata]]
+        do_barplotGO(
+          enrich_table = enrich_table,
+          title = title,
+          outfolder = outfolder
+        )
+      }
+    ))
   } else {
-    title <- ifelse(is.na(gsub("_", " ", dbs)), "", gsub("_", " ", dbs))
-    subtitle <- ifelse(is.na(gsub("_", " ", my_analysis)), "", gsub("_", " ", my_analysis))
+    if (is.null(title)) {
+      stop("must specify a title (as a vector of character strings c(title, subtitle)")
+    } else if (is.null(outfolder)) {
+      stop("must specify outfolder")
+    }
+
+    do_barplotGO(
+      enrich_table = enrich_tables,
+      title = title,
+      outfolder = outfolder
+    )
+  }
+}
+
+do_barplotGO <- function(enrich_table, title, outfolder) {
+  if (is.character(enrich_table) &&
+    file.exists(enrich_table) &&
+    tools::file_ext(enrich_table) == "tsv") {
+    # load file and overwrite variable
+
+    enrich_table <- read_delim(enrich_table, delim = "\t", col_types = cols())
   }
 
   enrich_table <- enrich_table %>%
@@ -63,7 +104,7 @@ barplotGO <- function(enrich_table,
   ggplot(data = enrich_table, aes(x = reorder(.data$Term, .data$`-log10(Adjusted.P.value)`), y = .data$`-log10(Adjusted.P.value)`)) +
     geom_bar(stat = "identity", fill = "#91bbdb", width = 0.5) +
     theme_minimal() +
-    ggtitle(title, subtitle = subtitle) +
+    ggtitle(title[1], subtitle = title[2]) +
     geom_hline(yintercept = -log10(0.05), size = 1, colour = "#e09696", linetype = "longdash") +
     scale_y_continuous(expand = c(0, 0)) +
     coord_flip() +
@@ -75,7 +116,7 @@ barplotGO <- function(enrich_table,
       axis.title.y = element_text(margin = margin(t = 0, r = 30, b = 0, l = 0))
     )
 
-  if (!dir.exists(path_to_save)) dir.create(path_to_save, recursive = T)
+  if (!dir.exists(outfolder)) dir.create(outfolder, recursive = T)
 
-  ggsave(filename = paste0(path_to_save, "barplotGO_", dbs, ".png"), plot = last_plot(), width = unit(25, "cm"), height = unit(10, "cm"))
+  ggsave(filename = file.path(outfolder, "barplotGO.png"), plot = last_plot(), width = unit(25, "cm"), height = unit(10, "cm"))
 }

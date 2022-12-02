@@ -70,9 +70,9 @@ heatmapGO <- function(lib,
   })
 
   complete_table <- purrr::reduce(dd, dplyr::full_join, by = "Term") %>%
-    replace(is.na(.), 1) %>%
+    dplyr::mutate(dplyr::across(is.na, tidyr::replace_na, 1)) %>%
     dplyr::rename_with(~ gsub("up_genes/|down_genes/", "", .x)) %>%
-    dplyr::filter_all(dplyr::any_vars(. <= padj_threshold)) %>%
+    dplyr::filter_all(dplyr::any_vars(.data <= padj_threshold)) %>%
     dplyr::mutate(Term = gsub("\\(GO.*", "", .data$Term)) %>%
     dplyr::mutate(dplyr::across(where(is.numeric), ~ (-1 * log10(.x)))) %>%
     textshape::column_to_rownames(loc = "Term")
