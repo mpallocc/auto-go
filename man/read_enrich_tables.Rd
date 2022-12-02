@@ -5,20 +5,16 @@
 \title{Read enrichment results from tables}
 \usage{
 read_enrich_tables(
-  where_results = "./",
-  outfolder = "results/",
+  enrich_table_path = "./results",
   log2FC_threshold = 0,
   padj_threshold = 0.05,
   which_list = c("up_genes", "down_genes", "up_down_genes", "everything"),
-  from_DE_analysis = TRUE,
-  where_files = NULL,
+  from_autoGO = TRUE,
   files_format = NULL
 )
 }
 \arguments{
-\item{where_results}{Specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.}
-
-\item{outfolder}{The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.}
+\item{enrich_table_path}{Specify the full path to the folder where enrichment tables have to read from (all fitting files in any subdirectory will be loaded).}
 
 \item{log2FC_threshold}{Threshold value for log2(Fold Change) for considering genes as differentially expressed (default = 0).}
 
@@ -26,9 +22,7 @@ read_enrich_tables(
 
 \item{which_list}{One of c("up_genes","down_genes","up_down_genes","everything"). Select a list of genes to perform the enrichment. Respectively, only up regulated genes (up_genes), only down regulated genes (down_genes), both up and down regulated genes (up_down_genes), or everything allow to load all the three kind of lists separately.}
 
-\item{from_DE_analysis}{Default is TRUE, set to FALSE if the lists you want to upload are not from a differential expression analysis.}
-
-\item{where_files}{Default is NULL, when from_DE_analysis = T it is mandatory to provide a path to specify where the list of genes are.}
+\item{from_autoGO}{Default is TRUE, set to FALSE if the lists you want to upload are not from a differential expression analysis.}
 
 \item{files_format}{Default is NULL, when from_DE_analysis = T it is mandatory to provide the extension of the list of genes you want to upload.}
 }
