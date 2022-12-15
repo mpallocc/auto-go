@@ -4,7 +4,7 @@
 #' @param enrich_table_path Specify the full path to the folder where enrichment tables have to read from (all fitting files in any subdirectory will be loaded).
 #' @param log2FC_threshold Threshold value for log2(Fold Change) for considering genes as differentially expressed (default = 0).
 #' @param padj_threshold Threshold value for adjusted p-value significance (Defaults to 0.05).
-#' @param which_list One of c("up_genes","down_genes","up_down_genes","everything"). Select a list of genes to perform the enrichment. Respectively, only up regulated genes (up_genes), only down regulated genes (down_genes), both up and down regulated genes (up_down_genes), or everything allow to load all the three kind of lists separately.
+#' @param which_list It can be: "up_genes","down_genes","up_down_genes","everything". Select a list of genes to perform the enrichment. Respectively, only up regulated genes (up_genes), only down regulated genes (down_genes), both up and down regulated genes (up_down_genes), or (everything) allow to load all the three kind of lists separately and it is employed also for lists not from differential analysis.
 #' @param from_autoGO Default is TRUE, set to FALSE if the lists you want to upload are not from a differential expression analysis.
 #' @param files_format Default is NULL, when from_DE_analysis = T it is mandatory to provide the extension of the list of genes you want to upload.
 #' @export
