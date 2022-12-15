@@ -8,7 +8,6 @@
 #' @param log2FC_thresh Threshold value for log2(Fold Change) to highlight genes as differentially expressed (default = 0).
 #' @param padj_thresh Threshold value for adjusted p-value to highlight genes as  significant (default = 0.05).
 #' @param del_csv Specify the delimiter of the .csv file (default = ","). This is because opening .csv files with Excel messes up the format and changes the delimiter to ";".
-#' @param where_results Specify the folder in which you want to save outputs. (Default = "./"). Note: if you are working with R Notebooks the default working directory (if not specified) is the folder in which the .Rmd is saved.
 #' @param outfolder The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.
 #' @export
 
@@ -18,8 +17,7 @@ volcanoplot <- function(DE_results,
                         log2FC_thresh = 0,
                         padj_thresh = 0.05,
                         del_csv = ",",
-                        where_results = "./",
-                        outfolder = "results/") {
+                        outfolder = "./results") {
   if (is.data.frame(DE_results)) {
     if (is.null(my_comparison)) {
       stop("If DE results is a dataframe you must specify my comparison.")
@@ -140,7 +138,7 @@ volcanoplot <- function(DE_results,
     scale_y_continuous(expand = expansion(mult = c(0, 0.01))) +
     scale_x_continuous(expand = expansion(mult = c(0.01, 0.01)), limits = c(xlim_n, xlim_p))
 
-  my_volcano_dir <- paste0(where_results, outfolder, my_comparison, "/filtered_DE", "_thFC", log2FC_thresh, "_thPval", padj_thresh)
+  my_volcano_dir <- file.path(outfolder, my_comparison, paste0("filtered_DE", "_thFC", log2FC_thresh, "_thPval", padj_thresh))
 
   if (!dir.exists(my_volcano_dir)) dir.create(my_volcano_dir, recursive = T)
 

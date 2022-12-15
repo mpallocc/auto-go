@@ -9,7 +9,6 @@
 #' @param log2FC_threshold Threshold value for log2(Fold Change) for considering genes as differentially expressed.
 #' @param pre_filtering Removes genes which sum in the raw counts is less than 10 (Default = TRUE).
 #' @param save_excel Allows to save all the output tables in .xlsx format (Default = FALSE).
-#' @param where_results Specify the folder in which you want to save outputs. (Default = "./"). Note: if you are working with R Notebooks the default working directory (if not specified) is the folder in which the .Rmd is saved.
 #' @param outfolder The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.
 #' @param del_csv Specify the delimiter of the .csv file, default is ",". This is because opening .csv files with Excel messes up the format and changes the delimiter in ";".
 #' @examples
@@ -30,8 +29,7 @@ deseq_analysis <- function(counts,
                            log2FC_threshold = 0,
                            pre_filtering = TRUE,
                            save_excel = FALSE,
-                           where_results = "./",
-                           outfolder = "results/",
+                           outfolder = "./results/",
                            del_csv = ",") {
   if (grepl(".tsv", counts)[1]) {
     counts <- read_delim(counts, col_types = cols(), delim = "\t")
@@ -99,11 +97,11 @@ deseq_analysis <- function(counts,
   vsd <- varianceStabilizingTransformation(dds, blind = T)
   vst <- SummarizedExperiment::assay(vsd)
 
-  if (!dir.exists(paste0(where_results, outfolder))) {
-    dir.create(paste0(where_results, outfolder), recursive = T)
+  if (!dir.exists(outfolder)) {
+    dir.create((outfolder), recursive = T)
   }
-  write.table(cc, paste0(where_results, outfolder, "deseq_norm_data.txt"), quote = F, sep = "\t", row.names = T, col.names = NA)
-  write.table(vst, paste0(where_results, outfolder, "deseq_vst_data.txt"), quote = F, sep = "\t", row.names = T, col.names = NA)
+  write.table(cc, file.path(outfolder, "deseq_norm_data.txt"), quote = F, sep = "\t", row.names = T, col.names = NA)
+  write.table(vst, file.path(outfolder, "deseq_vst_data.txt"), quote = F, sep = "\t", row.names = T, col.names = NA)
 
   group_list <- split(groups, groups[[2]])
   for (i in seq(dim(comparisons)[1])) {
@@ -140,7 +138,7 @@ deseq_analysis <- function(counts,
       dplyr::filter(rr$padj < padj_threshold & abs(rr$log2FoldChange) > log2FC_threshold)
 
     # generating folders
-    groups_fold <- paste0(where_results, outfolder, b, "_vs_", a)
+    groups_fold <- file.path(outfolder, paste0(b, "_vs_", a))
     groups_fold_filtered <- paste0(groups_fold, "/filtered_DE", "_thFC", log2FC_threshold, "_thPval", padj_threshold)
     groups_fold_thresh_up_down <- paste0(groups_fold_filtered, "/up_down_genes")
     groups_fold_thresh_up <- paste0(groups_fold_filtered, "/up_genes")

@@ -29,8 +29,8 @@ The autoGO package can be directly installed from github.
 ```{r, message=FALSE, warning=FALSE}
 library(devtools)
 # FIXME restore this before release
-install_github("mpallocc/auto-go", ref = "develop", force = T)
-#install(".")
+#install_github("mpallocc/auto-go", ref = "develop", force = T)
+install(".")
 library(autoGO)
 ```
 
@@ -54,8 +54,8 @@ deseq_analysis(counts,
                log2FC_threshold = 0,
                pre_filtering = T,
                save_excel = F,
-               where_results = "./",
-               outfolder = "results/",
+               #where_results = "./",
+               outfolder = "./results",
                del_csv = ",")
 ```
 
@@ -123,8 +123,8 @@ volcanoplot(DE_results = filename,
             padj_thresh = 0.05,
             highlight_genes = NULL,
             del_csv = ",",
-            where_results = "./",
-            outfolder = "results/")
+            #where_results = "./",
+            outfolder = "./results")
 ```
 
 #### Parameters:
