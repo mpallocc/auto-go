@@ -29,8 +29,8 @@ The autoGO package can be directly installed from github.
 ```{r, message=FALSE, warning=FALSE}
 library(devtools)
 # FIXME restore this before release
-#install_github("mpallocc/auto-go", ref = "develop", force = T)
-install(".")
+install_github("mpallocc/auto-go", ref = "develop", force = T)
+#install(".")
 library(autoGO)
 ```
 
@@ -218,7 +218,9 @@ autoGO(list_of_genes = gene_lists,
       ensembl = F,
       excel = F,
       outfolder = NULL)
+```
 
+```{r}
 # pass a single list of genes (must specify my_comparison and outfolder)
 autoGO(list_of_genes = gene_lists[[1]],
       dbs = c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human"),
@@ -294,12 +296,15 @@ barplotGO(enrich_tables = enrich_tables,
           title = NULL,
           outfolder = NULL,
           from_autoGO = TRUE)
+```
+
+```{r}
 
 # or for a single case (must provide title and outfolder)
-enrich_table <- enrich_tables$`./results/H460.2D_vs_H460.3D.SM/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_tables/GO_Biological_Process_2021`
+enrich_table <- enrich_tables[[1]]
 barplotGO(enrich_tables = enrich_table,
           title = c("Title of my barplot", "and subtitle"),
-          outfolder = "./results/my_comparison/plots",
+          outfolder = "./results/my_comparison_2022/enrichment_plots",
           from_autoGO = FALSE)
 ```
 
@@ -328,12 +333,14 @@ lolliGO(enrich_tables = enrich_tables,
         title = NULL,
         outfolder = NULL,
         from_autoGO = TRUE)
+```
 
+```{r}
 # or for a single case (must provide title and outfolder)
-enrich_table <- enrich_tables$`./results/H460.2D_vs_H460.3D.SM/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_tables/GO_Biological_Process_2021`
+enrich_table <- enrich_tables[[1]]
 lolliGO(enrich_tables = enrich_table,
         title = c("Title of my barplot", "and subtitle"),
-        outfolder = "./results/my_comparison/plots",
+        outfolder = "./results/my_comparison_2022/enrichment_plots",
         from_autoGO = FALSE)
 ```
 
@@ -358,13 +365,13 @@ For each enrichment result table a lollipop plot is produced. Results are stored
 ## HeatmapGO
 If the analysis has been performed on more conditions it is interest to have a look at the difference in the enrichment results between the groups. This can be performed by *heatmapGO.R*.
 ```{r}
-TO DO: enrich_tables_path instead of wr and of, but yet keep wr and of for the output
-heatmapGO(lib, 
+#TO DO: enrich_tables_path instead of wr and of, but yet keep wr and of for the output
+heatmapGO(lib = "GO_Biological_Process_2021", 
           where_results = "./",
           outfolder = "results/", 
-          log2FC_threshold = 0, 
+          log2FC_threshold = 0,
           padj_threshold = 0.05, 
-          which_list = c("up_genes", "down_genes","up_down_genes", "not_from_DE"))
+          which_list = "down_genes")
 ```
 
 #### Parameters:

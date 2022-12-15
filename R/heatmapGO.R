@@ -41,10 +41,10 @@ heatmapGO <- function(lib,
   }
 
   if (which_list == "up_down_genes") {
-    to_read <- to_read[grepl(pattern = "up_down_genes", to_read)]
+    to_read <- to_read[grepl(pattern = "/up_down_genes", to_read)]
     title <- " for all DE Genes"
   } else if (which_list == "up_genes") {
-    to_read <- to_read[grepl(pattern = "up_genes", to_read)]
+    to_read <- to_read[grepl(pattern = "/up_genes", to_read)]
     title <- " for Up Regulated Genes"
   } else if (which_list == "down_genes") {
     to_read <- to_read[grepl(pattern = "/down_genes", to_read)]

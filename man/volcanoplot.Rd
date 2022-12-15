@@ -18,7 +18,7 @@ volcanoplot(
 \arguments{
 \item{DE_results}{DESeq2 results table. Accepts both a file (.tsv, .csv, tab-separated .txt) or a dataframe (see example below). Requires 'log2FoldChange' and 'padj' columns.}
 
-\item{my_comparison}{The comparison to plot (control_vs_treatment, a_vs_b, ...).}
+\item{my_comparison}{The comparison to plot (control_vs_treatment, a_vs_b, ...). If the user is employing the whole workflow use exactly the name of the comparison indicated in the comparison dataframe.}
 
 \item{highlight_genes}{A (optional) list of genes the user would like to highlight (label) in the volcano plot. It accepts a dataframe, a character vector or a path to a file in .txt format.}
 
