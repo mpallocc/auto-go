@@ -23,10 +23,10 @@ filtering_DE <- function(padj_threshold = 0.05,
   all_res_path <- file.path(outfolder, all_res)
 
   # load result dataframes
-  list_of_results <- lapply(all_res_path, function(x) read_tsv(x, col_types = cols()))
+  list_of_comparisons <- lapply(all_res_path, function(x) read_tsv(x, col_types = cols()))
 
   # extract the "comparison" name for each result
-  names(list_of_comparisons) <- unlist(strsplit(all_res, split = "[\\\\/]"))[1]
+  names(list_of_comparisons) <- gsub("\\/.*", "", all_res)
 
   for (comparison_name in names(list_of_comparisons)) {
     data <- list_of_comparisons[[comparison_name]]
