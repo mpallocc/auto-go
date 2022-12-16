@@ -146,7 +146,7 @@ deseq_analysis <- function(counts,
     groups_fold_thresh_down <- file.path(groups_fold_filtered_path, "down_genes")
 
     # saving complete results
-    if (!dir.exists(groups_fold)) dir.create(groups_fold, recursive = T)
+    if (!dir.exists(groups_fold_filtered_path)) dir.create(groups_fold_filtered_path, recursive = T)
     filename <- paste0("DE_", b, "_vs_", a, "_allres.tsv")
     write_tsv(rr, file.path(groups_fold, filename))
 
