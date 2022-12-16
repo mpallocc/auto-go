@@ -162,12 +162,15 @@ deseq_analysis <- function(counts,
 
     # saving gene lists
     if (!dir.exists(groups_fold_thresh_up_down)) dir.create(groups_fold_thresh_up_down, recursive = T)
-    write.table(filtered$genes, paste0(groups_fold_thresh_up_down, "/up_down_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt"), quote = F, row.names = F, col.names = F)
+    filename <- paste0("up_down_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt")
+    write.table(filtered$genes, file.path(groups_fold_thresh_up_down, filename), quote = F, row.names = F, col.names = F)
 
     if (!dir.exists(groups_fold_thresh_up)) dir.create(groups_fold_thresh_up, recursive = T)
-    write.table(filtered$genes[filtered$log2FoldChange > 0], paste0(groups_fold_thresh_up, "/up_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt"), quote = F, row.names = F, col.names = F)
+    filename <- paste0("up_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt")
+    write.table(filtered$genes[filtered$log2FoldChange > 0], file.path(groups_fold_thresh_up, filename), quote = F, row.names = F, col.names = F)
 
     if (!dir.exists(groups_fold_thresh_down)) dir.create(groups_fold_thresh_down, recursive = T)
-    write.table(filtered$genes[filtered$log2FoldChange < 0], paste0(groups_fold_thresh_down, "/down_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt"), quote = F, row.names = F, col.names = F)
+    filename <- paste0("down_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt")
+    write.table(filtered$genes[filtered$log2FoldChange < 0], file.path(groups_fold_thresh_down, filename), quote = F, row.names = F, col.names = F)
   }
 }
