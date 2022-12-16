@@ -101,8 +101,7 @@ It allows to filter the Differential Expression Analysis results with the new fi
 ```{r}
 filtering_DE(padj_threshold = 0.05,
              log2FC_threshold = 1,
-             where_results = "./", #FIXME: cut where_results (in una singola linea di codice)
-             outfolder = "results/",
+             outfolder = "./results",
              save_excel = F)
 ```
 
@@ -124,7 +123,7 @@ volcanoplot(DE_results = filename,
 
 * *DE_results*: it accepts both a file (.tsv, .csv, tab-separated .txt) or a dataframe. It is necessary that the columns *genes*, *log2FoldChange* and *padj* are present.
 
-* *padj_threshold* and *log2FC_threshold*: Defaults are padj_threshold = 0.05, log2FC_threshold = 0
+* *padj_thresh* and *log2FC_thresh*: Defaults are padj_thresh = 0.05, log2FC_thresh = 0
 
 * *my_comparison*: the comparison the user would like to plot (taken from the comparison file: control_vs_treatment, a_vs_b)
 
@@ -187,14 +186,10 @@ names(gene_lists)
 
 * *from_autoGO* : default is TRUE, set FALSE if the lists you want to upload are not from a differential expression analysis. 
 
-* *where_files* : dafult NULL, when from_autoGO = T it is mandatory to provide a path to specify where the list of genes are.
-
 * *files_format* : default NULL, when from_autoGO = T it is mandatory to provide the extension of the list of genes you want to upload.
 
 #### Workflow:
 The function allows to load in a variable all the gene lists on which the enrichment will be performed.
-
-
 
 ## Enrichment analysis
 To perform the enrichment analysis on all the desired gene lists the function *autoGO.R* is required. This function take advantage of the *enrichR* package.
@@ -254,15 +249,13 @@ names(enrich_tables)
 
 #### Parameters:
 
-* *outfolder* : the name with which to call the folder to save the outputs. Default is: "results/". NOTE: please add "/" at the end.
+# TODO: fix param description
 
 * *padj_threshold* and *log2FC_threshold*: the threshold for the significance (adjusted pvalue) and for the difference in expression (log2 Fold Change). Defaults are padj_threshold = 0.05, log2FC_threshold = 0
 
 * *which_list* = c("up_genes","down_genes","up_down_genes","everything")_ : select with list of genes the user would like to choose to perform the enrichment. Respectively, both up and down regulated genes (up_down_genes), only up regulated genes (up_genes), only down regulated genes (down_genes), or everything allow to load all the three kind of lists separately.
 
 * *from_autoGO* : default is TRUE, set FALSE if the lists you want to upload are not from a differential expression analysis. 
-
-* *where_files* : dafult NULL, when from_autoGO = T it is mandatory to provide a path to specify where the list of genes are.
 
 * *files_format* : default NULL, when from_autoGO = T it is mandatory to provide the extension of the list of genes you want to upload.
 
@@ -353,31 +346,30 @@ For each enrichment result table a lollipop plot is produced. Results are stored
 If the analysis has been performed on more conditions it is interest to have a look at the difference in the enrichment results between the groups. This can be performed by *heatmapGO.R*.
 ```{r}
 #TO DO: enrich_tables_path instead of wr and of, but yet keep wr and of for the output
-heatmapGO(lib = "GO_Biological_Process_2021", 
-          where_results = "./",
-          outfolder = "results/", 
+heatmapGO(db = "GO_Biological_Process_2021",
+          outfolder = "./results",
           log2FC_threshold = 0,
-          padj_threshold = 0.05, 
+          padj_threshold = 0.05,
+          min_term_per_row = 2,
           which_list = "down_genes")
 ```
 
 #### Parameters:
 
-* *lib*: database for which we would like to produce the heatmap. It has to be one for which the enrichment analysis has been performed.
+# TODO review params
 
-* *where_results* : specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
+* *db*: database for which we would like to produce the heatmap. It has to be one for which the enrichment analysis has been performed.
 
 * *outfolder* : the name with which to call the folder to save the outputs. Default is: "results/". NOTE: please add "/" at the end.
 
 * *adj_threshold* and *log2FC_threshold*: the threshold for the significance (adjusted pvalue) and for the difference in expression (log2 Fold Change). Defaults are padj_threshold = 0.05, log2FC_threshold = 0
-
 
 * *which_list* = c("up_genes", "down_genes","up_down_genes", "not_from_DE")_: select the kind of data the user would like to plot. Respectively, enrichment on both up and down regulated genes (up_down_genes), only up regulated genes (up_genes), only down regulated genes ("down_genes") or select "not_from_DE" if your enrichment is made on a list of genes that does not come from a differential expression analysis.
 
 For a faster process it is possible to define a vector containing the employed database and produce the heatmap automatically:
 ```{r}
 dbs <- c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human")
-lapply(dbs, function (i) heatmapGO(lib = i, which_list = "down_genes"))
+lapply(dbs, function (i) heatmapGO(db = i, which_list = "down_genes"))
 ```
 
 #### Workflow:

@@ -5,8 +5,7 @@
 \title{HeatmapGO}
 \usage{
 heatmapGO(
-  lib,
-  where_results = "./",
+  db,
   outfolder = "./results",
   log2FC_threshold = 0,
   padj_threshold = 0.05,
@@ -14,9 +13,7 @@ heatmapGO(
 )
 }
 \arguments{
-\item{lib}{Database of choice to plot the heatmap. It has to be one for which the enrichment analysis has been performed.}
-
-\item{where_results}{Specify the folder in which you want to save outputs. (Default = "./"). Note: if you are working with R Notebooks the default working directory (if not specified) is the folder in which the .Rmd is saved.}
+\item{db}{Database of choice to plot the heatmap. It has to be one for which the enrichment analysis has been performed.}
 
 \item{outfolder}{The name to assign to the folder for output saving. (Default = "./results"). NOTE: please add "/" at the end.}
 
