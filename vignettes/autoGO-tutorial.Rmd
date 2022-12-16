@@ -20,8 +20,8 @@ knitr::opts_chunk$set(echo = T, error = TRUE, eval = F)
 
 This tutorial provides a walk through tutorial on how to use AutoGO to perform gene ontology enrichment analysis from gene lists or directly from raw counts performing differential expression analysis.
 
-The AutoGO package is structured in different, independent functions, in order to let the user decide which steps of the whole analysis perform and which visualization to produce.
-The whole workflow includes: Differential Expression Analysis with the employment of DESeq2; Generation of a Volcano Plot; Gene Ontology Enrichment Analysis with the employment of enrichR on databases chosen by the user; Visualization of the enrichment results with Barplot, Lollipop and Heatmap; In experiments with few samples autoGO allow to perform Single-sample Gene Set Enrichment Analysis (ssGSEA) with visualization of results by violin plot and heatmap.
+The AutoGO package is structured in different, independent functions, in order to let the user decide which steps of the whole analysis to perform and which visualizations to produce, even if it is suggested to perform the whole workflow that includes: Differential Expression Analysis with the employment of DESeq2; Generation of a Volcano Plot; Gene Ontology Enrichment Analysis with the employment of enrichR on databases chosen by the user; Visualization of the enrichment results with Barplot, Lollipop and Heatmap;
+In experiments with few samples autoGO allows to perform Single-Sample Gene Set Enrichment Analysis (ssGSEA) with visualization of results by violin plot and heatmap.
 
 ## Installation
 
@@ -54,16 +54,15 @@ deseq_analysis(counts,
                log2FC_threshold = 0,
                pre_filtering = T,
                save_excel = F,
-               #where_results = "./",
                outfolder = "./results",
                del_csv = ",")
 ```
 
 #### Parameters:
 
-* *counts*: path to raw counts file. Accepted formats: .txt, .csv, .tsv, .rds or a dataframe. [genes x samples]
+* *counts*: path to raw counts file or a dataframe. Accepted formats: .txt, .csv, .tsv, .rds. [genes x samples]
 
-* *groups*: it is the sample information table needed by DESeq2, constituted by the column *sample*, including samples barcode and by the column *group* including the condition to which each sample belongs. It can be provided as a .txt file or as a dataframe.
+* *groups*: it is the sample information table needed by DESeq2, constituted by the column *sample*, including sample barcodes and by the column *group* including the condition to which each sample belongs. It can be provided as a .txt file or as a dataframe.
 
 ```{r, echo=FALSE, eval=TRUE}
 groups <- data.frame(sample=c("Pat_1", "Pat_2", "Pat_3", "Pat_4", "Pat_5", "Pat_6"),
@@ -79,39 +78,34 @@ comparisons <- data.frame(treatment = c("TREAT_A", "TREAT_B", "TREAT_A"),
 comparisons
 ```
 
-* *padj_threshold* and *log2FC_threshold*: Defaults are padj_threshold = 0.05, log2FC_threshold = 1
+* *padj_threshold* and *log2FC_threshold*: Defaults are padj_threshold = 0.05, log2FC_threshold = 0
 
 * *pre_filtering*: It removes the genes which sum in the raw counts is less than 10.
 
 * *save_excel*: default False. If True it allows to save all the output tables in .xlsx format.
 
-* *where_results* : the parent folder in which the user wants to save the outputs. Default is the working directory. NOTE: please add "/" at the end.
-
-* *outfolder* : the name of the output folder. Default is: "results/". NOTE: please add "/" at the end.
+* *outfolder* : the name of the output folder. Default is: "./results".
 
 * *del_csv* : default ",". The delimiter of the counts file.
 
 #### Workflow:
-The DESeq2 workflow is employed. Raw counts are rounded, because integers are needed for DESeq2. A prefiltering is applied, if the user choose to, in order to remove all genes having sum along the sample less than 10.
+The DESeq2 workflow is employed. Raw counts are rounded. A prefiltering is applied, if the user choose to, in order to remove all genes having sum along the sample less than 10.
 
-The normalized data matrix is stored in the *outfolder* (default: results/). Subfolders will be generated with the name of the comparisons in the related file furnished by the user. Here there will be saved results from differential analysis. Inside those other subfolders will be generated 
-
- based on the threshold of the log2FC and of the Adj. P. Value where the user can find the list of the filtered genes and downstream analysis results.
+The normalized data matrix is stored in the *outfolder*. Subfolders will be generated with the name of the comparisons in the related file furnished by the user. Here there will be saved the differential analysis tables (normalized counts and vst). Inside those, other subfolders will be generated based on the threshold of the log2FC and of the Adj. P. Value where the user can find the lists and tables of the filtered genes and downstream analysis results.
 
 
-## Filtering DESeq results
+## Filtering DESeq2 results
 
-It allows to filter the Differential Expression Analysis results directly from the output table "*_allres.tsv" without repeating the whole workflow.
+It allows to filter the Differential Expression Analysis results with the new filters directly from the output table "*_allres.tsv" without repeating the whole analysis.
 
 ```{r}
 filtering_DE(padj_threshold = 0.05,
              log2FC_threshold = 1,
-             where_results = "./",
+             where_results = "./", #FIXME: cut where_results (in una singola linea di codice)
              outfolder = "results/",
              save_excel = F)
 ```
 
-The function searches inside the folders *where_results* and *outfolder* the files "_allres.tsv", the output from differential analysis, and generates the results with the new filters for foldchange and padj respectively.
 
 ## Volcano Plot
 
@@ -123,31 +117,28 @@ volcanoplot(DE_results = filename,
             padj_thresh = 0.05,
             highlight_genes = NULL,
             del_csv = ",",
-            #where_results = "./",
             outfolder = "./results")
 ```
 
 #### Parameters:
 
-* *DE_results*: it accepts both a file (.tsv, .csv, tab-separated .txt) or a dataframe (see example below). It is necessary that the columns _genes_, _log2FoldChange_ and _padj_ are present.
+* *DE_results*: it accepts both a file (.tsv, .csv, tab-separated .txt) or a dataframe. It is necessary that the columns *genes*, *log2FoldChange* and *padj* are present.
 
-* *padj_threshold* and *log2FC_threshold*: the threshold for the significance (adjusted pvalue) and for the difference in expression (log2 Fold Change). Defaults are padj_threshold = 0.05, log2FC_threshold = 0
+* *padj_threshold* and *log2FC_threshold*: Defaults are padj_threshold = 0.05, log2FC_threshold = 0
 
-* *my_comparison*: the comparison the user would like to plot (control_vs_treatment, a_vs_b, ...)
+* *my_comparison*: the comparison the user would like to plot (taken from the comparison file: control_vs_treatment, a_vs_b)
 
-* *highlight_genes*: a list of genes the user would like to highlight in the volcano plot. It accepts a dataframe, a character vector or a path to a file that has to be in .txt format.
+* *highlight_genes*: a list of genes the user would like to highlight in the volcano plot. It accepts a dataframe, a character vector or a path to a file .txt format.
 
-* *where_results* : specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
+* *outfolder* : the name of the output folder. Default is: "./results".
 
-* *outfolder* : the name with which to call the folder to save the outputs. Default is: "results/". NOTE: please add "/" at the end.
-
-* *del_csv* : specify the delimiter of the .csv file, default is ",". This is because opening .csv files with Excel messes up the format and changes the delimiter in ";".
+* *del_csv* : default is ",".
 
 
-If the user had more conditions in the differential analysis he probably produced many comparisons, so it is possible to apply the following structure to realize the volcano plots for all the comparisons:
+If the user had more conditions in the differential analysis he probably produced many comparisons, so it is possible to apply the following structure to realize the volcano plots for all the comparisons of the analysis:
+
 ```{r}
-path_res <- "results"
-all_path_res <- list.files(path = path_res, pattern = "_allres.tsv", recursive = T, full.names = T)
+all_path_res <- list.files(path = "results", pattern = "_allres.tsv", recursive = T, full.names = T)
 res_lists <- lapply(all_path_res, function (x) read_tsv(x, col_types = cols()))
 names(res_lists) <- gsub("results/|/DE_.*", "", all_path_res)
 
@@ -179,16 +170,14 @@ gene_lists <- read_gene_lists(gene_lists_path = gene_lists_path,
                log2FC_threshold = 0,
                padj_threshold = 0.05,
                which_list = "down_genes",
-               from_DE_analysis = T,
+               from_autoGO = T,
                files_format = NULL)
 names(gene_lists)
 ```
 
 #### Parameters:
 
-* *gene_list_path* : TO DO: IT HAS TO BE THE PARENT FOLDER OF THE LIST??? NO, CAN'T BE A FOLDER (SOLVED)
-
-* *where_results* : specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
+* *gene_list_path* : Folder in which the gene lists are contained.
 
 * *outfolder* : the name with which to call the folder to save the outputs. Default is: "results/". NOTE: please add "/" at the end.
 
@@ -196,11 +185,11 @@ names(gene_lists)
 
 * *which_list* = c("up_genes","down_genes","up_down_genes","everything")_ : select with list of genes the user would like to choose to perform the enrichment. Respectively, both up and down regulated genes (up_down_genes), only up regulated genes (up_genes), only down regulated genes (down_genes), or everything allow to load all the three kind of lists separately.
 
-* *from_DE_analysis* : default is TRUE, set FALSE if the lists you want to upload are not from a differential expression analysis. 
+* *from_autoGO* : default is TRUE, set FALSE if the lists you want to upload are not from a differential expression analysis. 
 
-* *where_files* : dafult NULL, when from_DE_analysis = T it is mandatory to provide a path to specify where the list of genes are.
+* *where_files* : dafult NULL, when from_autoGO = T it is mandatory to provide a path to specify where the list of genes are.
 
-* *files_format* : default NULL, when from_DE_analysis = T it is mandatory to provide the extension of the list of genes you want to upload.
+* *files_format* : default NULL, when from_autoGO = T it is mandatory to provide the extension of the list of genes you want to upload.
 
 #### Workflow:
 The function allows to load in a variable all the gene lists on which the enrichment will be performed.
@@ -265,8 +254,6 @@ names(enrich_tables)
 
 #### Parameters:
 
-* *where_results* : specify the folder in which you want to save the outputs. Default is "./". Note: if you are working with RNotebook the default working directory, if not specified, is the folder in which the .Rmd file is saved.
-
 * *outfolder* : the name with which to call the folder to save the outputs. Default is: "results/". NOTE: please add "/" at the end.
 
 * *padj_threshold* and *log2FC_threshold*: the threshold for the significance (adjusted pvalue) and for the difference in expression (log2 Fold Change). Defaults are padj_threshold = 0.05, log2FC_threshold = 0
@@ -275,9 +262,9 @@ names(enrich_tables)
 
 * *from_autoGO* : default is TRUE, set FALSE if the lists you want to upload are not from a differential expression analysis. 
 
-* *where_files* : dafult NULL, when from_DE_analysis = T it is mandatory to provide a path to specify where the list of genes are.
+* *where_files* : dafult NULL, when from_autoGO = T it is mandatory to provide a path to specify where the list of genes are.
 
-* *files_format* : default NULL, when from_DE_analysis = T it is mandatory to provide the extension of the list of genes you want to upload.
+* *files_format* : default NULL, when from_autoGO = T it is mandatory to provide the extension of the list of genes you want to upload.
 
 #### Workflow:
 The function allows to upload all the enrichment results in order to proceed with the visualization in an automated way.
