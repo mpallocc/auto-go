@@ -5,7 +5,7 @@
 #' @param padj_threshold (Default = 0.05) Threshold value for adjusted p-value filtering.
 #' @param log2FC_threshold (Default = 0) Threshold value for log2(Fold Change) filtering.
 #' @param where_results (Default = "./") Folder in which the new output is written.
-#' @param outfolder (Default = "results/") Name of the folder in which the new output is written.
+#' @param outfolder (Default = "./results") Name of the folder in which the new output is written.
 #' @param save_excel (Default = FALSE) Write output in MS Excel file format (.xlsx).
 #' @export
 
@@ -13,7 +13,7 @@
 filtering_DE <- function(padj_threshold = 0.05,
                          log2FC_threshold = 1,
                          where_results = "./",
-                         outfolder = "results/",
+                         outfolder = "./results",
                          save_excel = FALSE) {
   all_res <- list.files(
     path = paste0(where_results, outfolder),

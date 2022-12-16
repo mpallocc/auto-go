@@ -4,7 +4,7 @@
 #' @description The function automatically reads all the enrichment results of the chosen database. A heatmap is produced for each database, all the terms are merged together and a filter is applied as follows: only terms with a significant pvalue (i.e. less than padj_threshold) in at least one comparison will be retained and plotted. These plots will be saved in the "Comparison_Heatmap" folder. In order to have readable plots, if many terms are enriched for a database several images will be created (indexed _1, _2, ...).
 #' @param lib Database of choice to plot the heatmap. It has to be one for which the enrichment analysis has been performed.
 #' @param where_results Specify the folder in which you want to save outputs. (Default = "./"). Note: if you are working with R Notebooks the default working directory (if not specified) is the folder in which the .Rmd is saved.
-#' @param outfolder The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.
+#' @param outfolder The name to assign to the folder for output saving. (Default = "./results"). NOTE: please add "/" at the end.
 #' @param log2FC_threshold Threshold value for log2(Fold Change) for considering genes as differentially expressed (Default = 0).
 #' @param padj_threshold Threshold value for adjusted p-value significance (Defaults to 0.05).
 #' @param which_list One of c("up_genes", "down_genes","up_down_genes", "not_from_DE"): select data to plot. Respectively, only up regulated genes (up_genes), only down regulated genes ("down_genes"), enrichment on both up and down regulated genes (up_down_genes) or select "not_from_DE" if the enrichment will be made on a list of genes that does not come from a differential expression analysis.
@@ -18,7 +18,7 @@
 
 heatmapGO <- function(lib,
                       where_results = "./",
-                      outfolder = "results/",
+                      outfolder = "./results",
                       log2FC_threshold = 0,
                       padj_threshold = 0.05,
                       which_list = c(

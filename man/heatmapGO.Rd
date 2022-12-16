@@ -7,7 +7,7 @@
 heatmapGO(
   lib,
   where_results = "./",
-  outfolder = "results/",
+  outfolder = "./results",
   log2FC_threshold = 0,
   padj_threshold = 0.05,
   which_list = c("up_genes", "down_genes", "up_down_genes", "not_from_DE")
@@ -18,7 +18,7 @@ heatmapGO(
 
 \item{where_results}{Specify the folder in which you want to save outputs. (Default = "./"). Note: if you are working with R Notebooks the default working directory (if not specified) is the folder in which the .Rmd is saved.}
 
-\item{outfolder}{The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.}
+\item{outfolder}{The name to assign to the folder for output saving. (Default = "./results"). NOTE: please add "/" at the end.}
 
 \item{log2FC_threshold}{Threshold value for log2(Fold Change) for considering genes as differentially expressed (Default = 0).}
 

@@ -8,7 +8,7 @@ filtering_DE(
   padj_threshold = 0.05,
   log2FC_threshold = 1,
   where_results = "./",
-  outfolder = "results/",
+  outfolder = "./results",
   save_excel = FALSE
 )
 }
@@ -19,7 +19,7 @@ filtering_DE(
 
 \item{where_results}{(Default = "./") Folder in which the new output is written.}
 
-\item{outfolder}{(Default = "results/") Name of the folder in which the new output is written.}
+\item{outfolder}{(Default = "./results") Name of the folder in which the new output is written.}
 
 \item{save_excel}{(Default = FALSE) Write output in MS Excel file format (.xlsx).}
 }
