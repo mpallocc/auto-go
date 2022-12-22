@@ -279,7 +279,7 @@ It produces a barplot of the 15 most enriched term for each desired enrichment t
 In the case in which also the previous steps of autoGO have been performed (*from_autoGO = T*) it is not necessary to pass *title* and *outfolder*, all the information will be taken from the path of the gene lists.
 
 ```{r}
-barplotGO(enrich_tables = enrich_tables, 
+barplotGO(enrich_tables = enrich_tables,
           title = NULL,
           outfolder = NULL,
           from_autoGO = TRUE)

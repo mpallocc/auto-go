@@ -59,13 +59,16 @@ barplotGO <- function(enrich_tables,
           }
 
           title <- c(title, subtitle)
+
+          outfile <- paste0("barplotGO_", db, ".png")
         }
 
         enrich_table <- enrich_tables[[df_metadata]]
         do_barplotGO(
           enrich_table = enrich_table,
           title = title,
-          outfolder = outfolder
+          outfolder = outfolder,
+          outfile = outfile
         )
       }
     ))
@@ -79,12 +82,13 @@ barplotGO <- function(enrich_tables,
     do_barplotGO(
       enrich_table = enrich_tables,
       title = title,
-      outfolder = outfolder
+      outfolder = outfolder,
+      outfile = "barplotGO.png"
     )
   }
 }
 
-do_barplotGO <- function(enrich_table, title, outfolder) {
+do_barplotGO <- function(enrich_table, title, outfolder, outfile) {
   if (is.character(enrich_table) &&
     file.exists(enrich_table) &&
     tools::file_ext(enrich_table) == "tsv") {
@@ -118,5 +122,5 @@ do_barplotGO <- function(enrich_table, title, outfolder) {
 
   if (!dir.exists(outfolder)) dir.create(outfolder, recursive = T)
 
-  ggsave(filename = file.path(outfolder, "barplotGO.png"), plot = last_plot(), width = unit(25, "cm"), height = unit(10, "cm"))
+  ggsave(filename = file.path(outfolder, outfile), plot = last_plot(), width = unit(25, "cm"), height = unit(10, "cm"))
 }

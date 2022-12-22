@@ -59,13 +59,16 @@ lolliGO <- function(enrich_tables,
           }
 
           title <- c(title, subtitle)
+
+          outfile <- paste0("lolliGO_", db, ".png")
         }
 
         enrich_table <- enrich_tables[[df_metadata]]
         do_lolliGO(
           enrich_table = enrich_table,
           title = title,
-          outfolder = outfolder
+          outfolder = outfolder,
+          outfile = outfile
         )
       }
     ))
@@ -79,12 +82,13 @@ lolliGO <- function(enrich_tables,
     do_lolliGO(
       enrich_table = enrich_tables,
       title = title,
-      outfolder = outfolder
+      outfolder = outfolder,
+      outfile = "lolliGO.png"
     )
   }
 }
 
-do_lolliGO <- function(enrich_table, title, outfolder) {
+do_lolliGO <- function(enrich_table, title, outfolder, outfile) {
   if (is.character(enrich_table) &&
     file.exists(enrich_table) &&
     tools::file_ext(enrich_table) == "tsv") {
@@ -129,5 +133,5 @@ do_lolliGO <- function(enrich_table, title, outfolder) {
 
   if (!dir.exists(outfolder)) dir.create(outfolder, recursive = T)
 
-  ggsave(filename = file.path(outfolder, "lolliGO.png"), plot = last_plot(), width = unit(20, "cm"), height = unit(10, "cm"))
+  ggsave(filename = file.path(outfolder, outfile), plot = last_plot(), width = unit(20, "cm"), height = unit(10, "cm"))
 }
