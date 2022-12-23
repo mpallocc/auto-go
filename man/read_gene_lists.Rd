@@ -10,7 +10,7 @@ read_gene_lists(
   padj_threshold = 0.05,
   which_list = c("up_genes", "down_genes", "up_down_genes", "everything"),
   from_autoGO = TRUE,
-  files_format = ".txt"
+  files_format = NULL
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ read_gene_lists(
 
 \item{from_autoGO}{Default is TRUE, set FALSE if the gene list you want to upload are not from a differential expression analysis.}
 
-\item{files_format}{(Default = NULL). when from_autoGO = T it is mandatory to provide the extension of the list of genes to upload.}
+\item{files_format}{(Default = NULL). When from_autoGO = FALSE it is mandatory to provide the extension of the list of genes to upload.}
 }
 \description{
 Function employed for reading all the gene lists on which the enrichment will be performed.

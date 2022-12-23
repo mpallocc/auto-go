@@ -40,10 +40,10 @@ Perform enrichment analysis on all the desired gene lists. This function take ad
 Authors:
 \itemize{
   \item Eleonora Sperandio \email{eleonora.sperandio@ifo.it} (\href{https://orcid.org/0000-0002-8572-6788}{ORCID})
-  \item Lorenzo D'Ambrosio \email{lorenzo.dambrosio@ifo.it} (\href{https://orcid.org/0000-0002-9656-7436}{ORCID})
-  \item Matteo Pallocca \email{matteo.pallocca@ifo.it} (\href{https://orcid.org/0000-0002-7756-3579}{ORCID})
   \item Fabio Ticconi \email{fabio.ticconi@gmail.com} (\href{https://orcid.org/0000-0001-8905-6657}{ORCID})
   \item Alice Massacci \email{alice.massacci@ifo.it} (\href{https://orcid.org/0000-0001-7780-809X}{ORCID})
+  \item Lorenzo D'Ambrosio \email{lorenzo.dambrosio@ifo.it} (\href{https://orcid.org/0000-0002-9656-7436}{ORCID})
+  \item Matteo Pallocca \email{matteo.pallocca@ifo.it} (\href{https://orcid.org/0000-0002-7756-3579}{ORCID})
 }
 
 }

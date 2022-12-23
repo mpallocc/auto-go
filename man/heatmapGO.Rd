@@ -9,6 +9,7 @@ heatmapGO(
   outfolder = "./results",
   log2FC_threshold = 0,
   padj_threshold = 0.05,
+  min_term_per_row = 2,
   which_list = c("up_genes", "down_genes", "up_down_genes", "not_from_DE")
 )
 }
@@ -20,6 +21,8 @@ heatmapGO(
 \item{log2FC_threshold}{Threshold value for log2(Fold Change) for considering genes as differentially expressed (Default = 0).}
 
 \item{padj_threshold}{Threshold value for adjusted p-value significance (Defaults to 0.05).}
+
+\item{min_term_per_row}{Minimum of comparisons or enriched lists on which a certain term must be significant (Defaults to 2).}
 
 \item{which_list}{One of c("up_genes", "down_genes","up_down_genes", "not_from_DE"): select data to plot. Respectively, only up regulated genes (up_genes), only down regulated genes ("down_genes"), enrichment on both up and down regulated genes (up_down_genes) or select "not_from_DE" if the enrichment will be made on a list of genes that does not come from a differential expression analysis.}
 }

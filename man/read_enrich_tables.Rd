@@ -24,7 +24,7 @@ read_enrich_tables(
 
 \item{from_autoGO}{Default is TRUE, set to FALSE if the lists you want to upload are not from a differential expression analysis.}
 
-\item{files_format}{Default is NULL, when from_autoGO = T it is mandatory to provide the extension of the list of genes you want to upload.}
+\item{files_format}{Default is NULL, when from_autoGO = FALSE it is mandatory to provide the extension of the list of genes you want to upload.}
 }
 \description{
 Helper function to read all the enrichment results in order to proceed with the visualization in an automated way.
