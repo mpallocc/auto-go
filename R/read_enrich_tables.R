@@ -6,7 +6,7 @@
 #' @param padj_threshold Threshold value for adjusted p-value significance (Defaults to 0.05).
 #' @param which_list It can be: "up_genes","down_genes","up_down_genes","everything". Select a list of genes to perform the enrichment. Respectively, only up regulated genes (up_genes), only down regulated genes (down_genes), both up and down regulated genes (up_down_genes), or (everything) allow to load all the three kind of lists separately and it is employed also for lists not from differential analysis.
 #' @param from_autoGO Default is TRUE, set to FALSE if the lists you want to upload are not from a differential expression analysis.
-#' @param files_format Default is NULL, when from_autoGO = T it is mandatory to provide the extension of the list of genes you want to upload.
+#' @param files_format Default is NULL, when from_autoGO = FALSE it is mandatory to provide the extension of the list of genes you want to upload.
 #' @export
 
 
@@ -29,6 +29,9 @@ read_enrich_tables <- function(enrich_table_path = "./results",
   if (from_autoGO) {
     to_read <- enrich_lists_path[grepl(pattern = paste0("thFC", log2FC_threshold, "_thPval", padj_threshold), enrich_lists_path)]
   } else if (!from_autoGO) {
+    if (is.null(files_format)) {
+      stop("when from_autoGO is FALSE, files_format must be specified, eg .txt")
+    }
     if (is.null(files_format)) stop("Required parameter: 'files_format' for extension of enrichment tables, should be like '.txt' or '.tsv', etc.")
     enrich_lists_path <- list.files(path = enrich_table_path, pattern = files_format, recursive = T)
     to_read <- enrich_lists_path

@@ -75,10 +75,12 @@ lolliGO <- function(enrich_tables,
       }
     ))
   } else {
-    if (is.null(title)) {
-      stop("must specify a title (as a vector of character strings c(title, subtitle)")
-    } else if (is.null(outfolder)) {
-      stop("must specify outfolder")
+    if (!is.data.frame(enrich_tables) && !is.character(enrich_tables)) {
+      stop("enrich_tables can only be a list of dataframes or a dataframe or a character vector representing a file path")
+    } else if (from_autoGO) {
+      stop("can only be from_autoGO if enrich_tables are produced by the read_enrich_tables function")
+    } else if ((is.null(title) || is.null(outfolder) || is.null(outfile))) {
+      stop("when providing a single dataframe not generated from the autoGO pipeline, title as well as outfolder and outfile must be specified")
     }
 
     do_lolliGO(

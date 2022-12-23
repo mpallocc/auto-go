@@ -6,6 +6,7 @@
 #' @param outfolder The name to assign to the folder for output saving. (Default = "./results"). NOTE: please add "/" at the end.
 #' @param log2FC_threshold Threshold value for log2(Fold Change) for considering genes as differentially expressed (Default = 0).
 #' @param padj_threshold Threshold value for adjusted p-value significance (Defaults to 0.05).
+#' @param min_term_per_row Minimum of comparisons or enriched lists on which a certain term must be significant (Defaults to 2).
 #' @param which_list One of c("up_genes", "down_genes","up_down_genes", "not_from_DE"): select data to plot. Respectively, only up regulated genes (up_genes), only down regulated genes ("down_genes"), enrichment on both up and down regulated genes (up_down_genes) or select "not_from_DE" if the enrichment will be made on a list of genes that does not come from a differential expression analysis.
 #' @export
 
@@ -73,7 +74,7 @@ heatmapGO <- function(db,
   complete_table <- purrr::reduce(dd, dplyr::full_join, by = "Term") %>%
     dplyr::mutate(dplyr::across(-.data$Term, ~tidyr::replace_na(.x, 1))) %>%
     dplyr::rename_with(~ gsub("up_genes/|down_genes/", "", .x)) %>%
-    dplyr::filter(rowSums(dplyr::across(-.data$Term, ~.x <= padj_threshold)) > min_term_per_row) %>%
+    dplyr::filter(rowSums(dplyr::across(-.data$Term, ~.x <= padj_threshold)) >= min_term_per_row) %>%
     dplyr::mutate(Term = gsub("\\(GO.*", "", .data$Term)) %>%
     dplyr::mutate(dplyr::across(where(is.numeric), ~ (-1 * log10(.x)))) %>%
     textshape::column_to_rownames(loc = "Term")
@@ -138,7 +139,7 @@ heatmapGO <- function(db,
 
   if (!dir.exists(path_save)) dir.create(path_save, recursive = T)
 
-  name_save <- paste0(path_save, db, "_min", min_term_per_row, ".png")
+  name_save <- paste0(path_save, "_", db, "_min", min_term_per_row, ".png")
 
   saving <- function(data, path_save) {
     if (nrow(data) > 35) {

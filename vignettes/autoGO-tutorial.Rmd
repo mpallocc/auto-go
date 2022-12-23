@@ -191,7 +191,7 @@ names(gene_lists)
 
 * *from_autoGO* : set FALSE if the previous steps from autoGO have not been performed. Default is TRUE.
 
-* *files_format* : when from_autoGO is FALSE it is mandatory to provide the extension of the list of genes you want to upload. Default is NULL. # FIXME: check this
+* *files_format* : when from_autoGO is FALSE it is mandatory to provide the extension of the list of genes you want to upload. Default is NULL.
 
 
 
@@ -264,7 +264,7 @@ names(enrich_tables)
 
 * *from_autoGO* : set FALSE if the previous steps from autoGO have not been performed. Default is TRUE.
 
-* *files_format* : when from_autoGO is FALSE it is mandatory to provide the extension of the list of genes you want to upload. Default is NULL. # FIXME: check this
+* *files_format* : when from_autoGO is FALSE it is mandatory to provide the extension of the list of genes you want to upload. Default is NULL.
 
 
 
@@ -282,6 +282,7 @@ In the case in which also the previous steps of autoGO have been performed (*fro
 barplotGO(enrich_tables = enrich_tables,
           title = NULL,
           outfolder = NULL,
+          outfile = NULL,
           from_autoGO = TRUE)
 ```
 
@@ -298,6 +299,7 @@ enrich_table <- enrich_tables[[1]]
 barplotGO(enrich_tables = enrich_table,
           title = c("Title of my barplot", "and subtitle"),
           outfolder = "./results/my_comparison_2022/enrichment_plots",
+          outfile = "barplot_myDB.png",
           from_autoGO = FALSE)
 ```
 
@@ -305,9 +307,11 @@ barplotGO(enrich_tables = enrich_table,
 
 * *enrich_tables* : it can be a list of dataframe containing erichment tables (i.e. the output of *read_enrich_tabke.R*), a single dataframe containing the enrichment results or the path to a file. Columns 'Term' and 'Adjusted.P.Value' are required.
 
-* *title* : Default NULL. When enrichment tables are not from autoGO and thus from read_enrich_tables, the user must title and subtitle of the plot as 2-element character vector: c("This is the title", "this is the subtitle")
+* *title* : Default NULL. If from_autoGO is TRUE, it must be NULL. When enrichment tables are not from autoGO and thus from read_enrich_tables, the user must title and subtitle of the plot as 2-element character vector: c("This is the title", "this is the subtitle")
 
-* *outfolder* : the name of the output folder. #FIXME: EVEN IN THIS CASE? Ignored if enrich_tables is a list. Default is: "./results". (NOTE: The outfolder chosen by the user will be the parent folder of the results. Inside this, the subfolders will be organized following the autoGO structure in order to keep the results of the different analysis ordered.)
+* *outfolder* : Default NULL. If from_autoGO is TRUE, it must be NULL. This is the name of the output folder. (NOTE: The outfolder chosen by the user will be the parent folder of the results. Inside this, the subfolders will be organized following the autoGO structure in order to keep the results of the different analysis ordered.)
+
+* *outfile* : Default "barplotGO.png". If from_autoGO is TRUE, it's ignored. The name of the file containing the plot.
 
 * *from_autoGO* : set to FALSE if the enrichment tables you want to use are not from a differential expression analysis. Default is TRUE.
 
@@ -322,6 +326,7 @@ In the case in which also the previous steps of autoGO have been performed (*fro
 lolliGO(enrich_tables = enrich_tables,
         title = NULL,
         outfolder = NULL,
+        outfile = NULL,
         from_autoGO = TRUE)
 ```
 
@@ -337,6 +342,7 @@ enrich_table <- enrich_tables[[1]]
 lolliGO(enrich_tables = enrich_table,
         title = c("Title of my barplot", "and subtitle"),
         outfolder = "./results/my_comparison_2022/enrichment_plots",
+        outfile = "lolli_myDB.png",
         from_autoGO = FALSE)
 ```
 
@@ -344,9 +350,11 @@ lolliGO(enrich_tables = enrich_table,
 
 * *enrich_tables* : it can be a list of dataframe containing erichment tables (i.e. the output of *read_enrich_tabke.R*), a single dataframe containing the enrichment results or the path to a file. Columns 'Term' and 'Adjusted.P.Value' are required.
 
-* *title* : Default NULL. When enrichment tables are not from autoGO and thus from read_enrich_tables, the user must title and subtitle of the plot as 2-element character vector: c("This is the title", "this is the subtitle")
+* *title* : Default NULL. If from_autoGO is TRUE, it must be NULL. When enrichment tables are not from autoGO and thus from read_enrich_tables, the user must title and subtitle of the plot as 2-element character vector: c("This is the title", "this is the subtitle")
 
-* *outfolder* : the name of the output folder. #FIXME: EVEN IN THIS CASE? Ignored if enrich_tables is a list. Default is: "./results". (NOTE: The outfolder chosen by the user will be the parent folder of the results. Inside this, the subfolders will be organized following the autoGO structure in order to keep the results of the different analysis ordered.)
+* *outfolder* : Default NULL. If from_autoGO is TRUE, it must be NULL. This is the name of the output folder. (NOTE: The outfolder chosen by the user will be the parent folder of the results. Inside this, the subfolders will be organized following the autoGO structure in order to keep the results of the different analysis ordered.)
+
+* *outfile* : Default "lolliGO.png". If from_autoGO is TRUE, it's ignored. The name of the file containing the plot.
 
 * *from_autoGO* : set to FALSE if the enrichment tables you want to use are not from a differential expression analysis. Default is TRUE.
 
@@ -363,7 +371,7 @@ heatmapGO(db = "GO_Biological_Process_2021",
           outfolder = "./results",
           log2FC_threshold = 0,
           padj_threshold = 0.05,
-          min_term_per_row = 1, #FIXME: 1 vuol dire >1 e quindi 2 confronti significativi per termine? then default = 1
+          min_term_per_row = 2,
           which_list = "down_genes")
 ```
 
