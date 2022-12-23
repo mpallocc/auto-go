@@ -27,7 +27,7 @@ autoGO(
 
 \item{excel}{(Default = FALSE). Set to TRUE if you want to save output tables in .xlsx format.}
 
-\item{outfolder}{The name to assign to the folder in which outputs are saved. Ignored if list_of_genes is a list, taken from the path.}
+\item{outfolder}{Default to NULL. The name to assign to the folder in which outputs are saved. Ignored if list_of_genes is a list, taken from the path.}
 }
 \description{
 Auto-GO is a framework that enables automated, high quality Gene Ontology enrichment analyses visualizations. It also features a handy wrapper for Differential Expression analysis around the DESeq2 package (Love et. al 2014) and a handy wrapper around the single-sample implementation of the GSEA algorithm (ssGSEA), useful for low-numerosity transcriptional profiles. The whole framework is structured in different, independent functions, in order to let the user decide which steps of the analysis perform and which plot to produce.
