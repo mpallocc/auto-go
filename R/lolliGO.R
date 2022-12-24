@@ -3,8 +3,9 @@
 #' @description The function lolliGO.R implement the lollipop plot of the first 20 enrichment terms.
 #' @description For each enrichment result table a lollipop plot is produced. Results are stored in the "enrichment_plots" subfolder for each comparison.
 #' @param enrich_tables Dataframe containing the enrichment results or a path to your .tsv file containing the enrichment results. Columns 'Term' and 'Adjusted.P.Value' are required.
-#' @param title Default to NULL. When enrich_tables is not from autoGO and thus from read_enrich_tables, the user can specify title and subtitle of the plot as 2-element character vector, for example: c("This is the title", "this is the subtitle")
-#' @param outfolder The name to assign to the folder for output saving. (Default = "enrichment_plots").
+#' @param title Default to NULL, only specify if from_autoGO is FALSE. When enrich_tables is not from autoGO and thus from read_enrich_tables, the user can specify title and subtitle of the plot as 2-element character vector, for example: c("This is the title", "this is the subtitle")
+#' @param outfolder Default to NULL, only specify if from_autoGO is FALSE. The name to assign to the folder for output saving.
+#' @param outfile Default to "lolliGO.png", is ignored if from_autoGO is TRUE. The name of the lolli filename.
 #' @param from_autoGO Default is TRUE, set to FALSE if the enrichment tables you want to use are not from a differential expression analysis.
 #' @export
 
@@ -12,6 +13,7 @@
 lolliGO <- function(enrich_tables,
                     title = NULL,
                     outfolder = NULL,
+                    outfile = "lolliGO.png",
                     from_autoGO = TRUE) {
   if (!is.data.frame(enrich_tables) && is.list(enrich_tables)) {
     # a list of data frames, with each containing an enrich table.
@@ -19,9 +21,9 @@ lolliGO <- function(enrich_tables,
     # is used to derive the output path.
 
     if (from_autoGO && (!is.null(title) || !is.null(outfolder))) {
-      stop("when providing a list of dataframes generated from autoGO pipeline, title as well as outfolder will be derived from the path and any user-supplied values, will be ignored.")
-    } else if (!from_autoGO && (is.null(title) || is.null(outfolder))) {
-      stop("when providing a list of dataframes not generated from autoGO pipeline, title as well as outfolder must be specified")
+      stop("when providing a list of dataframes generated from autoGO pipeline, title as well as outfolder and outfile will be derived from the path and any user-supplied values, will be ignored.")
+    } else if (!from_autoGO && (is.null(title) || is.null(outfolder) || is.null(outfile))) {
+      stop("when providing a list of dataframes not generated from autoGO pipeline, title as well as outfolder and outfile must be specified")
     }
 
     invisible(lapply(
@@ -59,32 +61,38 @@ lolliGO <- function(enrich_tables,
           }
 
           title <- c(title, subtitle)
+
+          outfile <- paste0("lolliGO_", db, ".png")
         }
 
         enrich_table <- enrich_tables[[df_metadata]]
         do_lolliGO(
           enrich_table = enrich_table,
           title = title,
-          outfolder = outfolder
+          outfolder = outfolder,
+          outfile = outfile
         )
       }
     ))
   } else {
-    if (is.null(title)) {
-      stop("must specify a title (as a vector of character strings c(title, subtitle)")
-    } else if (is.null(outfolder)) {
-      stop("must specify outfolder")
+    if (!is.data.frame(enrich_tables) && !is.character(enrich_tables)) {
+      stop("enrich_tables can only be a list of dataframes or a dataframe or a character vector representing a file path")
+    } else if (from_autoGO) {
+      stop("can only be from_autoGO if enrich_tables are produced by the read_enrich_tables function")
+    } else if ((is.null(title) || is.null(outfolder) || is.null(outfile))) {
+      stop("when providing a single dataframe not generated from the autoGO pipeline, title as well as outfolder and outfile must be specified")
     }
 
     do_lolliGO(
       enrich_table = enrich_tables,
       title = title,
-      outfolder = outfolder
+      outfolder = outfolder,
+      outfile = outfile
     )
   }
 }
 
-do_lolliGO <- function(enrich_table, title, outfolder) {
+do_lolliGO <- function(enrich_table, title, outfolder, outfile) {
   if (is.character(enrich_table) &&
     file.exists(enrich_table) &&
     tools::file_ext(enrich_table) == "tsv") {
@@ -129,5 +137,5 @@ do_lolliGO <- function(enrich_table, title, outfolder) {
 
   if (!dir.exists(outfolder)) dir.create(outfolder, recursive = T)
 
-  ggsave(filename = file.path(outfolder, "lolliGO.png"), plot = last_plot(), width = unit(20, "cm"), height = unit(10, "cm"))
+  ggsave(filename = file.path(outfolder, outfile), plot = last_plot(), width = unit(20, "cm"), height = unit(10, "cm"))
 }

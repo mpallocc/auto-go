@@ -1,7 +1,7 @@
 #' @title  Differential Gene Expression Analysis
 #'
 #' @description This function allows to perform a differential gene expression analysis using the DESeq2 package.
-#' @description The principal DESeq2 workflow is employed. Raw counts are rounded, if it is necessary, because integers are needed for DESeq2 to run. In case the user provides an .rds file, the tool makes sure that in the assay of the SummarizedExperiment only counts are stored. Then the function DESeqDataSetFromMatrix (or DESeqDataSet for .rds) is employed. A prefiltering is applied in order to remove all genes having sum along the subjects less than 10. The Differential Expression Analysis is performed by employing the function DE and the normalized data matrix is stored in the working directory. This will be useful for further analysis and visualizations. Results are extracted for each comparison of interest. Subfolders will be generated in the "outfolder" (default: results/) with the name of the comparisons made. NOTE: as standard we use the nomenclature "CONTROL_vs_TREATMENT", i.e. the control is on the left. Inside each comparison subfolder we will find a .tsv file with the complete differential analysis and other subfolder based on the pvalue and the log2FC thresholds; inside this we will find a .tsv file with the results of the only filtered genes. This subfolders will be divided in other subfolders as "up_genes", "down_genes" and "up_down_genes". Look the path flow chart at the end of this tutorial (Figure 1).
+#' @description The principal DESeq2 workflow is employed. Raw counts are rounded, if it is necessary, because integers are needed for DESeq2 to run. In case the user provides an .rds file, the tool makes sure that in the assay of the SummarizedExperiment only counts are stored. Then the function DESeqDataSetFromMatrix (or DESeqDataSet for .rds) is employed. A prefiltering is applied in order to remove all genes having sum along the subjects less than 10. The Differential Expression Analysis is performed by employing the function DE and the normalized data matrix is stored in the working directory. This will be useful for further analysis and visualizations. Results are extracted for each comparison of interest. Subfolders will be generated in the "outfolder" (default: ./results) with the name of the comparisons made. NOTE: as standard we use the nomenclature "CONTROL_vs_TREATMENT", i.e. the control is on the left. Inside each comparison subfolder we will find a .tsv file with the complete differential analysis and other subfolder based on the pvalue and the log2FC thresholds; inside this we will find a .tsv file with the results of the only filtered genes. This subfolders will be divided in other subfolders as "up_genes", "down_genes" and "up_down_genes". Look the path flow chart at the end of this tutorial (Figure 1).
 #' @param counts The path to raw counts file. Accepted file formats are tab or comma-separated files (.tsv, .csv), .txt files, .rds. Genes must be on rows, samples on columns.
 #' @param groups Sample information table needed by DESeq2 (e.g. 'colData'). A data frame with at least two columns: one for samples, one for a grouping variable (See examples).
 #' @param comparisons Table of comparisons based on the grouping variable in 'groups' table (See examples). It should be a data.frame with column 'treatment' and column 'control'. It is possible to provide the path to a .txt file.
@@ -9,8 +9,7 @@
 #' @param log2FC_threshold Threshold value for log2(Fold Change) for considering genes as differentially expressed.
 #' @param pre_filtering Removes genes which sum in the raw counts is less than 10 (Default = TRUE).
 #' @param save_excel Allows to save all the output tables in .xlsx format (Default = FALSE).
-#' @param where_results Specify the folder in which you want to save outputs. (Default = "./"). Note: if you are working with R Notebooks the default working directory (if not specified) is the folder in which the .Rmd is saved.
-#' @param outfolder The name to assign to the folder for output saving. (Default = "results/"). NOTE: please add "/" at the end.
+#' @param outfolder The name to assign to the folder for output saving. (Default = "./results").
 #' @param del_csv Specify the delimiter of the .csv file, default is ",". This is because opening .csv files with Excel messes up the format and changes the delimiter in ";".
 #' @examples
 #' sample <- c("Pat_1", "Pat_2", "Pat_3", "Pat_4", "Pat_5", "Pat_6")
@@ -30,8 +29,7 @@ deseq_analysis <- function(counts,
                            log2FC_threshold = 0,
                            pre_filtering = TRUE,
                            save_excel = FALSE,
-                           where_results = "./",
-                           outfolder = "results/",
+                           outfolder = "./results",
                            del_csv = ",") {
   if (grepl(".tsv", counts)[1]) {
     counts <- read_delim(counts, col_types = cols(), delim = "\t")
@@ -99,11 +97,11 @@ deseq_analysis <- function(counts,
   vsd <- varianceStabilizingTransformation(dds, blind = T)
   vst <- SummarizedExperiment::assay(vsd)
 
-  if (!dir.exists(paste0(where_results, outfolder))) {
-    dir.create(paste0(where_results, outfolder), recursive = T)
+  if (!dir.exists(outfolder)) {
+    dir.create((outfolder), recursive = T)
   }
-  write.table(cc, paste0(where_results, outfolder, "deseq_norm_data.txt"), quote = F, sep = "\t", row.names = T, col.names = NA)
-  write.table(vst, paste0(where_results, outfolder, "deseq_vst_data.txt"), quote = F, sep = "\t", row.names = T, col.names = NA)
+  write.table(cc, file.path(outfolder, "deseq_norm_data.txt"), quote = F, sep = "\t", row.names = T, col.names = NA)
+  write.table(vst, file.path(outfolder, "deseq_vst_data.txt"), quote = F, sep = "\t", row.names = T, col.names = NA)
 
   group_list <- split(groups, groups[[2]])
   for (i in seq(dim(comparisons)[1])) {
@@ -140,32 +138,39 @@ deseq_analysis <- function(counts,
       dplyr::filter(rr$padj < padj_threshold & abs(rr$log2FoldChange) > log2FC_threshold)
 
     # generating folders
-    groups_fold <- paste0(where_results, outfolder, b, "_vs_", a)
-    groups_fold_filtered <- paste0(groups_fold, "/filtered_DE", "_thFC", log2FC_threshold, "_thPval", padj_threshold)
-    groups_fold_thresh_up_down <- paste0(groups_fold_filtered, "/up_down_genes")
-    groups_fold_thresh_up <- paste0(groups_fold_filtered, "/up_genes")
-    groups_fold_thresh_down <- paste0(groups_fold_filtered, "/down_genes")
+    groups_fold <- file.path(outfolder, paste0(b, "_vs_", a))
+    groups_fold_filtered <- paste0("filtered_DE", "_thFC", log2FC_threshold, "_thPval", padj_threshold)
+    groups_fold_filtered_path <- file.path(groups_fold, groups_fold_filtered)
+    groups_fold_thresh_up_down <- file.path(groups_fold_filtered_path, "up_down_genes")
+    groups_fold_thresh_up <- file.path(groups_fold_filtered_path, "up_genes")
+    groups_fold_thresh_down <- file.path(groups_fold_filtered_path, "down_genes")
 
     # saving complete results
-    if (!dir.exists(groups_fold)) dir.create(groups_fold, recursive = T)
-    write_tsv(rr, paste0(groups_fold, "/DE_", b, "_vs_", a, "_allres.tsv"))
+    if (!dir.exists(groups_fold_filtered_path)) dir.create(groups_fold_filtered_path, recursive = T)
+    filename <- paste0("DE_", b, "_vs_", a, "_allres.tsv")
+    write_tsv(rr, file.path(groups_fold, filename))
 
     if (save_excel) {
-      openxlsx::write.xlsx(rr, file = paste0(groups_fold, "/DE_", b, "_vs_", a, "_allres.xlsx"), row.names = F)
+      filename <- paste0("DE_", b, "_vs_", a, "_allres.xlsx")
+      openxlsx::write.xlsx(rr, file = file.path(groups_fold, filename), row.names = F)
     }
 
     # saving filtered results in different folders by thresholds
-    if (!dir.exists(groups_fold_thresh_up_down)) dir.create(groups_fold_thresh_up_down, recursive = T)
-    write_tsv(filtered, paste0(groups_fold_filtered, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".tsv"))
-    if (save_excel) openxlsx::write.xlsx(filtered, file = paste0(groups_fold_thresh_up_down, "/filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".xlsx"), row.names = F)
+    filename <- paste0("filtered_DE_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold)
+    write_tsv(filtered, file.path(groups_fold_filtered_path, paste0(filename, ".tsv")))
+    if (save_excel) openxlsx::write.xlsx(filtered, file = file.path(groups_fold_filtered_path, paste0(filename, ".xlsx")), row.names = F)
 
     # saving gene lists
-    write.table(filtered$genes, paste0(groups_fold_thresh_up_down, "/up_down_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt"), quote = F, row.names = F, col.names = F)
+    if (!dir.exists(groups_fold_thresh_up_down)) dir.create(groups_fold_thresh_up_down, recursive = T)
+    filename <- paste0("up_down_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt")
+    write.table(filtered$genes, file.path(groups_fold_thresh_up_down, filename), quote = F, row.names = F, col.names = F)
 
     if (!dir.exists(groups_fold_thresh_up)) dir.create(groups_fold_thresh_up, recursive = T)
-    write.table(filtered$genes[filtered$log2FoldChange > 0], paste0(groups_fold_thresh_up, "/up_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt"), quote = F, row.names = F, col.names = F)
+    filename <- paste0("up_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt")
+    write.table(filtered$genes[filtered$log2FoldChange > 0], file.path(groups_fold_thresh_up, filename), quote = F, row.names = F, col.names = F)
 
     if (!dir.exists(groups_fold_thresh_down)) dir.create(groups_fold_thresh_down, recursive = T)
-    write.table(filtered$genes[filtered$log2FoldChange < 0], paste0(groups_fold_thresh_down, "/down_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt"), quote = F, row.names = F, col.names = F)
+    filename <- paste0("down_genes_list_", b, "_vs_", a, "_thFC", log2FC_threshold, "_thPval", padj_threshold, ".txt")
+    write.table(filtered$genes[filtered$log2FoldChange < 0], file.path(groups_fold_thresh_down, filename), quote = F, row.names = F, col.names = F)
   }
 }

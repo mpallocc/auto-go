@@ -2,11 +2,11 @@
 #'
 #' @description Perform enrichment analysis on all the desired gene lists. This function take advantage of the 'enrichR' package.
 #' @param list_of_genes it can be a list of dataframes containing gene names (i.e. from the output of read_gene_lists()), a single dataframe or character vector of gene names, or a path to a .txt file containing one gene name per row.
-#' @param dbs Databases over which the enrichment will be performed, based on the enrichR libraries. Default are GO_Molecular_Function_2021, GO_Cellular_Component_2021, GO_Biological_Process_2021, KEGG_2021_Human.
-#' @param my_comparison Name of the comparison the user would like to inspect. Ignored if list_of_genes is a list.
+#' @param dbs Databases over which the enrichment will be performed, based on the enrichR libraries. Default are GO_Molecular_Function_2021, GO_Cellular_Component_2021, GO_Biological_Process_2021, KEGG_2021_Human. Run choose_database() to see all the possible databases.
+#' @param my_comparison Name of the comparison (or the analysis) the user would like to inspect. Ignored if list_of_genes is a list. taken from the path.
 #' @param ensembl (Default = FALSE). Set to TRUE if the provided gene list contains Ensembl IDs. A conversion to HGNC will be performed.
 #' @param excel (Default = FALSE). Set to TRUE if you want to save output tables in .xlsx format.
-#' @param outfolder The name to assign to the folder in which outputs are saved. Ignored if list_of_genes is a list.
+#' @param outfolder Default to NULL. The name to assign to the folder in which outputs are saved. Ignored if list_of_genes is a list, taken from the path.
 #' @export
 
 

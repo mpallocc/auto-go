@@ -9,8 +9,8 @@ read_gene_lists(
   log2FC_threshold = 0,
   padj_threshold = 0.05,
   which_list = c("up_genes", "down_genes", "up_down_genes", "everything"),
-  from_DE_analysis = TRUE,
-  files_format = ".txt"
+  from_autoGO = TRUE,
+  files_format = NULL
 )
 }
 \arguments{
@@ -20,11 +20,11 @@ read_gene_lists(
 
 \item{padj_threshold}{Threshold value for adjusted p-value significance (Defaults to 0.05).}
 
-\item{which_list}{one of c("up_genes","down_genes","up_down_genes","everything"). Select a list of genes to perform the enrichment. Respectively, both up and down regulated genes (up_down_genes), only up regulated genes (up_genes), only down regulated genes (down_genes), or everything allow to load all the three kind of lists separately.}
+\item{which_list}{It can be: "up_genes","down_genes","up_down_genes","everything". Select a list of genes to perform the enrichment. Respectively, both up and down regulated genes (up_down_genes), only up regulated genes (up_genes), only down regulated genes (down_genes), or (everything) allow to load all the three kind of lists separately and it is employed also for lists not from differential analysis..}
 
-\item{from_DE_analysis}{Default is TRUE, set FALSE if the lists you want to upload are not from a differential expression analysis.}
+\item{from_autoGO}{Default is TRUE, set FALSE if the gene list you want to upload are not from a differential expression analysis.}
 
-\item{files_format}{(Default = NULL). when from_DE_analysis = T it is mandatory to provide the extension of the list of genes to upload.}
+\item{files_format}{(Default = NULL). When from_autoGO = FALSE it is mandatory to provide the extension of the list of genes to upload.}
 }
 \description{
 Function employed for reading all the gene lists on which the enrichment will be performed.
