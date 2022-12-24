@@ -116,6 +116,15 @@ volcanoplot(DE_results = filename,
             highlight_genes = NULL,
             del_csv = ",",
             outfolder = "./results")
+
+filename <- "./results/H460.2D_vs_H460.3D.2p/DE_H460.2D_vs_H460.3D.2p_allres.tsv"
+volcanoplot(DE_results = filename,
+            my_comparison = "H460.2D_vs_H460.3D.2p",
+            log2FC_thresh = 1,
+            padj_thresh = 0.05,
+            highlight_genes = NULL,
+            del_csv = ",",
+            outfolder = "./results")
 ```
 
 #### Parameters:
@@ -145,8 +154,8 @@ invisible(lapply(names(res_lists), function (i) volcanoplot(res_lists[[i]], my_c
  
 
 ```{r, fig.show='hold', echo=FALSE, out.width = '47%',  eval=TRUE} 
-knitr::include_graphics("./results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/volcano.png")
-knitr::include_graphics("./results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC1_thPval0.05/volcano.png")
+knitr::include_graphics("img/results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/volcano.png")
+knitr::include_graphics("img/results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC1_thPval0.05/volcano.png")
 
 ```
 
@@ -286,7 +295,7 @@ barplotGO(enrich_tables = enrich_tables,
 
 
 ```{r, echo=FALSE, out.width = '98%',  eval=TRUE} 
-knitr::include_graphics("./results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_plots/barplotGO_GO_Molecular_Function_2021.png")
+knitr::include_graphics("img/results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_plots/barplotGO_GO_Molecular_Function_2021.png")
 ```
 
 It is possible to produce a Barplot also on a single enrichment table. It is anyway suggested to employ the *read_enrich_table* function.
@@ -329,7 +338,7 @@ lolliGO(enrich_tables = enrich_tables,
 ```
 
 ```{r, echo=FALSE, out.width = '98%',  eval=TRUE} 
-knitr::include_graphics("./results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_plots/lolliGO_GO_Molecular_Function_2021.png")
+knitr::include_graphics("img/results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_plots/lolliGO_GO_Molecular_Function_2021.png")
 ```
 
 
@@ -362,7 +371,7 @@ lolliGO(enrich_tables = enrich_table,
 
 If the enrichemnt analysis have been performed on many comparisons (or gene lists) it is interesting to have a look at the enrichment results over all these gene lists together.
 
-The function automatically reads all the enrichment tables of the chosen database (if the previous steps of autoGO have been performed. In this case the subfolders structure of autoGO is needed). It produces a heatmap of the most enriched terms over a certain number of comparison (or enriched lists). It is possible to produce the heatmap of terms enriched in at least one comparison or more. The user can choose the minimum of comparisons on which a certain term must be significant (i.e. if the user has 5 comparisons and he wants to look at the terms significant on all the comparisons it has to use *min_term_per_row = 4*)
+The function automatically reads all the enrichment tables of the chosen database (if the previous steps of autoGO have been performed. In this case the subfolders structure of autoGO is needed). It produces a heatmap of the most enriched terms over a certain number of comparison (or enriched lists). It is possible to produce the heatmap of terms enriched in at least one comparison or more. The user can choose the minimum of comparisons on which a certain term must be significant (i.e. if the user has 5 comparisons and he wants to look at the terms significant on all the comparisons it has to use *min_term_per_row = 5*)
 
 ```{r}
 heatmapGO(db = "GO_Biological_Process_2021",
@@ -377,15 +386,17 @@ heatmapGO(db = "GO_Biological_Process_2021",
 
 * *db*: database for which the user would like to produce the heatmap. It has to be one for which the enrichment analysis has been performed.
 
-* *outfolder* : the name of the output folder used until now. The enrichment tables will be searched inside of it. Default is: "./results". (NOTE: The outfolder chosen by the user will be the parent folder of the results. Inside this, there will be created a folder called ComparisonHeatmap).
+* *outfolder*: the name of the output folder used until now. The enrichment tables will be searched inside of it. Default is: "./results". (NOTE: The outfolder chosen by the user will be the parent folder of the results. Inside this, there will be created a folder called ComparisonHeatmap).
 
 * *padj_threshold* and *log2FC_threshold*: Default are *padj_treshold* = 0.05 and *log2FC_threshold* = 0
+
+* *min_term_per_row*: Minimum of comparisons or enriched lists on which a certain term must be significant (Defaults to 2).
 
 * *which_list*: "up_genes", "down_genes","up_down_genes" or "not_from_DE". It allows to choose which enrichment results to plot based on the kind of enriched lists. Respectively, enrichment on both up and down regulated genes (up_down_genes), only up regulated genes (up_genes), only down regulated genes ("down_genes") or select "not_from_DE" if your enrichment is made on a list of genes that does not come from a differential expression analysis.
 
 
 ```{r, echo=FALSE, out.width = '80%', fig.align='center', eval=TRUE} 
-knitr::include_graphics("./results/ComparisonHeatmap/down_genes_GO_Biological_Process_2021_min3.png")
+knitr::include_graphics("img/results/ComparisonHeatmap/down_genes_GO_Biological_Process_2021_min3.png")
 ```
 
 
@@ -393,6 +404,6 @@ For a faster process it is possible to define a vector containing the employed d
 
 ```{r}
 dbs <- c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human")
-lapply(dbs, function (i) heatmapGO(db = i, which_list = "down_genes"))
+lapply(dbs, function (i) heatmapGO(db = i, which_list = "down_genes", min_term_per_row = 3))
 ```
 

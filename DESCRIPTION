@@ -2,11 +2,11 @@ Package: autoGO
 Title: Auto-GO: Reproducible, Robust and High Quality Ontology Enrichment Visualizations
 Version: 0.9
 Authors@R: c(
-    person("Isabella", "Grassucci", , "isabella.grassucci@gmail.com", role = "cre",
+    person("Isabella", "Grassucci", , "isabella.grassucci@gmail.com", role = "aut",
            comment = c(ORCID = "0000-0002-2484-8570")),
     person("Eleonora", "Sperandio", , "eleonora.sperandio@ifo.it", role = "aut",
            comment = c(ORCID = "0000-0002-8572-6788")),
-    person("Fabio", "Ticconi", , "fabio.ticconi@gmail.com", role = "aut",
+    person("Fabio", "Ticconi", , "fabio.ticconi@gmail.com", role = "cre",
            comment = c(ORCID = "0000-0001-8905-6657")),
     person("Alice", "Massacci", , "alice.massacci@ifo.it", role = "aut",
            comment = c(ORCID = "0000-0001-7780-809X")),
@@ -38,7 +38,6 @@ Imports:
     imguR,
     openxlsx,
     purrr,
-    tibble,
     RColorBrewer,
     reshape2,
     stats,

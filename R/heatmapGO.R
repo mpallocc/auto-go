@@ -38,7 +38,6 @@ heatmapGO <- function(db,
   db_files_path <- file.path(outfolder, db_files)
 
   if (which_list != "not_from_DE") {
-    # FIXME: change column names to the new, correct ones
     to_read <- db_files_path[grepl(pattern = paste0("thFC", log2FC_threshold, "_thPval", padj_threshold), db_files_path)]
   }
 
