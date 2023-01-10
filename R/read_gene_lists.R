@@ -7,6 +7,7 @@
 #' @param which_list It can be: "up_genes","down_genes","up_down_genes","everything". Select a list of genes to perform the enrichment. Respectively, both up and down regulated genes (up_down_genes), only up regulated genes (up_genes), only down regulated genes (down_genes), or (everything) allow to load all the three kind of lists separately and it is employed also for lists not from differential analysis..
 #' @param from_autoGO Default is TRUE, set FALSE if the gene list you want to upload are not from a differential expression analysis.
 #' @param files_format (Default = NULL). When from_autoGO = FALSE it is mandatory to provide the extension of the list of genes to upload.
+#' @return List of gene lists, each one being a one-dimensional data.frame.
 #' @export
 
 

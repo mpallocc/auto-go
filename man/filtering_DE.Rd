@@ -20,6 +20,9 @@ filtering_DE(
 
 \item{save_excel}{(Default = FALSE) Write output in MS Excel file format (.xlsx).}
 }
+\value{
+No return value. Files will be produced as part of normal execution.
+}
 \description{
 We could be in a position to carry out multiple filters on the results of the differential analysis, in order not to repeat all the deseq_analysis.R code which provides for the actual computation of the differential analysis, the filtering_DE.R function has been implemented to be able to filter the file(s) " * _allres.tsv " and generate all the folders and files associated with the specific filters applied.
 

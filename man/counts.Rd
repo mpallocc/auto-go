@@ -3,7 +3,7 @@
 \docType{data}
 \name{counts}
 \alias{counts}
-\title{Counts.}
+\title{Example raw count data.}
 \format{
 A data frame with 29744 rows and 19 variable:
 }
@@ -11,6 +11,6 @@ A data frame with 29744 rows and 19 variable:
 counts
 }
 \description{
-TODO: write a longer description
+Genes as rows and samples as columns.
 }
 \keyword{datasets}

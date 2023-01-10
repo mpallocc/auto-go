@@ -26,6 +26,9 @@ read_enrich_tables(
 
 \item{files_format}{Default is NULL, when from_autoGO = FALSE it is mandatory to provide the extension of the list of genes you want to upload.}
 }
+\value{
+List of enrichment tables, each one being a tibble object.
+}
 \description{
 Helper function to read all the enrichment results in order to proceed with the visualization in an automated way.
 }

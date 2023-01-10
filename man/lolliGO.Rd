@@ -23,6 +23,9 @@ lolliGO(
 
 \item{from_autoGO}{Default is TRUE, set to FALSE if the enrichment tables you want to use are not from a differential expression analysis.}
 }
+\value{
+No return value. Files will be produced as part of normal execution.
+}
 \description{
 The function lolliGO.R implement the lollipop plot of the first 20 enrichment terms.
 

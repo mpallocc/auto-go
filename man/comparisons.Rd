@@ -3,7 +3,7 @@
 \docType{data}
 \name{comparisons}
 \alias{comparisons}
-\title{Comparisons.}
+\title{Example comparison data.}
 \format{
 A data frame with 6 rows and 2 variable:
 }
@@ -11,6 +11,7 @@ A data frame with 6 rows and 2 variable:
 comparisons
 }
 \description{
-TODO: write a longer description
+It is the comparison table needed by DESeq2, constituted by the
+column \emph{treatment} and by the column \emph{control}.
 }
 \keyword{datasets}

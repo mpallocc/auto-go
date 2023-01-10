@@ -23,6 +23,9 @@ barplotGO(
 
 \item{from_autoGO}{Default is TRUE, set to FALSE if the enrichment tables you want to use are not from a differential expression analysis.}
 }
+\value{
+No return value. Files will be produced as part of normal execution.
+}
 \description{
 The function barplotGO.R implement the barplot of the first 15 enrichment terms.
 

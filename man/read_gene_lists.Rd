@@ -26,6 +26,9 @@ read_gene_lists(
 
 \item{files_format}{(Default = NULL). When from_autoGO = FALSE it is mandatory to provide the extension of the list of genes to upload.}
 }
+\value{
+List of gene lists, each one being a one-dimensional data.frame.
+}
 \description{
 Function employed for reading all the gene lists on which the enrichment will be performed.
 }

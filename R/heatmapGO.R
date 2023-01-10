@@ -8,7 +8,9 @@
 #' @param padj_threshold Threshold value for adjusted p-value significance (Defaults to 0.05).
 #' @param min_term_per_row Minimum of comparisons or enriched lists on which a certain term must be significant (Defaults to 2).
 #' @param which_list One of c("up_genes", "down_genes","up_down_genes", "not_from_DE"): select data to plot. Respectively, only up regulated genes (up_genes), only down regulated genes ("down_genes"), enrichment on both up and down regulated genes (up_down_genes) or select "not_from_DE" if the enrichment will be made on a list of genes that does not come from a differential expression analysis.
+#' @return No return value. Files will be produced as part of normal execution.
 #' @export
+
 
 heatmapGO <- function(db,
                       outfolder = "./results",
@@ -22,11 +24,11 @@ heatmapGO <- function(db,
                         "not_from_DE"
                       )) {
   stopifnot(which_list %in% c(
-                        "up_genes",
-                        "down_genes",
-                        "up_down_genes",
-                        "not_from_DE"
-                      ))
+    "up_genes",
+    "down_genes",
+    "up_down_genes",
+    "not_from_DE"
+  ))
   stopifnot(min_term_per_row > 0)
 
   db_files <- list.files(
@@ -71,9 +73,9 @@ heatmapGO <- function(db,
   })
 
   complete_table <- purrr::reduce(dd, dplyr::full_join, by = "Term") %>%
-    dplyr::mutate(dplyr::across(-.data$Term, ~tidyr::replace_na(.x, 1))) %>%
+    dplyr::mutate(dplyr::across(-.data$Term, ~ tidyr::replace_na(.x, 1))) %>%
     dplyr::rename_with(~ gsub("up_genes/|down_genes/", "", .x)) %>%
-    dplyr::filter(rowSums(dplyr::across(-.data$Term, ~.x <= padj_threshold)) >= min_term_per_row) %>%
+    dplyr::filter(rowSums(dplyr::across(-.data$Term, ~ .x <= padj_threshold)) >= min_term_per_row) %>%
     dplyr::mutate(Term = gsub("\\(GO.*", "", .data$Term)) %>%
     dplyr::mutate(dplyr::across(where(is.numeric), ~ (-1 * log10(.x)))) %>%
     textshape::column_to_rownames(loc = "Term")
@@ -112,24 +114,25 @@ heatmapGO <- function(db,
       width_col <- 6
     }
 
-    h1 <- suppressWarnings(draw(Heatmap(data,
-      name = "-log10(Adj. P-value + 1)", col = col_fun,
-      row_names_gp = gpar(fontsize = 10),
-      show_row_dend = F, show_column_names = F,
-      show_column_dend = F, row_gap = unit(55, "cm"),
-      heatmap_width = unit(2, "cm") * width_col,
-      bottom_annotation = anno,
-      heatmap_legend_param = list(
-        legend_direction = "vertical",
-        title_position = "leftcenter-rot",
-        legend_height = unit(3, "cm")
+    h1 <- suppressWarnings(draw(
+      Heatmap(data,
+        name = "-log10(Adj. P-value + 1)", col = col_fun,
+        row_names_gp = gpar(fontsize = 10),
+        show_row_dend = F, show_column_names = F,
+        show_column_dend = F, row_gap = unit(55, "cm"),
+        heatmap_width = unit(2, "cm") * width_col,
+        bottom_annotation = anno,
+        heatmap_legend_param = list(
+          legend_direction = "vertical",
+          title_position = "leftcenter-rot",
+          legend_height = unit(3, "cm")
+        ),
+        column_title = title[1], rect_gp = gpar(col = "white", lwd = 1),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          if (data[i, j] > -log10(padj_threshold)) grid.text(sprintf("%.2f", data[i, j]), x, y, gp = gpar(fontsize = 10, col = "#e35b5b", fontface = "bold"))
+        }
       ),
-      column_title = title[1], rect_gp = gpar(col = "white", lwd = 1),
-      cell_fun = function(j, i, x, y, width, height, fill) {
-        if (data[i, j] > -log10(padj_threshold)) grid.text(sprintf("%.2f", data[i, j]), x, y, gp = gpar(fontsize = 10, col = "#e35b5b", fontface = "bold"))
-      }
-    ),
-    heatmap_legend_side = "left", annotation_legend_side = "bottom"
+      heatmap_legend_side = "left", annotation_legend_side = "bottom"
     ))
   }
 

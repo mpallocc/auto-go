@@ -29,6 +29,9 @@ volcanoplot(
 
 \item{outfolder}{The name to assign to the folder for output saving. (Default = "./results").}
 }
+\value{
+No return value. Files will be produced as part of normal execution.
+}
 \description{
 Once the differential analysis has been performed, it is possible to visualize the volcano plots employing this function.
 

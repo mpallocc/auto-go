@@ -3,7 +3,7 @@
 \docType{data}
 \name{groups}
 \alias{groups}
-\title{Groups.}
+\title{Example group data.}
 \format{
 A data frame with 18 rows and 2 variable:
 }
@@ -11,6 +11,8 @@ A data frame with 18 rows and 2 variable:
 groups
 }
 \description{
-TODO: write a longer description
+It is the sample information table needed by DESeq2, constituted by the
+column \emph{sample}, including sample barcodes and by the column \emph{group}
+including the condition to which each sample belongs.
 }
 \keyword{datasets}

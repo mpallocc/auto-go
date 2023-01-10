@@ -11,6 +11,7 @@
 #' @param save_excel Allows to save all the output tables in .xlsx format (Default = FALSE).
 #' @param outfolder The name to assign to the folder for output saving. (Default = "./results").
 #' @param del_csv Specify the delimiter of the .csv file, default is ",". This is because opening .csv files with Excel messes up the format and changes the delimiter in ";".
+#' @return No return value. Files will be produced as part of normal execution.
 #' @examples
 #' sample <- c("Pat_1", "Pat_2", "Pat_3", "Pat_4", "Pat_5", "Pat_6")
 #' group <- c("CTRL", "CTRL", "TREAT_A", "TREAT_A", "TREAT_B", "TREAT_B")

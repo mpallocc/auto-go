@@ -6,6 +6,7 @@
 #' @param log2FC_threshold (Default = 0) Threshold value for log2(Fold Change) filtering.
 #' @param outfolder (Default = "./results") Name of the folder in which the new output is written.
 #' @param save_excel (Default = FALSE) Write output in MS Excel file format (.xlsx).
+#' @return No return value. Files will be produced as part of normal execution.
 #' @export
 
 

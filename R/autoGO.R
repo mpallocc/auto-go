@@ -7,6 +7,7 @@
 #' @param ensembl (Default = FALSE). Set to TRUE if the provided gene list contains Ensembl IDs. A conversion to HGNC will be performed.
 #' @param excel (Default = FALSE). Set to TRUE if you want to save output tables in .xlsx format.
 #' @param outfolder Default to NULL. The name to assign to the folder in which outputs are saved. Ignored if list_of_genes is a list, taken from the path.
+#' @return No return value. Files will be produced as part of normal execution.
 #' @export
 
 

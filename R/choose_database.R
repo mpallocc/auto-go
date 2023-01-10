@@ -2,6 +2,7 @@
 #'
 #' @description It allows the user to choose the databases on which to perform the enrichment analysis. Either it returns all the possible databases or a subset of them.
 #' @param db_search (Default = NULL), is the string pattern to be matched against the list of enrichR databases. Any matching DBs will be returned.
+#' @return List of database names as a character vector.
 #' @export
 
 

@@ -9,6 +9,7 @@
 #' @param padj_thresh Threshold value for adjusted p-value to highlight genes as  significant (default = 0.05).
 #' @param del_csv Specify the delimiter of the .csv file (default = ","). This is because opening .csv files with Excel messes up the format and changes the delimiter to ";".
 #' @param outfolder The name to assign to the folder for output saving. (Default = "./results").
+#' @return No return value. Files will be produced as part of normal execution.
 #' @export
 
 volcanoplot <- function(DE_results,

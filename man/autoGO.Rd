@@ -29,8 +29,11 @@ autoGO(
 
 \item{outfolder}{Default to NULL. The name to assign to the folder in which outputs are saved. Ignored if list_of_genes is a list, taken from the path.}
 }
+\value{
+No return value. Files will be produced as part of normal execution.
+}
 \description{
-Auto-GO is a framework that enables automated, high quality Gene Ontology enrichment analyses visualizations. It also features a handy wrapper for Differential Expression analysis around the DESeq2 package (Love et. al 2014) and a handy wrapper around the single-sample implementation of the GSEA algorithm (ssGSEA), useful for low-numerosity transcriptional profiles. The whole framework is structured in different, independent functions, in order to let the user decide which steps of the analysis perform and which plot to produce.
+Auto-GO is a framework that enables automated, high quality Gene Ontology enrichment analyses visualizations. It also features a handy wrapper for Differential Expression analysis around the 'DESeq2' package described in Love et al. (2014) \doi{10.1186/s13059-014-0550-8}, and a handy wrapper around the single-sample implementation of the Gene Set Enrichment Analysis (GSEA) algorithm ('ssGSEA') described in Barbie et al. (2009) \doi{10.1038/nature08460}, useful for low-numerosity transcriptional profiles. The whole framework is structured in different, independent functions, in order to let the user decide which steps of the analysis to perform and which plot to produce.
 
 Perform enrichment analysis on all the desired gene lists. This function take advantage of the 'enrichR' package.
 }

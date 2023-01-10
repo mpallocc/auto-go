@@ -35,6 +35,9 @@ deseq_analysis(
 
 \item{del_csv}{Specify the delimiter of the .csv file, default is ",". This is because opening .csv files with Excel messes up the format and changes the delimiter in ";".}
 }
+\value{
+No return value. Files will be produced as part of normal execution.
+}
 \description{
 This function allows to perform a differential gene expression analysis using the DESeq2 package.
 
