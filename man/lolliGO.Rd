@@ -31,3 +31,14 @@ The function lolliGO.R implement the lollipop plot of the first 20 enrichment te
 
 For each enrichment result table a lollipop plot is produced. Results are stored in the "enrichment_plots" subfolder for each comparison.
 }
+\examples{
+\dontrun{
+lolliGO(
+  enrich_tables = enrich_tables,
+  title = NULL,
+  outfolder = NULL,
+  outfile = NULL,
+  from_autoGO = TRUE
+)
+}
+}

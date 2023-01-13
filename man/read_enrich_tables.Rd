@@ -32,3 +32,15 @@ List of enrichment tables, each one being a tibble object.
 \description{
 Helper function to read all the enrichment results in order to proceed with the visualization in an automated way.
 }
+\examples{
+\dontrun{
+enrich_tables <- read_enrich_tables(
+  enrich_table_path = "./results",
+  log2FC_threshold = 0,
+  padj_threshold = 0.05,
+  which_list = "down_genes",
+  from_autoGO = T,
+  files_format = NULL
+)
+}
+}

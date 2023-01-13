@@ -15,3 +15,8 @@ List of database names as a character vector.
 \description{
 It allows the user to choose the databases on which to perform the enrichment analysis. Either it returns all the possible databases or a subset of them.
 }
+\examples{
+\dontrun{
+choose_database(db_search = "KEGG")
+}
+}

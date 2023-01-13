@@ -8,20 +8,31 @@
 #' @param from_autoGO Default is TRUE, set FALSE if the gene list you want to upload are not from a differential expression analysis.
 #' @param files_format (Default = NULL). When from_autoGO = FALSE it is mandatory to provide the extension of the list of genes to upload.
 #' @return List of gene lists, each one being a one-dimensional data.frame.
+#' @examples
+#' \dontrun{
+#' gene_lists <- read_gene_lists(
+#'   gene_lists_path = "./results",
+#'   log2FC_threshold = 0,
+#'   padj_threshold = 0.05,
+#'   which_list = "down_genes",
+#'   from_autoGO = T,
+#'   files_format = NULL
+#' )
+#' }
 #' @export
 
 
 read_gene_lists <- function(gene_lists_path = "./results",
-                           log2FC_threshold = 0,
-                           padj_threshold = 0.05,
-                           which_list = c(
-                             "up_genes",
-                             "down_genes",
-                             "up_down_genes",
-                             "everything"
-                           ),
-                           from_autoGO = TRUE,
-                           files_format = NULL) {
+                            log2FC_threshold = 0,
+                            padj_threshold = 0.05,
+                            which_list = c(
+                              "up_genes",
+                              "down_genes",
+                              "up_down_genes",
+                              "everything"
+                            ),
+                            from_autoGO = TRUE,
+                            files_format = NULL) {
   if (from_autoGO) {
     gene_lists_files <- list.files(path = gene_lists_path, pattern = ".*genes_list_.*.txt", recursive = TRUE, full.names = TRUE)
     to_read <- gene_lists_files[grepl(pattern = paste0("thFC", log2FC_threshold, "_thPval", padj_threshold), gene_lists_files)]

@@ -28,3 +28,13 @@ We could be in a position to carry out multiple filters on the results of the di
 
 The function automatically searches inside the folders where_results and outfolder the file(s) (See ?deseq_analysis()) "_allres.tsv" and generates folders and files in the same folders with the new filters for foldchange and pvalue respectively.
 }
+\examples{
+\dontrun{
+filtering_DE(
+  padj_threshold = 0.05,
+  log2FC_threshold = 1,
+  outfolder = "./results",
+  save_excel = F
+)
+}
+}

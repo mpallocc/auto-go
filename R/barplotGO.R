@@ -8,6 +8,16 @@
 #' @param outfile Default to "barplotGO.png", is ignored if from_autoGO is TRUE. The name of the barplot filename.
 #' @param from_autoGO Default is TRUE, set to FALSE if the enrichment tables you want to use are not from a differential expression analysis.
 #' @return No return value. Files will be produced as part of normal execution.
+#' @examples
+#' \dontrun{
+#' barplotGO(
+#'   enrich_tables = enrich_tables,
+#'   title = NULL,
+#'   outfolder = NULL,
+#'   outfile = NULL,
+#'   from_autoGO = TRUE
+#' )
+#' }
 #' @export
 
 

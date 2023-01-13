@@ -7,6 +7,15 @@
 #' @param outfolder (Default = "./results") Name of the folder in which the new output is written.
 #' @param save_excel (Default = FALSE) Write output in MS Excel file format (.xlsx).
 #' @return No return value. Files will be produced as part of normal execution.
+#' @examples
+#' \dontrun{
+#' filtering_DE(
+#'   padj_threshold = 0.05,
+#'   log2FC_threshold = 1,
+#'   outfolder = "./results",
+#'   save_excel = F
+#' )
+#' }
 #' @export
 
 

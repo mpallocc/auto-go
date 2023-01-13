@@ -8,6 +8,17 @@
 #' @param from_autoGO Default is TRUE, set to FALSE if the lists you want to upload are not from a differential expression analysis.
 #' @param files_format Default is NULL, when from_autoGO = FALSE it is mandatory to provide the extension of the list of genes you want to upload.
 #' @return List of enrichment tables, each one being a tibble object.
+#' @examples
+#' \dontrun{
+#' enrich_tables <- read_enrich_tables(
+#'   enrich_table_path = "./results",
+#'   log2FC_threshold = 0,
+#'   padj_threshold = 0.05,
+#'   which_list = "down_genes",
+#'   from_autoGO = T,
+#'   files_format = NULL
+#' )
+#' }
 #' @export
 
 

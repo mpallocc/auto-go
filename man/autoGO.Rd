@@ -33,9 +33,21 @@ autoGO(
 No return value. Files will be produced as part of normal execution.
 }
 \description{
-Auto-GO is a framework that enables automated, high quality Gene Ontology enrichment analyses visualizations. It also features a handy wrapper for Differential Expression analysis around the 'DESeq2' package described in Love et al. (2014) \doi{10.1186/s13059-014-0550-8}, and a handy wrapper around the single-sample implementation of the Gene Set Enrichment Analysis (GSEA) algorithm ('ssGSEA') described in Barbie et al. (2009) \doi{10.1038/nature08460}, useful for low-numerosity transcriptional profiles. The whole framework is structured in different, independent functions, in order to let the user decide which steps of the analysis to perform and which plot to produce.
+Auto-GO is a framework that enables automated, high quality Gene Ontology enrichment analysis visualizations. It also features a handy wrapper for Differential Expression analysis around the 'DESeq2' package described in Love et al. (2014) \doi{10.1186/s13059-014-0550-8}. The whole framework is structured in different, independent functions, in order to let the user decide which steps of the analysis to perform and which plot to produce.
 
 Perform enrichment analysis on all the desired gene lists. This function take advantage of the 'enrichR' package.
+}
+\examples{
+\dontrun{
+autoGO(
+  list_of_genes = gene_lists,
+  dbs = c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human"),
+  my_comparison = NULL,
+  ensembl = F,
+  excel = F,
+  outfolder = NULL
+)
+}
 }
 \author{
 \strong{Maintainer}: Fabio Ticconi \email{fabio.ticconi@gmail.com} (\href{https://orcid.org/0000-0001-8905-6657}{ORCID})

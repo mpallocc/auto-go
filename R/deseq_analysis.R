@@ -16,10 +16,21 @@
 #' sample <- c("Pat_1", "Pat_2", "Pat_3", "Pat_4", "Pat_5", "Pat_6")
 #' group <- c("CTRL", "CTRL", "TREAT_A", "TREAT_A", "TREAT_B", "TREAT_B")
 #' groups <- data.frame(sample, group)
-#' @examples
 #' treatment <- c("TREAT_A", "TREAT_B", "TREAT_A")
 #' control <- c("CTRL", "CTRL", "TREAT_B")
 #' comparisons <- data.frame(treatment, control)
+#' \dontrun{
+#' deseq_analysis(counts,
+#'   groups,
+#'   comparisons,
+#'   padj_threshold = 0.05,
+#'   log2FC_threshold = 0,
+#'   pre_filtering = T,
+#'   save_excel = F,
+#'   outfolder = "./results",
+#'   del_csv = ","
+#' )
+#' }
 #' @export
 
 

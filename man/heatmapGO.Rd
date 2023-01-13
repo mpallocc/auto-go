@@ -34,3 +34,15 @@ If the analysis has been performed on more conditions it is interest to have a l
 
 The function automatically reads all the enrichment results of the chosen database. A heatmap is produced for each database, all the terms are merged together and a filter is applied as follows: only terms with a significant pvalue (i.e. less than padj_threshold) in at least one comparison will be retained and plotted. These plots will be saved in the "Comparison_Heatmap" folder. In order to have readable plots, if many terms are enriched for a database several images will be created (indexed _1, _2, ...).
 }
+\examples{
+\dontrun{
+heatmapGO(
+  db = "GO_Biological_Process_2021",
+  outfolder = "./results",
+  log2FC_threshold = 0,
+  padj_threshold = 0.05,
+  min_term_per_row = 3,
+  which_list = "down_genes"
+)
+}
+}

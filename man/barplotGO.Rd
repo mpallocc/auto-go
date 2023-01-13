@@ -31,3 +31,14 @@ The function barplotGO.R implement the barplot of the first 15 enrichment terms.
 
 For each enrichment result table a barplot is produced. Results are stored in the "enrichment_plots" subfolder for each comparison.
 }
+\examples{
+\dontrun{
+barplotGO(
+  enrich_tables = enrich_tables,
+  title = NULL,
+  outfolder = NULL,
+  outfile = NULL,
+  from_autoGO = TRUE
+)
+}
+}

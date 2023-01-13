@@ -8,6 +8,17 @@
 #' @param excel (Default = FALSE). Set to TRUE if you want to save output tables in .xlsx format.
 #' @param outfolder Default to NULL. The name to assign to the folder in which outputs are saved. Ignored if list_of_genes is a list, taken from the path.
 #' @return No return value. Files will be produced as part of normal execution.
+#' @examples
+#' \dontrun{
+#' autoGO(
+#'   list_of_genes = gene_lists,
+#'   dbs = c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human"),
+#'   my_comparison = NULL,
+#'   ensembl = F,
+#'   excel = F,
+#'   outfolder = NULL
+#' )
+#' }
 #' @export
 
 

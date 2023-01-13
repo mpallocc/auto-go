@@ -32,3 +32,15 @@ List of gene lists, each one being a one-dimensional data.frame.
 \description{
 Function employed for reading all the gene lists on which the enrichment will be performed.
 }
+\examples{
+\dontrun{
+gene_lists <- read_gene_lists(
+  gene_lists_path = "./results",
+  log2FC_threshold = 0,
+  padj_threshold = 0.05,
+  which_list = "down_genes",
+  from_autoGO = T,
+  files_format = NULL
+)
+}
+}

@@ -10,7 +10,21 @@
 #' @param del_csv Specify the delimiter of the .csv file (default = ","). This is because opening .csv files with Excel messes up the format and changes the delimiter to ";".
 #' @param outfolder The name to assign to the folder for output saving. (Default = "./results").
 #' @return No return value. Files will be produced as part of normal execution.
+#' @examples
+#' \dontrun{
+#' filename <- "./results/H460.2D_vs_H460.3D.2p/DE_H460.2D_vs_H460.3D.2p_allres.tsv"
+#' volcanoplot(
+#'   DE_results = filename,
+#'   my_comparison = "H460.2D_vs_H460.3D.2p",
+#'   log2FC_thresh = 0,
+#'   padj_thresh = 0.05,
+#'   highlight_genes = NULL,
+#'   del_csv = ",",
+#'   outfolder = "./results"
+#' )
+#' }
 #' @export
+
 
 volcanoplot <- function(DE_results,
                         my_comparison = NULL,

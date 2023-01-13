@@ -9,6 +9,17 @@
 #' @param min_term_per_row Minimum of comparisons or enriched lists on which a certain term must be significant (Defaults to 2).
 #' @param which_list One of c("up_genes", "down_genes","up_down_genes", "not_from_DE"): select data to plot. Respectively, only up regulated genes (up_genes), only down regulated genes ("down_genes"), enrichment on both up and down regulated genes (up_down_genes) or select "not_from_DE" if the enrichment will be made on a list of genes that does not come from a differential expression analysis.
 #' @return No return value. Files will be produced as part of normal execution.
+#' @examples
+#' \dontrun{
+#' heatmapGO(
+#'   db = "GO_Biological_Process_2021",
+#'   outfolder = "./results",
+#'   log2FC_threshold = 0,
+#'   padj_threshold = 0.05,
+#'   min_term_per_row = 3,
+#'   which_list = "down_genes"
+#' )
+#' }
 #' @export
 
 
