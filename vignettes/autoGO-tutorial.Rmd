@@ -154,8 +154,8 @@ invisible(lapply(names(res_lists), function (i) volcanoplot(res_lists[[i]], my_c
  
 
 ```{r, fig.show='hold', echo=FALSE, out.width = '47%',  eval=TRUE} 
-knitr::include_graphics("img/results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/volcano.png")
-knitr::include_graphics("img/results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC1_thPval0.05/volcano.png")
+knitr::include_graphics("volcano1.png")
+knitr::include_graphics("volcano2.png")
 
 ```
 
@@ -295,7 +295,7 @@ barplotGO(enrich_tables = enrich_tables,
 
 
 ```{r, echo=FALSE, out.width = '98%',  eval=TRUE} 
-knitr::include_graphics("img/results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_plots/barplotGO_GO_Molecular_Function_2021.png")
+knitr::include_graphics("barplotGO_GO_Molecular_Function_2021.png")
 ```
 
 It is possible to produce a Barplot also on a single enrichment table. It is anyway suggested to employ the *read_enrich_table* function.
@@ -338,7 +338,7 @@ lolliGO(enrich_tables = enrich_tables,
 ```
 
 ```{r, echo=FALSE, out.width = '98%',  eval=TRUE} 
-knitr::include_graphics("img/results/H460.2D_vs_H460.3D.2p/filtered_DE_thFC0_thPval0.05/down_genes/enrichment_plots/lolliGO_GO_Molecular_Function_2021.png")
+knitr::include_graphics("lolliGO_GO_Molecular_Function_2021.png")
 ```
 
 
@@ -396,7 +396,7 @@ heatmapGO(db = "GO_Biological_Process_2021",
 
 
 ```{r, echo=FALSE, out.width = '80%', fig.align='center', eval=TRUE} 
-knitr::include_graphics("img/results/ComparisonHeatmap/down_genes_GO_Biological_Process_2021_min3.png")
+knitr::include_graphics("down_genes_GO_Biological_Process_2021_min3.png")
 ```
 
 
