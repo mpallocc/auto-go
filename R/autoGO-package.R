@@ -15,13 +15,13 @@
 #' @import ggplot2
 #' @import stringr
 #' @import SummarizedExperiment
-#' @import ape
 #' @import dichromat
 #' @import grid
 #' @import imguR
 #' @import ggrepel
 #' @import grDevices
 #' @import dplyr
+#' @rawNamespace import(ape, except = where)
 #' @importFrom stats median na.omit p.adjust reorder setNames t.test wilcox.test
 #' @importFrom textshape column_to_rownames
 ## usethis namespace: end
