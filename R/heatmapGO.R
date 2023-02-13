@@ -88,7 +88,7 @@ heatmapGO <- function(db,
     dplyr::rename_with(~ gsub("up_genes/|down_genes/", "", .x)) %>%
     dplyr::filter(rowSums(dplyr::across(-.data$Term, ~ .x <= padj_threshold)) >= min_term_per_row) %>%
     dplyr::mutate(Term = gsub("\\(GO.*", "", .data$Term)) %>%
-    dplyr::mutate(dplyr::across(where(is.numeric), ~ (-1 * log10(.x)))) %>%
+    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ (-1 * log10(.x)))) %>%
     textshape::column_to_rownames(loc = "Term")
 
   pretty_labels <- function(data) {

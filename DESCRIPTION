@@ -1,6 +1,6 @@
 Package: autoGO
 Title: Auto-GO: Reproducible, Robust and High Quality Ontology Enrichment Visualizations
-Version: 0.9
+Version: 0.9.1
 Authors@R: c(
     person('Isabella', 'Grassucci', , 'isabella.grassucci@gmail.com', role = 'aut',
            comment = c(ORCID = '0000-0002-2484-8570')),
@@ -17,12 +17,14 @@ Authors@R: c(
 Description: Auto-GO is a framework that enables automated, high quality Gene Ontology enrichment analysis visualizations. It also features a handy wrapper for Differential Expression analysis around the 'DESeq2' package described in Love et al. (2014) <doi:10.1186/s13059-014-0550-8>. The whole framework is structured in different, independent functions, in order to let the user decide which steps of the analysis to perform and which plot to produce.
 License: MIT + file LICENSE
 Encoding: UTF-8
+BugReports: https://github.com/mpallocc/auto-go/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 LazyData: true
 Depends: 
     R (>= 3.5.0),
     readr (>= 2.1.2),
+    dplyr (>= 1.1.0),
     enrichR
 biocViews:
 Imports: 
@@ -30,7 +32,6 @@ Imports:
     ComplexHeatmap,
     DESeq2,
     dichromat,
-    dplyr,
     ggplot2,
     ggrepel,
     grDevices,
