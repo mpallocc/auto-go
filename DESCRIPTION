@@ -1,6 +1,6 @@
 Package: autoGO
 Title: Auto-GO: Reproducible, Robust and High Quality Ontology Enrichment Visualizations
-Version: 0.9
+Version: 0.9.1
 Authors@R: c(
     person('Isabella', 'Grassucci', , 'isabella.grassucci@gmail.com', role = 'aut',
            comment = c(ORCID = '0000-0002-2484-8570')),
