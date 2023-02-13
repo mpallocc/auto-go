@@ -85,7 +85,7 @@ deseq_analysis <- function(counts,
       dplyr::distinct(.data$gene_id, .keep_all = TRUE) %>% # removing duplicated genes
       textshape::column_to_rownames(loc = "gene_id") %>%
       dplyr::relocate(sort(tidyselect::peek_vars())) %>%
-      dplyr::mutate(dplyr::across(where(is.numeric), round))
+      dplyr::mutate(dplyr::across(dplyr::where(is.numeric), round))
 
     if (dim(counts)[2] != dim(groups)[1]) {
       stop("Please provide all counts columns in your groups dataframe.")

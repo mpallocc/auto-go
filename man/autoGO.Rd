@@ -49,6 +49,13 @@ autoGO(
 )
 }
 }
+\seealso{
+Useful links:
+\itemize{
+  \item Report bugs at \url{https://github.com/mpallocc/auto-go/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Fabio Ticconi \email{fabio.ticconi@gmail.com} (\href{https://orcid.org/0000-0001-8905-6657}{ORCID})
 
