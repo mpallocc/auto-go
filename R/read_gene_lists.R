@@ -55,8 +55,6 @@ read_gene_lists <- function(gene_lists_path = "./results",
     to_read <- to_read
   }
 
-  # FIXME: double slash after results?
-
   gene_lists <- lapply(to_read, function(x) read.table(x, header = FALSE, sep = "\n"))
   names(gene_lists) <- tools::file_path_sans_ext(to_read)
 
