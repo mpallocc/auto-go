@@ -82,7 +82,10 @@ volcanoplot <- function(DE_results,
     } else if (grepl(".txt", highlight_genes)) {
       highlight_genes <- read_delim(highlight_genes, delim = "\t", col_types = cols(), col_names = F) %>% dplyr::pull()
     }
-    labeled_genes <- volcanoData[rownames(volcanoData) %in% highlight_genes, ]
+    labeled_genes_df <- volcanoData[rownames(volcanoData) %in% highlight_genes, ]
+
+    labeled_genes_up <- rownames(labeled_genes_df[labeled_genes_df$logFC > 0, ])
+    labeled_genes_down <- rownames(labeled_genes_df[labeled_genes_df$logFC < 0, ])
   }
 
   volcanoData$`-log10(padj)`[volcanoData$`-log10(padj)` == Inf] <- max(volcanoData$`-log10(padj)`[is.finite(volcanoData$`-log10(padj)`)])
@@ -122,25 +125,25 @@ volcanoplot <- function(DE_results,
     {
       if (!is.null(highlight_genes)) {
         geom_text_repel(
-          data = subset(labeled_genes, .data$logFC > 0), size = 3, segment.size = 0.15,
+          data = volcanoData[rownames(volcanoData) %in% labeled_genes_up, ], size = 3, segment.size = 0.15,
           xlim = c(x_high_p, NA), ylim = c(max(volcanoData$`-log10(padj)`) / 3, NA),
           segment.color = "grey50", direction = "y", box.padding = 1, max.overlaps = 50,
-          aes(x = .data$logFC, y = .data$`-log10(padj)`, label = rownames(subset(labeled_genes, .data$logFC > 0)))
+          aes(x = .data$logFC, y = .data$`-log10(padj)`, label = labeled_genes_up)
         )
       }
     } +
     {
       if (!is.null(highlight_genes)) {
         geom_text_repel(
-          data = subset(labeled_genes, .data$logFC < 0), size = 3, segment.size = 0.15,
+          data = volcanoData[rownames(volcanoData) %in% labeled_genes_down, ], size = 3, segment.size = 0.15,
           xlim = c(NA, x_high_n), ylim = c(max(volcanoData$`-log10(padj)`) / 3, NA),
           segment.color = "grey50", direction = "y", box.padding = 1, max.overlaps = 50,
-          aes(x = .data$logFC, y = .data$`-log10(padj)`, label = rownames(subset(labeled_genes, .data$logFC < 0)))
+          aes(x = .data$logFC, y = .data$`-log10(padj)`, label = labeled_genes_down)
         )
       }
     } +
     {
-      if (!is.null(highlight_genes)) geom_point(data = labeled_genes, pch = 10)
+      if (!is.null(highlight_genes)) geom_point(data = labeled_genes_df, pch = 10)
     } +
     scale_fill_continuous(guide = guide_legend()) +
     scale_color_manual(
