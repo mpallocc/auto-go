@@ -127,7 +127,7 @@ heatmapGO <- function(db,
 
     h1 <- suppressWarnings(draw(
       Heatmap(data,
-        name = "-log10(Adj. P-value + 1)", col = col_fun,
+        name = "-log10(Adj. P-value)", col = col_fun,
         row_names_gp = gpar(fontsize = 10),
         show_row_dend = F, show_column_names = F,
         show_column_dend = F, row_gap = unit(55, "cm"),

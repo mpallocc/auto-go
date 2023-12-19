@@ -3,7 +3,6 @@
 \docType{package}
 \name{autoGO}
 \alias{autoGO}
-\alias{_PACKAGE}
 \alias{autoGO-package}
 \title{autoGO: Auto-GO: Reproducible, Robust and High Quality Ontology Enrichment Visualizations}
 \usage{
