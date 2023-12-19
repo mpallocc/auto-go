@@ -27,7 +27,9 @@ The AutoGO package is structured in different, independent functions, in order t
 The autoGO package can be directly installed from github.
 ```{r, message=FALSE, warning=FALSE}
 library(devtools)
-install_github("mpallocc/auto-go")
+#install_github("mpallocc/auto-go")
+#install.packages("autoGO")
+install("..")
 library(autoGO)
 ```
 
@@ -113,7 +115,7 @@ volcanoplot(DE_results = filename,
             my_comparison = "H460.2D_vs_H460.3D.2p",
             log2FC_thresh = 0,
             padj_thresh = 0.05,
-            highlight_genes = NULL,
+            highlight_genes = c("TFPI", "PROS1"),
             del_csv = ",",
             outfolder = "./results")
 
@@ -237,7 +239,7 @@ It is possible to perform the enrichment analysis also on a single gene list. It
 ```{r}
 autoGO(list_of_genes = gene_lists[[1]],
       dbs = c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human"),
-      my_comparison = "my_comparison_2022",
+      my_comparison = "my_comparison_2023",
       ensembl = F,
       excel = F,
       outfolder = "./results")
@@ -305,7 +307,7 @@ It is possible to produce a Barplot also on a single enrichment table. It is any
 enrich_table <- enrich_tables[[1]]
 barplotGO(enrich_tables = enrich_table,
           title = c("Title of my barplot", "and subtitle"),
-          outfolder = "./results/my_comparison_2022/enrichment_plots",
+          outfolder = "./results/my_comparison_2023/enrichment_plots",
           outfile = "barplot_myDB.png",
           from_autoGO = FALSE)
 ```
@@ -348,7 +350,7 @@ It is possible to produce a lolliplot also on a single enrichment. It is anyway 
 enrich_table <- enrich_tables[[1]]
 lolliGO(enrich_tables = enrich_table,
         title = c("Title of my barplot", "and subtitle"),
-        outfolder = "./results/my_comparison_2022/enrichment_plots",
+        outfolder = "./results/my_comparison_2023/enrichment_plots",
         outfile = "lolli_myDB.png",
         from_autoGO = FALSE)
 ```

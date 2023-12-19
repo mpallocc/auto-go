@@ -24,5 +24,6 @@
 #' @rawNamespace import(ape, except = where)
 #' @importFrom stats median na.omit p.adjust reorder setNames t.test wilcox.test
 #' @importFrom textshape column_to_rownames
+#' @importFrom tibble rownames_to_column
 ## usethis namespace: end
 NULL

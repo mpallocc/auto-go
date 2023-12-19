@@ -126,7 +126,7 @@ do_lolliGO <- function(enrich_table, title, outfolder, outfile) {
 
   breaks <- round(seq(min(enrich_table$gene_counts), max(enrich_table$gene_counts), length.out = 6))
 
-  ggplot(enrich_table, aes(x = .data$`-log10(Adjusted.P.value)`, reorder(.data$Term, .data$`Adjusted.P.value`))) +
+  ggplot(enrich_table, aes(x = .data$`-log10(Adjusted.P.value)`, reorder(.data$Term, .data$`Adjusted.P.value`, decreasing=T))) +
     ggtitle(label = title[1], subtitle = title[2]) +
     geom_segment(aes(xend = 0, yend = .data$Term)) +
     geom_point(aes(color = .data$percent, size = .data$gene_counts)) +

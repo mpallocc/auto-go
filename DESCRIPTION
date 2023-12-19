@@ -19,7 +19,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 BugReports: https://github.com/mpallocc/auto-go/issues
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 LazyData: true
 Depends: 
     R (>= 3.5.0),
@@ -37,6 +37,7 @@ Imports:
     grDevices,
     GSVA,
     imguR,
+    msigdbr,
     openxlsx,
     purrr,
     RColorBrewer,
@@ -45,6 +46,7 @@ Imports:
     stringr,
     SummarizedExperiment,
     textshape,
+    tibble,
     tidyr,
     tidyselect,
     utils
