@@ -18,18 +18,16 @@ knitr::opts_chunk$set(echo = T, error = TRUE, eval = F)
 
 ## Introduction
 
-This tutorial provides a walk through on how to use AutoGO to perform gene ontology enrichment analysis from gene lists or directly from raw counts performing differential expression analysis.
+This tutorial provides a walk through on how to use AutoGO to perform Functional Enrichment Analysis from gene lists or directly from raw counts performing Differential Expression Analysis.
 
-The AutoGO package is structured in different, independent functions, in order to let the user decide which steps of the whole analysis to perform and which visualizations to produce, even if it is suggested to perform the whole workflow that includes: Differential Expression Analysis with the employment of DESeq2; Generation of a Volcano Plot; Functional Enrichment Analysis on databases chosen by the user with the employment of enrichR; Visualization of the enrichment results with Barplot, Lollipop and Heatmap;
+The AutoGO package is structured in different, independent functions, in order to let the user decide which steps of the whole analysis to perform and which visualizations to produce, even if it is suggested to perform the whole workflow: Differential Expression Analysis; Volcano Plot; Functional Enrichment Analysis on databases chosen by the user; Visualization of the enrichment results with Barplot, Lollipop and Heatmap;
 
 ## Installation
 
-The autoGO package can be directly installed from github.
 ```{r, message=FALSE, warning=FALSE}
 library(devtools)
-#install_github("mpallocc/auto-go")
+install_github("mpallocc/auto-go", ref="develop")
 #install.packages("autoGO")
-install("..")
 library(autoGO)
 ```
 
@@ -45,8 +43,6 @@ data(counts, groups, comparisons)
 
 ## Differential Gene Expression
 
-The DESeq2 workflow is employed. A prefiltering is applied, if the user choose to, in order to remove all genes having sum along the sample less than 10.
-
 ```{r}
 deseq_analysis(counts,
                groups,
@@ -61,7 +57,7 @@ deseq_analysis(counts,
 
 #### Parameters:
 
-* *counts*: path to raw counts file or a dataframe. Accepted formats: .txt, .csv, .tsv, .rds. [genes x samples]
+* *counts*: path to raw counts file or a dataframe.
 
 * *groups*: it is the sample information table needed by DESeq2, constituted by the column *sample*, including sample barcodes and by the column *group* including the condition to which each sample belongs. It can be provided as a .txt file or as a dataframe.
 
@@ -144,10 +140,10 @@ volcanoplot(DE_results = filename,
 * *del_csv* : default is ",".
 
 
-If the user had more conditions in the differential analysis, there will be many comparisons, so it is possible to apply the following structure to realize the volcano plots for all the comparisons of the analysis:
+If the user had more conditions in the Differential Analysis, there will be many comparisons, so it is possible to apply the following structure to realize the volcano plots for all the comparisons of the analysis:
 
 ```{r}
-all_path_res <- list.files(path = "results", pattern = "_allres.tsv", recursive = T, full.names = T)
+all_path_res <- list.files(path = "./results", pattern = "_allres.tsv", recursive = T, full.names = T)
 res_lists <- lapply(all_path_res, function (x) read_tsv(x, col_types = cols()))
 names(res_lists) <- gsub("results/|/DE_.*", "", all_path_res)
 
@@ -163,7 +159,7 @@ knitr::include_graphics("volcano2.png")
 
 
 ## Choose of database
-It allows to search over all the Enrichr databases on which it is possible to perform the enrichment analysis. In this way the user is able to select only the databases for which he wants to perform downstream analysis.
+It allows to search over all the Enrichr databases on which it is possible to perform the Enrichment Analysis. In this way the user is able to select only the databases for which he wants to perform downstream analysis.
 
 ```{r}
 choose_database(db_search = "KEGG")
@@ -207,8 +203,6 @@ names(gene_lists)
 ## Enrichment analysis
 
 Each desired gene list is enriched on all the databases chosen by the user (see choose_database). The function will produce the enrichment table for each chosen database.
-In the case in which also the previous steps of autoGO have been performed it is not necessary to pass other parameters rather than the *gene_lists_path* to the function *my_comparison* and *outfolder*, all the information will be taken from the path of the gene lists.
-
 
 ```{r}
 autoGO(list_of_genes = gene_lists,
@@ -216,7 +210,7 @@ autoGO(list_of_genes = gene_lists,
       my_comparison = NULL,
       ensembl = F,
       excel = F,
-      outfolder = NULL)
+      outfolder = "./results")
 ```
 
 
@@ -228,18 +222,18 @@ autoGO(list_of_genes = gene_lists,
 
 * *my_comparison*: the comparison of the differential analysis the user would like to plot (following the structure from the comparison file: control_vs_treatment, a_vs_b), or the name the user would like to give to the analysis.
 
-* *ensembl*: Set TRUE if the provided gene list contains Ensembl IDs. A conversion to HGNC will be performed. Default is FALSE
+* *ensembl*: Set TRUE if the provided gene list contains Ensembl IDs. A conversion to HGNC will be performed. Default is FALSE.
 
 * *excel*: if True it allows to save all the output tables in .xlsx format. Default False.
 
 * *outfolder* : the name of the output folder. Ignored if list_of_genes is a list. Default is NULL. (NOTE: The outfolder chosen by the user will be the parent folder of the results. Inside this, the subfolders will be organized following the autoGO structure in order to keep the results of the downstream analysis ordered.)
 
-It is possible to perform the enrichment analysis also on a single gene list. It is anyway suggested to employ the read_gene_list function.
+It is possible to perform the Enrichment Analysis also on a single gene list. It is anyway suggested to employ the read_gene_list function.
 
 ```{r}
 autoGO(list_of_genes = gene_lists[[1]],
       dbs = c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human"),
-      my_comparison = "my_comparison_2023",
+      my_comparison = "my_comparison_2025",
       ensembl = F,
       excel = F,
       outfolder = "./results")
@@ -279,7 +273,7 @@ names(enrich_tables)
 
 ## Visualization:
 
-Auto-GO allows the user to visualize the enrichment results with different kind of plot produced in an automated way. The barplot and the lollipop plot of the most enriched terms of each list and the heatmap of the most enriched terms along all the enriched lists.
+Auto-GO allows the user to visualize the enrichment results with different kind of plots produced in an automated way. The barplot and the lollipop plot of the most enriched terms of each list and the heatmap of the most enriched terms along all the enriched lists.
 
 
 ## Barplot
@@ -307,7 +301,7 @@ It is possible to produce a Barplot also on a single enrichment table. It is any
 enrich_table <- enrich_tables[[1]]
 barplotGO(enrich_tables = enrich_table,
           title = c("Title of my barplot", "and subtitle"),
-          outfolder = "./results/my_comparison_2023/enrichment_plots",
+          outfolder = "./results/my_comparison_2025/enrichment_plots",
           outfile = "barplot_myDB.png",
           from_autoGO = FALSE)
 ```
@@ -373,7 +367,7 @@ lolliGO(enrich_tables = enrich_table,
 
 If the enrichemnt analysis have been performed on many comparisons (or gene lists) it is interesting to have a look at the enrichment results over all these gene lists together.
 
-The function automatically reads all the enrichment tables of the chosen database (if the previous steps of autoGO have been performed. In this case the subfolders structure of autoGO is needed). It produces a heatmap of the most enriched terms over a certain number of comparison (or enriched lists). It is possible to produce the heatmap of terms enriched in at least one comparison or more. The user can choose the minimum of comparisons on which a certain term must be significant (i.e. if the user has 5 comparisons and he wants to look at the terms significant on all the comparisons it has to use *min_term_per_row = 5*)
+The function automatically reads all the enrichment tables of the chosen database (if the previous steps of autoGO have been performed. In this case it is mandatory). It produces a heatmap of the most enriched terms over a certain number of comparison (or enriched lists). The user can choose the minimum of comparisons on which a certain term must be significant (i.e. if the user has 5 comparisons it is possible to look at terms significant over all the comparison using *min_term_per_row = 5*).
 
 ```{r}
 heatmapGO(db = "GO_Biological_Process_2021",
@@ -406,6 +400,36 @@ For a faster process it is possible to define a vector containing the employed d
 
 ```{r}
 dbs <- c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human")
-lapply(dbs, function (i) heatmapGO(db = i, which_list = "down_genes", min_term_per_row = 3))
+lapply(dbs, function (i) heatmapGO(db = i, outfolder = "./results", which_list = "down_genes", min_term_per_row = 3))
 ```
+
+## Single-sample Gene Set Enrichment Analysis
+
+It is possible to perform a single-sample Gene Set Enrichment Analysis with the function *ssgsea_wrapper.R* . This kind of analysis is recommended when there are too few samples. In the end the analysis will produce an enrichment score for each sample and associated visualizations.
+
+
+```{r}
+ssgsea_wrapper(norm_data = "results/deseq_vst_data.txt",
+                           gene_id_type = c("gene_symbol"),
+                           write_enrich_tables = TRUE,
+                           group = NULL,
+                           outfolder = "./results/ssgsea",
+                           full_names = TRUE,
+                           tpm_norm = FALSE,
+                           categories = c("C1", "H"))
+```
+
+#### Parameters:
+
+* *norm_data*: path of the normalized matrix. By default it is the "deseq_vst_data.txt" computed with the function "deseq_analysis.R". Requirements: first column gene names.
+
+* *gene_id_type*: it is possible to choose among "gene_symbol", "entrez_gene", "ensembl_gene".
+
+* *write_enrich_tables*: default False. Set to True will save the matrix with enrichment scores.
+
+* *outfolder* : Name of the output folder in which to save the results. Default "./ssgsea"
+
+* *full_names* : default FALSE. This parameter regards the visualizations, set to TRUE will plot the full names of the terms inside the plots.
+
+* *categories*: Possible to choose between "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "H", based on Molecular Signatures Database (MSigDB).
 
