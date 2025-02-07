@@ -125,6 +125,11 @@ volcanoplot(DE_results = filename,
             outfolder = "./results")
 ```
 
+```{r, fig.show='hold', echo=FALSE, out.width = '47%',  eval=TRUE} 
+knitr::include_graphics("imgs/volcanoplot_highlighted.png")
+knitr::include_graphics("imgs/volcano.png")
+```
+
 #### Parameters:
 
 * *DE_results*: output table of the differential analysis. It can be provided as a file (.tsv, .csv, tab-separated .txt) or a dataframe. It is necessary that the columns *genes*, *log2FoldChange* and *padj* are present.
@@ -149,14 +154,6 @@ names(res_lists) <- gsub("results/|/DE_.*", "", all_path_res)
 
 invisible(lapply(names(res_lists), function (i) volcanoplot(res_lists[[i]], my_comparison = i)))
 ```
- 
-
-```{r, fig.show='hold', echo=FALSE, out.width = '47%',  eval=TRUE} 
-knitr::include_graphics("volcano1.png")
-knitr::include_graphics("volcano2.png")
-
-```
-
 
 ## Choose of database
 It allows to search over all the Enrichr databases on which it is possible to perform the Enrichment Analysis. In this way the user is able to select only the databases for which he wants to perform downstream analysis.
@@ -290,8 +287,8 @@ barplotGO(enrich_tables = enrich_tables,
 ```
 
 
-```{r, echo=FALSE, out.width = '98%',  eval=TRUE} 
-knitr::include_graphics("barplotGO_GO_Molecular_Function_2021.png")
+```{r, echo=FALSE, out.width = '98%', eval=TRUE} 
+knitr::include_graphics("imgs/barplot.png")
 ```
 
 It is possible to produce a Barplot also on a single enrichment table. It is anyway suggested to employ the *read_enrich_table* function.
@@ -333,8 +330,8 @@ lolliGO(enrich_tables = enrich_tables,
         from_autoGO = TRUE)
 ```
 
-```{r, echo=FALSE, out.width = '98%',  eval=TRUE} 
-knitr::include_graphics("lolliGO_GO_Molecular_Function_2021.png")
+```{r, echo=FALSE, out.width = '98%', eval=TRUE} 
+knitr::include_graphics("imgs/lolligo.png")
 ```
 
 
@@ -382,7 +379,7 @@ heatmapGO(db = "GO_Biological_Process_2021",
 
 * *db*: database for which the user would like to produce the heatmap. It has to be one for which the enrichment analysis has been performed.
 
-* *outfolder*: the name of the output folder used until now. The enrichment tables will be searched inside of it. Default is: "./results". (NOTE: The outfolder chosen by the user will be the parent folder of the results. Inside this, there will be created a folder called ComparisonHeatmap).
+* *outfolder*: the name of the output folder used until now. The enrichment tables will be searched inside of it. Default is: "./results". (NOTE: The outfolder chosen by the user will be the parent folder of the results. Inside this, there will be created a folder called comparison_heatmap).
 
 * *padj_threshold* and *log2FC_threshold*: Default are *padj_treshold* = 0.05 and *log2FC_threshold* = 0
 
@@ -392,7 +389,7 @@ heatmapGO(db = "GO_Biological_Process_2021",
 
 
 ```{r, echo=FALSE, out.width = '80%', fig.align='center', eval=TRUE} 
-knitr::include_graphics("down_genes_GO_Biological_Process_2021_min3.png")
+knitr::include_graphics("imgs/heatmap.png")
 ```
 
 
@@ -410,13 +407,20 @@ It is possible to perform a single-sample Gene Set Enrichment Analysis with the 
 
 ```{r}
 ssgsea_wrapper(norm_data = "results/deseq_vst_data.txt",
-                           gene_id_type = c("gene_symbol"),
-                           write_enrich_tables = TRUE,
-                           group = NULL,
-                           outfolder = "./results/ssgsea",
-                           full_names = TRUE,
-                           tpm_norm = FALSE,
-                           categories = c("C1", "H"))
+               gene_id_type = c("gene_symbol"),
+               write_enrich_tables = TRUE,
+               group = NULL,
+               outfolder = "./results/ssgsea",
+               full_names = TRUE,
+               tpm_norm = FALSE,
+               categories = c("C1", "H"))
+```
+
+```{r, echo=FALSE, out.width = '98%',  eval=TRUE} 
+knitr::include_graphics("imgs/distrib_C1.png")
+knitr::include_graphics("imgs/heatmap_C1.png")
+knitr::include_graphics("imgs/distrib_H.png")
+knitr::include_graphics("imgs/heatmap_H.png")
 ```
 
 #### Parameters:

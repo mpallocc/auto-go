@@ -147,12 +147,12 @@ heatmapGO <- function(db,
     ))
   }
 
-  if (which_list != "not_from_DE") path_save <- file.path(outfolder, "ComparisonHeatmap", which_list)
-  if (which_list == "not_from_DE") path_save <- file.path(outfolder, "ComparisonHeatmap")
+  if (which_list != "not_from_DE") path_save <- file.path(outfolder, "comparison_heatmap", which_list)
+  if (which_list == "not_from_DE") path_save <- file.path(outfolder, "comparison_heatmap")
 
   if (!dir.exists(path_save)) dir.create(path_save, recursive = T)
 
-  name_save <- paste0(path_save, "_", db, "_min", min_term_per_row, ".png")
+  name_save <- paste0(path_save, "/heatmap_", db, "_min", min_term_per_row, ".png")
 
   saving <- function(data, path_save) {
     if (nrow(data) > 35) {
