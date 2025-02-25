@@ -6,3 +6,4 @@ results/
 vignettes/results/
 ^doc$
 ^Meta$
+.git
