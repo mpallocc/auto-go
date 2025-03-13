@@ -3,6 +3,7 @@
 #' @description Perform enrichment analysis on all the desired gene lists. This function take advantage of the 'enrichR' package.
 #' @param list_of_genes it can be a list of dataframes containing gene names (i.e. from the output of read_gene_lists()), a single dataframe or character vector of gene names, or a path to a .txt file containing one gene name per row.
 #' @param dbs Databases over which the enrichment will be performed, based on the enrichR libraries. Default are GO_Molecular_Function_2021, GO_Cellular_Component_2021, GO_Biological_Process_2021, KEGG_2021_Human. Run choose_database() to see all the possible databases.
+#' @param background (Default = NULL). Character vector of Entrez gene symbols to be used as background. It can be also a data.frame of gene symbols in first column.
 #' @param my_comparison Name of the comparison (or the analysis) the user would like to inspect. Ignored if list_of_genes is a list. taken from the path.
 #' @param ensembl (Default = FALSE). Set to TRUE if the provided gene list contains Ensembl IDs. A conversion to HGNC will be performed.
 #' @param excel (Default = FALSE). Set to TRUE if you want to save output tables in .xlsx format.
@@ -13,6 +14,7 @@
 #' autoGO(
 #'   list_of_genes = gene_lists,
 #'   dbs = c("GO_Molecular_Function_2021", "GO_Biological_Process_2021", "KEGG_2021_Human"),
+#'   background = background_list,
 #'   my_comparison = NULL,
 #'   ensembl = F,
 #'   excel = F,
@@ -27,7 +29,8 @@ autoGO <- function(list_of_genes,
                      "GO_Molecular_Function_2021",
                      "GO_Biological_Process_2021",
                      "KEGG_2021_Human"
-                   ),
+                   background = NULL,
+		               ),
                    my_comparison = NULL,
                    ensembl = FALSE,
                    excel = FALSE,
@@ -51,6 +54,7 @@ autoGO <- function(list_of_genes,
         do_autogo(
           list_of_genes = set_of_genes,
           dbs = dbs,
+          background = background,
           my_comparison = "",
           ensembl = ensembl,
           excel = excel,
@@ -62,6 +66,7 @@ autoGO <- function(list_of_genes,
     invisible(do_autogo(
       list_of_genes = list_of_genes,
       dbs = dbs,
+      background = background,
       my_comparison = my_comparison,
       ensembl = ensembl,
       excel = excel,
@@ -72,6 +77,7 @@ autoGO <- function(list_of_genes,
 
 do_autogo <- function(list_of_genes,
                       dbs,
+                      background,
                       my_comparison,
                       ensembl,
                       excel,
@@ -109,7 +115,7 @@ do_autogo <- function(list_of_genes,
       dplyr::pull()
   }
 
-  enriched <- enrichr(list_of_genes, dbs)
+  enriched <- enrichr(list_of_genes, dbs, background)
   lapply(seq_along(enriched), function(i) {
     enriched[[i]] <- enriched[[i]][!is.na(enriched[[i]]$Term), ]
     enriched[[i]]$`-log10(Adjusted.P.value)` <- -log10(enriched[[i]]$Adjusted.P.value)

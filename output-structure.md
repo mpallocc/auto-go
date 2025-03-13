@@ -70,5 +70,5 @@ results/
 
 ---
 
-![](/Users/antocruo/Downloads/Unknown-2.png)
+![](../develop/vignettes/imgs/tree-structure.png)
 *Visual Representation of an Example of the Output Structure.*
