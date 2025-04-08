@@ -28,9 +28,8 @@ autoGO <- function(list_of_genes,
                    dbs = c(
                      "GO_Molecular_Function_2021",
                      "GO_Biological_Process_2021",
-                     "KEGG_2021_Human"
+                     "KEGG_2021_Human"),
                    background = NULL,
-		               ),
                    my_comparison = NULL,
                    ensembl = FALSE,
                    excel = FALSE,
@@ -114,15 +113,15 @@ do_autogo <- function(list_of_genes,
       dplyr::inner_join(all_genes_conversion, by = c("list_of_genes" = "ensembl_gene_id")) %>%
       dplyr::pull()
   }
-
-  enriched <- enrichr(list_of_genes, dbs, background)
+  overlap_option <- ifelse(is.null(background), FALSE, TRUE) 
+  enriched <- enrichr(list_of_genes, dbs, background, include_overlap = overlap_option)
   lapply(seq_along(enriched), function(i) {
     enriched[[i]] <- enriched[[i]][!is.na(enriched[[i]]$Term), ]
     enriched[[i]]$`-log10(Adjusted.P.value)` <- -log10(enriched[[i]]$Adjusted.P.value)
     enriched[[i]] <- enriched[[i]][order(enriched[[i]]$Adjusted.P.value), ]
   })
-
   my_path <- file.path(outfolder, my_comparison, "enrichment_tables")
+  
   if (!dir.exists(my_path)) dir.create(my_path, recursive = T)
 
   invisible(lapply(seq_along(enriched), function(ind) {
