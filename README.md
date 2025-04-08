@@ -65,7 +65,7 @@ The figure below illustrates the output structure of the autoGO package.
 
 By default, the output folder is named `results` (unless specified otherwise using the `where_results` and `outfolder` parameters).
 
-You can find a detailed description of the output folders in this ![file](../develop/output-structure.md).
+You can find a detailed description of the output folders in this [file](../develop/output-structure.md).
 
 
 
@@ -77,7 +77,7 @@ You can find a detailed description of the output folders in this ![file](../dev
 ## Citation
 
 If you use AutoGO in your research, please cite the following publication:
-I. Grassucci et al., "Auto-GO: Reproducible, Robust and High Quality Ontology Enrichment Visualizations," 2023 IEEE International Conference on Bioinformatics and Biomedicine (BIBM), Istanbul, Turkiye, 2023, pp. 3638-3641, doi: 10.1109/BIBM58861.2023.10385722. 
+I. Grassucci et al., "Auto-GO: Reproducible, Robust and High Quality Ontology Enrichment Visualizations", 2023 IEEE International Conference on Bioinformatics and Biomedicine (BIBM), Istanbul, Turkiye, 2023, pp. 3638-3641, doi: 10.1109/BIBM58861.2023.10385722. 
 
 
   
