@@ -17,7 +17,6 @@
 #' @import SummarizedExperiment
 #' @import dichromat
 #' @import grid
-#' @import imguR
 #' @import ggrepel
 #' @import grDevices
 #' @import dplyr

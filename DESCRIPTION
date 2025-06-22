@@ -36,7 +36,6 @@ Imports:
     ggrepel,
     grDevices,
     GSVA,
-    imguR,
     msigdbr,
     openxlsx,
     purrr,
@@ -55,3 +54,4 @@ Suggests:
     rlang,
     rmarkdown
 VignetteBuilder: knitr
+Config/Authors@R: yes
