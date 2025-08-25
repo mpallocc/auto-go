@@ -1,18 +1,20 @@
 Package: autoGO
 Title: Auto-GO: Reproducible, Robust and High Quality Ontology Enrichment Visualizations
-Version: 1.0.1
+Version: 1.0.4
 Authors@R: c(
     person('Isabella', 'Grassucci', , 'isabella.grassucci@gmail.com', role = 'aut',
            comment = c(ORCID = '0000-0002-2484-8570')),
     person('Eleonora', 'Sperandio', , 'eleonora.sperandio@ifo.it', role = 'aut',
            comment = c(ORCID = '0000-0002-8572-6788')),
-    person('Fabio', 'Ticconi', , 'fabio.ticconi@gmail.com', role = 'cre',
+    person('Fabio', 'Ticconi', , 'fabio.ticconi@gmail.com', role = 'aut',
            comment = c(ORCID = '0000-0001-8905-6657')),
     person('Alice', 'Massacci', , 'alice.massacci@ifo.it', role = 'aut',
            comment = c(ORCID = '0000-0001-7780-809X')),
     person('Lorenzo', 'D\'Ambrosio', , 'lorenzo.dambrosio@ifo.it', role = 'aut',
            comment = c(ORCID = '0000-0002-9656-7436')),
-    person('Matteo', 'Pallocca', , 'matteo.pallocca@ifo.it', role = 'aut',
+    person('Antonella', 'Cruoglio', , 'antonella.cruoglio@gmail.com', role = 'aut',
+           comment = c(ORCID = '0009-0001-9024-8936')),
+    person('Matteo', 'Pallocca', , 'matteo.pallocca@ifo.it', role = 'cre',
            comment = c(ORCID = '0000-0002-7756-3579')))
 Description: Auto-GO is a framework that enables automated, high quality Gene Ontology enrichment analysis visualizations. It also features a handy wrapper for Differential Expression analysis around the 'DESeq2' package described in Love et al. (2014) <doi:10.1186/s13059-014-0550-8>. The whole framework is structured in different, independent functions, in order to let the user decide which steps of the analysis to perform and which plot to produce.
 License: MIT + file LICENSE
@@ -54,4 +56,3 @@ Suggests:
     rlang,
     rmarkdown
 VignetteBuilder: knitr
-Config/Authors@R: yes
