@@ -65,7 +65,7 @@ The figure below illustrates the output structure of the autoGO package.
 
 By default, the output folder is named `results` (unless specified otherwise using the `where_results` and `outfolder` parameters).
 
-You can find a detailed description of the output folders in this [file](../develop/output-structure.md).
+You can find a detailed description of the output folders in this [file](../develop/vignettes/output_structure.md).
 
 
 
